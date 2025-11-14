@@ -210,6 +210,8 @@ L["NEW_ROUTES_RESET_PROMPT"] = "В этой версии были обновле
 L["RESET_ALL"] = "Сбросить все подземелья"
 L["RESET_CHANGED_ONLY"] = "Сбросить только измененные"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "Обновлены маршруты следующих подземелий:"
+L["BOSS"] = "Boss"
+L["BOSS_ORDER"] = "Boss Order"
 
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "Выделите всё, затем нажмите Ctrl+C, чтобы скопировать. Дополнительно: DeepL - https://www.deepl.com/translator"

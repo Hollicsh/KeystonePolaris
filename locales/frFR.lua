@@ -207,6 +207,8 @@ L["NEW_ROUTES_RESET_PROMPT"] = "Les routes par défaut des donjons ont changé d
 L["RESET_ALL"] = "Réinitialiser tous les donjons"
 L["RESET_CHANGED_ONLY"] = "Réinitialiser uniquement ces donjons"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "Les donjons suivants ont des routes mises à jour :"
+L["BOSS"] = "Boss"
+L["BOSS_ORDER"] = "Ordre des boss"
 
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "Sélectionner tout, puis Ctrl+C pour copier. Optionnel : DeepL https://www.deepl.com/translator"

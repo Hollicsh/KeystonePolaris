@@ -47,6 +47,7 @@ KeystonePolaris.realPull = {
 -- Track current dungeon and section
 KeystonePolaris.currentDungeonID = 0
 KeystonePolaris.currentSection = 1
+KeystonePolaris.currentSectionOrder = nil
 
 -- [TEMP-MIGRATION-KPH->KP] BEGIN: migration popup and ack (remove once rebrand is widely adopted)
 -- Show a one-time migration popup for users coming from Keystone Percentage Helper
@@ -557,6 +558,51 @@ function KeystonePolaris:CreateDisplay()
     self:Refresh()
 end
 
+-- Build logical section order for the given dungeon, using advanced bossOrder when available
+function KeystonePolaris:BuildSectionOrder(dungeonId)
+    self.currentSectionOrder = nil
+    local dungeon = self.DUNGEONS[dungeonId]
+    if not dungeon then return end
+
+    local numBosses = #dungeon
+    if numBosses == 0 then return end
+
+    local order = {}
+    local dungeonKey = self.GetDungeonKeyById and self:GetDungeonKeyById(dungeonId) or nil
+    if dungeonKey and self.db and self.db.profile and self.db.profile.advanced and self.db.profile.advanced[dungeonKey] then
+        local adv = self.db.profile.advanced[dungeonKey]
+        local advOrder = adv.bossOrder
+        if type(advOrder) == "table" then
+            local valid = true
+            for i = 1, numBosses do
+                local idx = advOrder[i]
+                if type(idx) ~= "number" or idx < 1 or idx > numBosses then
+                    valid = false
+                    break
+                end
+                order[i] = math.floor(idx)
+            end
+            if valid then
+                self.currentSectionOrder = order
+                return
+            end
+        end
+    end
+
+    -- Fallback: order by required percentage ascending
+    for i = 1, numBosses do
+        order[i] = i
+    end
+    table.sort(order, function(a, b)
+        local da = dungeon[a]
+        local db = dungeon[b]
+        local pa = da and da[2] or 0
+        local pb = db and db[2] or 0
+        return pa < pb
+    end)
+    self.currentSectionOrder = order
+end
+
 -- Initialize dungeon tracking when entering a dungeon
 function KeystonePolaris:InitiateDungeon()
     local currentDungeonId = C_ChallengeMode.GetActiveChallengeMapID()
@@ -566,13 +612,7 @@ function KeystonePolaris:InitiateDungeon()
     -- Set current dungeon and reset to first section
     self.currentDungeonID = currentDungeonId
     self.currentSection = 1
-
-    -- Sort dungeon data by percentage to ensure proper progression
-    if self.DUNGEONS[self.currentDungeonID] then
-        table.sort(self.DUNGEONS[self.currentDungeonID], function(left, right)
-            return left[2] < right[2]
-        end)
-    end
+    self:BuildSectionOrder(self.currentDungeonID)
 end
 
 -- Get the current enemy forces percentage from the scenario UI
@@ -633,11 +673,28 @@ end
 
 -- Get data for the current section of the dungeon
 function KeystonePolaris:GetDungeonData()
-    if not self.DUNGEONS[self.currentDungeonID] or not self.DUNGEONS[self.currentDungeonID][self.currentSection] then
+    local dungeon = self.DUNGEONS[self.currentDungeonID]
+    if not dungeon then
         return nil
     end
 
-    local dungeonData = self.DUNGEONS[self.currentDungeonID][self.currentSection]
+    if not self.currentSectionOrder then
+        if self.currentDungeonID then
+            self:BuildSectionOrder(self.currentDungeonID)
+        end
+    end
+
+    local order = self.currentSectionOrder
+    if not order then
+        return nil
+    end
+
+    local sectionIndex = order[self.currentSection]
+    if not sectionIndex or not dungeon[sectionIndex] then
+        return nil
+    end
+
+    local dungeonData = dungeon[sectionIndex]
     return dungeonData[1], dungeonData[2], dungeonData[3], dungeonData[4]
 end
 
@@ -680,7 +737,16 @@ function KeystonePolaris:UpdatePercentageText()
     local currentPullCount = tonumber(self.realPull and self.realPull.sum) or 0
 
     -- Skip sections that have 0 or negative percentage requirements
-    while self.DUNGEONS[self.currentDungeonID][self.currentSection] and self.DUNGEONS[self.currentDungeonID][self.currentSection][2] <= 0 do
+    if not self.currentSectionOrder then
+        self:BuildSectionOrder(self.currentDungeonID)
+    end
+    local skipOrder = self.currentSectionOrder
+    while skipOrder and self.currentSection <= #skipOrder do
+        local idx = skipOrder[self.currentSection]
+        local dungeon = self.DUNGEONS[self.currentDungeonID]
+        if not idx or not dungeon or not dungeon[idx] or dungeon[idx][2] > 0 then
+            break
+        end
         self.currentSection = self.currentSection + 1
     end
 
@@ -727,7 +793,11 @@ function KeystonePolaris:UpdatePercentageText()
             -- Inform group about missing percentage if enabled
             if shouldInfom and not haveInformed and self.db.profile.general.informGroup then
                 self:InformGroup(remainingPercent)
-                self.DUNGEONS[self.currentDungeonID][self.currentSection][4] = true
+                local order = self.currentSectionOrder
+                local idx = order and order[self.currentSection]
+                if idx and self.DUNGEONS[self.currentDungeonID] and self.DUNGEONS[self.currentDungeonID][idx] then
+                    self.DUNGEONS[self.currentDungeonID][idx][4] = true
+                end
             end
             color = self.db.profile.color.missing
             local base = (formatMode == "count") and displayCount or displayPercent
@@ -756,9 +826,15 @@ function KeystonePolaris:UpdatePercentageText()
                 self.displayFrame.text:SetText(self:FormatMainDisplayText(L["SECTION_DONE"], currentPercentage, currentPullPercent, remainingPercent, fmtData, isBossKilled, allBosses))
             end
             self.currentSection = self.currentSection + 1
-            if self.currentSection <= #self.DUNGEONS[self.currentDungeonID] then -- Next section exists
+            if self.currentSectionOrder and self.currentSection <= #self.currentSectionOrder then -- Next section exists
                 C_Timer.After(2, function()
-                    local nextRequired = self.DUNGEONS[self.currentDungeonID][self.currentSection][2] - currentPercentage
+                    local order = self.currentSectionOrder
+                    local dungeon = self.DUNGEONS[self.currentDungeonID]
+                    local sectionIndex = order and order[self.currentSection]
+                    local nextRequired = 0
+                    if dungeon and sectionIndex and dungeon[sectionIndex] then
+                        nextRequired = dungeon[sectionIndex][2] - currentPercentage
+                    end
                         -- Ensure nextRequired never goes below zero
                         if nextRequired < 0 then
                             nextRequired = 0.00
@@ -774,7 +850,10 @@ function KeystonePolaris:UpdatePercentageText()
                             self.displayFrame.text:SetText(self:FormatMainDisplayText(L["DONE"], currentPercentage, currentPullPercent, nil, fmtData, isBossKilled, allBosses))
                         else
                             color = self.db.profile.color.inProgress
-                            local nextNeededPercent = self.DUNGEONS[self.currentDungeonID][self.currentSection][2]
+                            local nextNeededPercent = 0
+                            if dungeon and sectionIndex and dungeon[sectionIndex] then
+                                nextNeededPercent = dungeon[sectionIndex][2]
+                            end
                             local nextNeededCount = (totalCount and totalCount > 0) and math.ceil((nextNeededPercent / 100) * totalCount) or 0
                             local nextRemainingCount = (totalCount and totalCount > 0) and math.max(0, nextNeededCount - (currentCount or 0)) or 0
                             local baseNext

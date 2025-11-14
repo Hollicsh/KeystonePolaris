@@ -8,9 +8,9 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2660,
         teleportID = 445417,
         bosses = {
-            {1, 37.75, false},
-            {2, 73.50, false},
-            {3, 100, true}
+            {1, 37.75, false, 1},
+            {2, 73.50, false, 2},
+            {3, 100, true, 3}
         }
     },
     CoT = { -- City of Threads
@@ -18,10 +18,10 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2669,
         teleportID = 445416,
         bosses = {
-            {1, 31.54, false},
-            {2, 56.60, false},
-            {3, 87.60, false},
-            {4, 100, true}
+            {1, 31.54, false, 1},
+            {2, 56.60, false, 2},
+            {3, 87.60, false, 3},
+            {4, 100, true, 4}
         }
     },
     CBM = { -- Cinderbrew Meadery
@@ -29,10 +29,10 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2661,
         teleportID = 445440,
         bosses = {
-            {1, 24.87, false},
-            {2, 61.33, false},
-            {3, 97.96, true},
-            {4, 100, true}
+            {1, 24.87, false, 1},
+            {2, 61.33, false, 2},
+            {3, 97.96, true, 3},
+            {4, 100, true, 4}
         }
     },
     DFC = { -- Darkflame Cleft
@@ -40,10 +40,10 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2651,
         teleportID = 445441,
         bosses = {
-            {1, 28.24, false},
-            {2, 65.02, true},
-            {3, 80.05, true},
-            {4, 100, true}
+            {1, 28.24, false, 1},
+            {2, 65.02, true, 2},
+            {3, 80.05, true, 3},
+            {4, 100, true, 4}
         }
     },
     OFG = { -- Operation: Floodgate
@@ -51,10 +51,10 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2773,
         teleportID = 1216786,
         bosses = {
-            {1, 36.81, false},
-            {2, 67.86, false},
-            {3, 57.87, true},
-            {4, 100, true}
+            {1, 36.81, false, 2},
+            {2, 67.86, false, 1},
+            {3, 57.87, true, 3},
+            {4, 100, true, 4}
         }
     },
     PotSF = { -- Priory of the Sacred Flame
@@ -62,9 +62,9 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2649,
         teleportID = 445444,
         bosses = {
-            {1, 46.98, false},
-            {2, 69.48, false},
-            {3, 100, true}
+            {1, 46.98, false, 1},
+            {2, 69.48, false, 2},
+            {3, 100, true, 3}
         }
     },
     TDB = { -- The Dawnbreaker
@@ -72,9 +72,9 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2662,
         teleportID = 445414,
         bosses = {
-            {1, 29.78, false},
-            {2, 93.48, false},
-            {3, 100, true}
+            {1, 29.78, false, 1},
+            {2, 93.48, false, 2},
+            {3, 100, true, 3}
         }
     },
     TR = { -- The Rookery
@@ -82,9 +82,9 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2648,
         teleportID = 445443,
         bosses = {
-            {1, 41.13, false},
-            {2, 66.73, false},
-            {3, 100, true}
+            {1, 41.13, false, 1},
+            {2, 66.73, false, 2},
+            {3, 100, true, 3}
         }
     },
     TSV = { -- The Stonevault
@@ -92,10 +92,10 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2652,
         teleportID = 445269,
         bosses = {
-            {1, 26.79, false},
-            {2, 54.40, false},
-            {3, 75.66, false},
-            {4, 100, true}
+            {1, 26.79, false, 1},
+            {2, 54.40, false, 2},
+            {3, 75.66, false, 3},
+            {4, 100, true, 4}
         }
     },
     EDAD = { -- Eco-Dome Al'dani
@@ -103,9 +103,9 @@ KeystonePolaris.TWW_DUNGEON_DATA = {
         mapID = 2830,
         teleportID = 1237215,
         bosses = {
-            {1, 18.92, false},
-            {2, 57.12, false},
-            {3, 100, true}
+            {1, 18.92, false, 1},
+            {2, 57.12, false, 2},
+            {3, 100, true, 3}
         }
     }
 }

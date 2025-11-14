@@ -211,6 +211,8 @@ L["NEW_ROUTES_RESET_PROMPT"] = "此版本中默认的地下城路线已更新。
 L["RESET_ALL"] = "重置所有地下城"
 L["RESET_CHANGED_ONLY"] = "仅重置有变化的"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "以下地下城有更新的路线："
+L["BOSS"] = "Boss"
+L["BOSS_ORDER"] = "Boss Order"
 
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "Select All, then Ctrl+C to copy. Optional: DeepL https://www.deepl.com/translator"

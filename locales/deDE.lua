@@ -209,6 +209,8 @@ L["NEW_ROUTES_RESET_PROMPT"] = "Die Standardrouten der Dungeons wurden in dieser
 L["RESET_ALL"] = "Alle zurücksetzen"
 L["RESET_CHANGED_ONLY"] = "Nur geänderte zurücksetzen"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "Folgende Dungeons haben aktualisierte Routen:"-- Export/Import
+L["BOSS"] = "Boss"
+L["BOSS_ORDER"] = "Boss Order"
 
 -- Changelog (TO TRANSLATE)
 L["COPY_INSTRUCTIONS"] = "Select All, then Ctrl+C to copy. Optional: DeepL https://www.deepl.com/translator"

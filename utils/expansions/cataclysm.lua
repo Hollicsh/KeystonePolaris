@@ -8,10 +8,10 @@ KeystonePolaris.CATACLYSM_DUNGEON_DATA = {
         mapID = 670,
         teleportID = 445424,
         bosses = {
-            {1, 39.68, false},
-            {2, 45.83, false},
-            {3, 81.26, true},
-            {4, 100, true}
+            {1, 39.68, false, 1},
+            {2, 45.83, false, 2},
+            {3, 81.26, true, 3},
+            {4, 100, true, 4}
         }
     }
 }
