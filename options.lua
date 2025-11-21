@@ -1248,7 +1248,11 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                 local defaults = self[expansion.id .. "_DEFAULTS"][dungeonKey]
                 if defaults then
                     for key, value in pairs(defaults) do
-                        self.db.profile.advanced[dungeonKey][key] = value
+                        if type(value) == "table" then
+                            self.db.profile.advanced[dungeonKey][key] = CloneTable(value)
+                        else
+                            self.db.profile.advanced[dungeonKey][key] = value
+                        end
                     end
                 end
                 break
@@ -1299,6 +1303,8 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                         -- Reset all boss percentages and inform group settings for this dungeon to defaults
                         if not self.db.profile.advanced[dungeonKey] then
                             self.db.profile.advanced[dungeonKey] = {}
+                        else
+                            wipe(self.db.profile.advanced[dungeonKey])
                         end
 
                         -- Get the appropriate defaults
@@ -1313,8 +1319,11 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
 
                         if defaults then
                             for key, value in pairs(defaults) do
-                                self.db.profile.advanced[dungeonKey][key] =
-                                    value
+                                if type(value) == "table" then
+                                    self.db.profile.advanced[dungeonKey][key] = CloneTable(value)
+                                else
+                                    self.db.profile.advanced[dungeonKey][key] = value
+                                end
                             end
                         end
 
@@ -1931,9 +1940,15 @@ function KeystonePolaris:ResetAllDungeons()
                 if defaults then
                     if not self.db.profile.advanced[dungeonKey] then
                         self.db.profile.advanced[dungeonKey] = {}
+                    else
+                        wipe(self.db.profile.advanced[dungeonKey])
                     end
                     for key, value in pairs(defaults) do
-                        self.db.profile.advanced[dungeonKey][key] = value
+                        if type(value) == "table" then
+                            self.db.profile.advanced[dungeonKey][key] = CloneTable(value)
+                        else
+                            self.db.profile.advanced[dungeonKey][key] = value
+                        end
                     end
                 end
             end
@@ -1990,10 +2005,15 @@ function KeystonePolaris:ResetCurrentSeasonDungeons(specificDungeons)
                         if defaults then
                             if not self.db.profile.advanced[dungeonKey] then
                                 self.db.profile.advanced[dungeonKey] = {}
+                            else
+                                wipe(self.db.profile.advanced[dungeonKey])
                             end
                             for key, value in pairs(defaults) do
-                                self.db.profile.advanced[dungeonKey][key] =
-                                    value
+                                if type(value) == "table" then
+                                    self.db.profile.advanced[dungeonKey][key] = CloneTable(value)
+                                else
+                                    self.db.profile.advanced[dungeonKey][key] = value
+                                end
                             end
                         end
                     end
