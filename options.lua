@@ -1329,8 +1329,12 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
 
                         -- Update the display
                         self:UpdateDungeonData()
+                        if self.currentDungeonID and self.BuildSectionOrder then
+                            self:BuildSectionOrder(self.currentDungeonID)
+                        end
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(
                             "KeystonePolaris")
+                        if self.UpdatePercentageText then self:UpdatePercentageText() end
                     end
                 end,
                 confirm = true,
@@ -1461,6 +1465,7 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                         self:BuildSectionOrder(dungeonId)
                     end
                     self:UpdateDungeonData()
+                    if self.UpdatePercentageText then self:UpdatePercentageText() end
                 end
             end
         }
@@ -1957,7 +1962,11 @@ function KeystonePolaris:ResetAllDungeons()
 
     -- Update the display
     self:UpdateDungeonData()
+    if self.currentDungeonID and self.BuildSectionOrder then
+        self:BuildSectionOrder(self.currentDungeonID)
+    end
     LibStub("AceConfigRegistry-3.0"):NotifyChange("KeystonePolaris")
+    if self.UpdatePercentageText then self:UpdatePercentageText() end
 end
 
 function KeystonePolaris:ResetCurrentSeasonDungeons(specificDungeons)
@@ -2024,7 +2033,11 @@ function KeystonePolaris:ResetCurrentSeasonDungeons(specificDungeons)
 
     -- Update the display
     self:UpdateDungeonData()
+    if self.currentDungeonID and self.BuildSectionOrder then
+        self:BuildSectionOrder(self.currentDungeonID)
+    end
     LibStub("AceConfigRegistry-3.0"):NotifyChange("KeystonePolaris")
+    if self.UpdatePercentageText then self:UpdatePercentageText() end
 end
 
 function KeystonePolaris:CheckForNewSeason()
