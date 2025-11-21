@@ -2307,7 +2307,11 @@ function KeystonePolaris:ImportDungeonSettings(importString,
                         addon.db.profile.advanced[dungeonKey] = {}
                     end
                     for k, v in pairs(dungeonData) do
-                        addon.db.profile.advanced[dungeonKey][k] = v
+                        if type(v) == "table" then
+                            addon.db.profile.advanced[dungeonKey][k] = CloneTable(v)
+                        else
+                            addon.db.profile.advanced[dungeonKey][k] = v
+                        end
                     end
                     importCount = importCount + 1
                 end
@@ -2323,7 +2327,11 @@ function KeystonePolaris:ImportDungeonSettings(importString,
                         addon.db.profile.advanced[dungeonKey] = {}
                     end
                     for k, v in pairs(dungeonData) do
-                        addon.db.profile.advanced[dungeonKey][k] = v
+                        if type(v) == "table" then
+                            addon.db.profile.advanced[dungeonKey][k] = CloneTable(v)
+                        else
+                            addon.db.profile.advanced[dungeonKey][k] = v
+                        end
                     end
                     importCount = importCount + 1
                 end
@@ -2339,11 +2347,19 @@ function KeystonePolaris:ImportDungeonSettings(importString,
                     addon.db.profile.advanced[dungeonKey] = {}
                 end
                 for k, v in pairs(importData.data) do
-                    addon.db.profile.advanced[dungeonKey][k] = v
+                    if type(v) == "table" then
+                        addon.db.profile.advanced[dungeonKey][k] = CloneTable(v)
+                    else
+                        addon.db.profile.advanced[dungeonKey][k] = v
+                    end
                 end
                 addon:UpdateDungeonData()
+                if addon.currentDungeonID and addon.BuildSectionOrder then
+                    addon:BuildSectionOrder(addon.currentDungeonID)
+                end
                 LibStub("AceConfigRegistry-3.0"):NotifyChange(
                     "KeystonePolaris")
+                if addon.UpdatePercentageText then addon:UpdatePercentageText() end
                 print("|cffdb6233Keystone Polaris:|r " ..
                           L["IMPORT_SUCCESS"]:format(
                               addon:GetDungeonDisplayName(dungeonKey)))
@@ -2360,7 +2376,11 @@ function KeystonePolaris:ImportDungeonSettings(importString,
     -- Update data and notify of changes
     if importCount > 0 then
         addon:UpdateDungeonData()
+        if addon.currentDungeonID and addon.BuildSectionOrder then
+            addon:BuildSectionOrder(addon.currentDungeonID)
+        end
         LibStub("AceConfigRegistry-3.0"):NotifyChange("KeystonePolaris")
+        if addon.UpdatePercentageText then addon:UpdatePercentageText() end
 
         -- Determine success message based on import type
         if importData.type == "all_dungeons" then
