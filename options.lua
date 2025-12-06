@@ -179,6 +179,44 @@ function KeystonePolaris:LoadExpansionDungeons()
     end
 end
 
+function KeystonePolaris:GetDungeonEncounterID(dungeonKey, bossIndex)
+    -- Check each expansion's dungeon data table
+    for _, expansion in ipairs(expansions) do
+        local dungeonDataMap = self[expansion.id .. "_DUNGEON_DATA"]
+        if dungeonDataMap and dungeonDataMap[dungeonKey] then
+            local dungeon = dungeonDataMap[dungeonKey]
+            if dungeon.bosses and dungeon.bosses[bossIndex] then
+                -- encounterID is the 5th element in the boss entry
+                return dungeon.bosses[bossIndex][5]
+            end
+        end
+    end
+    return nil
+end
+
+function KeystonePolaris:GetBossName(dungeonKey, bossIdx)
+    local name
+    local encounterID = self:GetDungeonEncounterID(dungeonKey, bossIdx)
+
+    if encounterID then
+        -- Try to get name from Encounter Journal using the ID
+        name = EJ_GetEncounterInfo(encounterID)
+    end
+
+    return name or ("Boss " .. bossIdx)
+end
+
+function KeystonePolaris:GetDungeonMapID(dungeonKey)
+    -- Check each expansion's dungeon data table
+    for _, expansion in ipairs(expansions) do
+        local dungeonDataMap = self[expansion.id .. "_DUNGEON_DATA"]
+        if dungeonDataMap and dungeonDataMap[dungeonKey] then
+            return dungeonDataMap[dungeonKey].mapID
+        end
+    end
+    return nil
+end
+
 function KeystonePolaris:GetDungeonIdByKey(dungeonKey)
     -- Check each expansion's dungeon IDs table
     for _, expansion in ipairs(expansions) do
@@ -833,15 +871,18 @@ function KeystonePolaris:GetAdvancedOptions()
         if defaults then
             text = text .. "|cffffd700" .. GetDungeonNameWithIcon(dungeonKey) ..
                        "|r:\n"
+
             local bossNum = 1
             while defaults["Boss" .. self:GetBossNumberString(bossNum)] do
                 local bossKey = "Boss" .. self:GetBossNumberString(bossNum)
                 local informKey = bossKey .. "Inform"
+                local bossName = self:GetBossName(dungeonKey, bossNum)
+
                 text = text ..
                            string.format(
                                "  %s: |cff40E0D0%.2f%%|r - " ..
                                    L["INFORM_GROUP"] .. ": %s\n",
-                               L[dungeonKey .. "_BOSS" .. bossNum],
+                               bossName,
                                defaults[bossKey],
                                defaults[informKey] and '|cff00ff00' .. L["YES"] ..
                                    '|r' or '|cffff0000' .. L["NO"] .. '|r')
@@ -859,7 +900,7 @@ function KeystonePolaris:GetAdvancedOptions()
                 for section = 1, numSections do
                     local idx = bossOrder[section]
                     if type(idx) == "number" then
-                        local bossName = L[dungeonKey .. "_BOSS" .. idx] or ("Boss " .. idx)
+                        local bossName = self:GetBossName(dungeonKey, idx)
                         table.insert(names, bossName)
                     end
                 end
@@ -1426,7 +1467,7 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
     -- Build choices for boss order selector (indexed by boss index in DUNGEONS)
     local bossChoices = {}
     for i = 1, numBosses do
-        local bossName = L[dungeonKey .. "_BOSS" .. i] or ("Boss " .. i)
+        local bossName = self:GetBossName(dungeonKey, i)
         bossChoices[i] = bossName
     end
 
@@ -1473,7 +1514,7 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
 
     for i = 1, numBosses do
         local bossNumStr = self:GetBossNumberString(i)
-        local bossName = L[dungeonKey .. "_BOSS" .. i] or ("Boss " .. i)
+        local bossName = self:GetBossName(dungeonKey, i)
 
         -- Create a group for each boss line
         options.args["boss" .. i] = {
