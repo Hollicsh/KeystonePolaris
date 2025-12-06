@@ -31,15 +31,18 @@
 ## Category-zhCN: Mythic+ Dungeons
 ## Category-zhTW: Mythic+ Dungeons
 
-embeds.xml
-locales/locales.xml
+Embeds.xml
+Locales/Locales.xml
 
-utils/expansions/expansions.xml
-utils/seasons/seasons.xml
+Data/Expansions/Expansions.xml
+Data/Seasons/Seasons.xml
 
-options.lua
-core.lua
-modules/mdt_integration/mobPercentages.lua
-modules/mdt_integration/mobIndicator.lua
+Modules/DungeonManager.lua
+Modules/Changelog/Changelog.lua
+Options.lua
+Modules/ImportExport.lua
+Core.lua
+Modules/MdtIntegration/MobPercentages.lua
+Modules/MdtIntegration/MobIndicator.lua
 
-utils/changelog/Load_Changelog.xml
+Modules/Changelog/Load_Changelog.xml
