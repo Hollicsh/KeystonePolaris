@@ -34,14 +34,16 @@
 Embeds.xml
 Locales/Locales.xml
 
+Core.lua
+
 Data/Expansions/Expansions.xml
 Data/Seasons/Seasons.xml
 
 Modules/DungeonManager.lua
+Modules/Display.lua
 Modules/Changelog/Changelog.lua
 Options.lua
 Modules/ImportExport.lua
-Core.lua
 Modules/MdtIntegration/MobPercentages.lua
 Modules/MdtIntegration/MobIndicator.lua
 
