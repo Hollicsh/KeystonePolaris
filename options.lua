@@ -23,6 +23,24 @@ local function CloneTable(tbl)
     return t
 end
 
+-- Helper to format date string "YYYY-MM-DD" to localized format or default
+local function FormatSeasonDate(dateStr)
+    if not dateStr then return "" end
+    local year, month, day = strsplit("-", dateStr)
+    if year and month and day then
+         if L["%month%-%day%-%year%"] then
+            local formatted = L["%month%-%day%-%year%"]
+            formatted = gsub(formatted, "%%year%%", year)
+            formatted = gsub(formatted, "%%month%%", month)
+            formatted = gsub(formatted, "%%day%%", day)
+            return formatted
+         else
+            return string.format("%s-%s-%s", year, month, day)
+         end
+    end
+    return dateStr
+end
+
 -- Insert dungeon option groups into an AceConfig args table in alphabetical
 -- order. Every option is cloned from `sharedOptions[key]`, placed after the
 -- section headers (offset with `baseOrder`), and assigned its own `order` so
@@ -1227,29 +1245,29 @@ function KeystonePolaris:GetAdvancedOptions()
 
                 -- Collect all dungeon data
                 local allDungeonData = {}
-                for dungeonKey, _ in pairs(addon.db.profile.advanced) do
-                    if type(addon.db.profile.advanced[dungeonKey]) == "table" then
-                        allDungeonData[dungeonKey] =
-                            addon.db.profile.advanced[dungeonKey]
+                for _, expansion in ipairs(expansions) do
+                    if addon.db.profile.advanced then
+                        for dungeonKey, _ in pairs(addon[expansion.id .. "_DUNGEON_IDS"] or {}) do
+                            if addon.db.profile.advanced[dungeonKey] then
+                                allDungeonData[dungeonKey] = addon.db.profile.advanced[dungeonKey]
+                            end
+                        end
                     end
                 end
-
-                -- Export all dungeon data
-                addon:ExportDungeonSettings(allDungeonData, "all_dungeons")
+                addon:ExportDungeonSettings(allDungeonData, "all")
             end
         },
         importAllDungeons = {
-            order = 4,
+            order = 3.5,
             type = "execute",
             name = L["IMPORT_ALL_DUNGEONS"],
             desc = L["IMPORT_ALL_DUNGEONS_DESC"],
             func = function()
-                local addon = KeystonePolaris
-                addon:ShowImportDialog()
+                KeystonePolaris:ShowImportDialog(nil)
             end
         },
         dungeons = {
-            name = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r",
+            name = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(mostRecentSeasonDate) .. "|r",
             type = "group",
             childGroups = "tree",
             order = 5,
@@ -1260,7 +1278,7 @@ function KeystonePolaris:GetAdvancedOptions()
     -- Only add next season section if there are next season dungeons
     if nextSeasonId and #nextSeasonDungeons > 0 then
         args.nextseason = {
-            name = "|cffff5733" .. L["NEXT_SEASON"] .. "|r",
+            name = "|cffff5733" .. L["NEXT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(nextSeasonDate) .. "|r",
             type = "group",
             childGroups = "tree",
             order = 4,
