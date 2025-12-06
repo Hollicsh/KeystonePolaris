@@ -208,6 +208,20 @@ function KeystonePolaris:GetBossName(dungeonKey, bossIdx)
         name = EJ_GetEncounterInfo(encounterID)
     end
 
+    if not name then
+        -- Try to find manual boss name (6th parameter)
+        for _, expansion in ipairs(expansions) do
+            local dungeonDataMap = self[expansion.id .. "_DUNGEON_DATA"]
+            if dungeonDataMap and dungeonDataMap[dungeonKey] then
+                local dungeon = dungeonDataMap[dungeonKey]
+                if dungeon.bosses and dungeon.bosses[bossIdx] then
+                    name = dungeon.bosses[bossIdx][6]
+                end
+                break
+            end
+        end
+    end
+
     return name or ("Boss " .. bossIdx)
 end
 
@@ -863,9 +877,19 @@ function KeystonePolaris:GetAdvancedOptions()
             name, _, _, texture = C_ChallengeMode.GetMapUIInfo(mapId)
         end
 
+        -- Retrieve manual display name
+        local manualName
+        for _, expansion in ipairs(expansions) do
+            local names = self[expansion.id .. "_DUNGEON_NAMES"]
+            if names and names[dungeonKey] then
+                manualName = names[dungeonKey]
+                break
+            end
+        end
+
         -- Fallbacks
-        local icon = texture
-        local displayName = name
+        local icon = texture or "Interface\\Icons\\INV_Misc_QuestionMark"
+        local displayName = name or manualName or dungeonKey or "Unknown"
 
         return '|T' .. icon .. ":20:20:0:0|t " .. displayName
     end
@@ -1315,6 +1339,20 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                 name, _, _, texture, _ = C_ChallengeMode.GetMapUIInfo(mapId)
             end
 
+            -- Fallback if name/texture is missing
+            if not name then
+                -- Try to find manual name
+                for _, expansion in ipairs(expansions) do
+                    local names = self[expansion.id .. "_DUNGEON_NAMES"]
+                    if names and names[dungeonKey] then
+                        name = names[dungeonKey]
+                        break
+                    end
+                end
+            end
+            name = name or dungeonKey or "Unknown"
+            texture = texture or "Interface\\Icons\\INV_Misc_QuestionMark"
+
             return '|T' .. texture .. ":16:16:0:0|t " .. (name)
         end,
         type = "group",
@@ -1332,6 +1370,20 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                         name, _, _, texture, _ =
                             C_ChallengeMode.GetMapUIInfo(mapId)
                     end
+
+                    -- Fallback if name/texture is missing
+                    if not name then
+                         -- Try to find manual name
+                         for _, expansion in ipairs(expansions) do
+                             local names = self[expansion.id .. "_DUNGEON_NAMES"]
+                             if names and names[dungeonKey] then
+                                 name = names[dungeonKey]
+                                 break
+                             end
+                         end
+                    end
+                    name = name or dungeonKey or "Unknown"
+                    texture = texture or "Interface\\Icons\\INV_Misc_QuestionMark"
 
                     return "|T" .. texture .. ":20:20:0:0|t |cff40E0D0" ..
                                (name) .. "|r"
@@ -2482,11 +2534,14 @@ function KeystonePolaris:GenerateExpansionTables(expansionId,
     self[expansionId .. "_DEFAULTS"] = self[expansionId .. "_DEFAULTS"] or {}
     self[expansionId .. "_DUNGEON_IDS"] =
         self[expansionId .. "_DUNGEON_IDS"] or {}
+    self[expansionId .. "_DUNGEON_NAMES"] =
+        self[expansionId .. "_DUNGEON_NAMES"] or {}
 
     -- Clear existing data if any
     wipe(self[expansionId .. "_DUNGEONS"])
     wipe(self[expansionId .. "_DEFAULTS"])
     wipe(self[expansionId .. "_DUNGEON_IDS"])
+    wipe(self[expansionId .. "_DUNGEON_NAMES"])
 
     for shortName, dungeonData in pairs(dungeonData) do
         -- Generate DUNGEONS table
@@ -2534,5 +2589,8 @@ function KeystonePolaris:GenerateExpansionTables(expansionId,
 
         -- Generate DUNGEON_IDS table
         self[expansionId .. "_DUNGEON_IDS"][shortName] = dungeonData.id
+
+        -- Generate DUNGEON_NAMES table
+        self[expansionId .. "_DUNGEON_NAMES"][shortName] = dungeonData.displayName
     end
 end
