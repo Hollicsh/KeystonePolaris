@@ -3,4 +3,6 @@
   <Script file="TWW/TWW_1.lua"/>
   <Script file="TWW/TWW_2.lua"/>
   <Script file="TWW/TWW_3.lua"/>
+  <!-- Midnight -->
+   <Script file="Midnight/Midnight_1.lua"/>
 </Ui>

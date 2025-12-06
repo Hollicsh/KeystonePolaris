@@ -1,7 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+  <Script file="midnight.lua"/>
   <Script file="tww.lua"/>
+  <Script file="df.lua"/>
   <Script file="shadowlands.lua"/>
   <Script file="bfa.lua"/>
   <Script file="legion.lua"/>
+  <Script file="wod.lua"/>
   <Script file="cataclysm.lua"/>
+  <Script file="wotlk.lua"/>
 </Ui>

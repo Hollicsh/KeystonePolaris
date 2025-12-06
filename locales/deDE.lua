@@ -11,12 +11,16 @@ if not L then return end
 L["DUNGEONS"] = "Dungeons"
 L["CURRENT_SEASON"] = "Aktuelle Saison"
 L["NEXT_SEASON"] = "Nächste Saison"
-L["EXPANSION_DF"] = "Dragonflight"
-L["EXPANSION_CATA"] = "Cataclysm"
+
+L["EXPANSION_MIDNIGHT"] = "Midnight"
 L["EXPANSION_WW"] = "The War Within"
+L["EXPANSION_DF"] = "Dragonflight"
 L["EXPANSION_SL"] = "Shadowlands"
 L["EXPANSION_BFA"] = "Battle for Azeroth"
 L["EXPANSION_LEGION"] = "Legion"
+L["EXPANSION_WOD"] = "Warlords of Draenor"
+L["EXPANSION_CATA"] = "Cataclysm"
+L["EXPANSION_WOTLK"] = "Wrath of the Lich King"
 
 -- UI Strings
 L["MODULES"] = "Module" -- To Translate

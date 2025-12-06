@@ -11,12 +11,16 @@ if not L then return end
 L["DUNGEONS"] = "현재 시즌"
 L["CURRENT_SEASON"] = "현재 시즌"
 L["NEXT_SEASON"] = "다음 시즌"
-L["EXPANSION_DF"] = "용군단"
-L["EXPANSION_CATA"] = "대격변"
+
+L["EXPANSION_MIDNIGHT"] = "Midnight" -- To Translate
 L["EXPANSION_WW"] = "내부전쟁"
+L["EXPANSION_DF"] = "용군단"
 L["EXPANSION_SL"] = "어둠땅"
 L["EXPANSION_BFA"] = "격전의 아제로스"
 L["EXPANSION_LEGION"] = "군단"
+L["EXPANSION_WOD"] = "Warlords of Draenor" -- To Translate
+L["EXPANSION_CATA"] = "대격변"
+L["EXPANSION_WOTLK"] = "Wrath of the Lich King" -- To Translate
 
 -- UI Strings
 L["MODULES"] = "모듈"

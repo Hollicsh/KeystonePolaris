@@ -99,16 +99,18 @@ KeystonePolaris.defaults = {
 
 -- List of expansions and their corresponding data
 local expansions = {
+    {id = "MIDNIGHT", name = "EXPANSION_MIDNIGHT", order = 3}, -- Midnight
     {id = "TWW", name = "EXPANSION_WW", order = 4}, -- The War Within
-    -- {id = "DF", name = "EXPANSION_DF", order = 5},         -- Dragonflight
+    {id = "DF", name = "EXPANSION_DF", order = 5}, -- Dragonflight
     {id = "SL", name = "EXPANSION_SL", order = 6}, -- Shadowlands
     {id = "BFA", name = "EXPANSION_BFA", order = 7}, -- Battle for Azeroth
-    -- {id = "LEGION", name = "EXPANSION_LEGION", order = 8}, -- Legion
-    -- {id = "WOD", name = "EXPANSION_WOD", order = 9},       -- Warlords of Draenor
+    {id = "LEGION", name = "EXPANSION_LEGION", order = 8}, -- Legion
+    {id = "WOD", name = "EXPANSION_WOD", order = 9},       -- Warlords of Draenor
     -- {id = "MOP", name = "EXPANSION_MOP", order = 10},      -- Mists of Pandaria
-    {id = "CATACLYSM", name = "EXPANSION_CATA", order = 11} -- Cataclysm
-    -- {id = "TBC", name = "EXPANSION_TBC", order = 12} -- The Burning Crusade
-    -- {id = "Vanilla", name = "EXPANSION_VANILLA", order = 12} -- Vanilla WoW
+    {id = "CATACLYSM", name = "EXPANSION_CATA", order = 11}, -- Cataclysm
+    {id = "WOTLK", name = "EXPANSION_WOTLK", order = 12}, -- Wrath of the Lich King
+    -- {id = "TBC", name = "EXPANSION_TBC", order = 13} -- The Burning Crusade
+    -- {id = "Vanilla", name = "EXPANSION_VANILLA", order = 14} -- Vanilla WoW
 }
 
 local portal = C_CVar.GetCVar("portal")
@@ -116,19 +118,22 @@ if portal == "US" then
     KeystonePolaris.SEASON_START_DATES = {
         ["2024-09-10"] = "TWW_1", -- TWW Season 1 start date
         ["2025-03-04"] = "TWW_2", -- TWW Season 2 start date
-        ["2025-08-12"] = "TWW_3"  -- TWW Season 3 start date
+        ["2025-08-12"] = "TWW_3",  -- TWW Season 3 start date
+        ["2026-03-24"] = "MIDNIGHT_1" -- Midnight Season 1 start date
     }
 elseif portal == "EU" then
     KeystonePolaris.SEASON_START_DATES = {
         ["2024-09-10"] = "TWW_1", -- TWW Season 1 start date
         ["2025-03-05"] = "TWW_2", -- TWW Season 2 start date
-        ["2025-08-13"] = "TWW_3"  -- TWW Season 3 start date
+        ["2025-08-13"] = "TWW_3",  -- TWW Season 3 start date
+        ["2026-03-25"] = "MIDNIGHT_1" -- Midnight Season 1 start date
     }
 else
     KeystonePolaris.SEASON_START_DATES = {
         ["2024-09-10"] = "TWW_1", -- TWW Season 1 start date
         ["2025-03-05"] = "TWW_2", -- TWW Season 2 start date
-        ["2025-08-13"] = "TWW_3"  -- TWW Season 3 start date
+        ["2025-08-13"] = "TWW_3",  -- TWW Season 3 start date
+        ["2026-03-25"] = "MIDNIGHT_1" -- Midnight Season 1 start date
     }
 end
 
