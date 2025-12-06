@@ -569,6 +569,20 @@ function KeystonePolaris:GetCurrentPullPercent()
     return (sum / denom) * 100
 end
 
+-- Determine if all non-weighted (boss) criteria are completed
+function KeystonePolaris:AreAllBossesKilled()
+    local stepInfo = C_ScenarioInfo and C_ScenarioInfo.GetStepInfo and C_ScenarioInfo.GetStepInfo()
+    local numCriteria = stepInfo and stepInfo.numCriteria or 0
+    if numCriteria == 0 then return false end
+    for i = 1, numCriteria do
+        local info = C_ScenarioInfo.GetCriteriaInfo(i)
+        if info and not info.isWeightedProgress then
+            if not info.completed then return false end
+        end
+    end
+    return true
+end
+
 function KeystonePolaris:CheckForNewRoutes()
     local currentVersion = C_AddOns.GetAddOnMetadata("KeystonePolaris",
                                                      "Version")
