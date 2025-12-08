@@ -9,6 +9,9 @@ local strsplit = strsplit
 local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
+-- Get localization table
+local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName, true)
+
 -- ---------------------------------------------------------------------------
 -- Helper utilities
 -- ---------------------------------------------------------------------------
@@ -65,9 +68,6 @@ local function InsertSortedDungeonOptions(addon, dungeonKeys, sharedOptions, tar
         targetArgs[entry.key] = opt
     end
 end
-
-local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName, true);
-KeystonePolaris.L = L
 
 KeystonePolaris.defaults = {
     profile = {
