@@ -11,6 +11,7 @@ if not L then return end
 L["DUNGEONS"] = "Dungeons"
 L["CURRENT_SEASON"] = "Aktuelle Saison"
 L["NEXT_SEASON"] = "Nächste Saison"
+L["REMIX"] = "Remix" -- To Translate
 
 L["EXPANSION_MIDNIGHT"] = "Midnight"
 L["EXPANSION_WW"] = "The War Within"

@@ -11,6 +11,7 @@ if not L then return end
 L["DUNGEONS"] = "当前赛季"
 L["CURRENT_SEASON"] = "当前赛季"
 L["NEXT_SEASON"] = "下个赛季"
+L["REMIX"] = "Remix" -- To Translate
 
 L["EXPANSION_MIDNIGHT"] = "Midnight" -- To Translate
 L["EXPANSION_WW"] = "地心之战"

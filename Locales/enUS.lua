@@ -8,6 +8,7 @@ local L = AceLocale:NewLocale(AddonName, "enUS", true, false);
 L["DUNGEONS"] = "Current Season"
 L["CURRENT_SEASON"] = "Current Season"
 L["NEXT_SEASON"] = "Next Season"
+L["REMIX"] = "Remix"
 
 L["EXPANSION_MIDNIGHT"] = "Midnight"
 L["EXPANSION_WW"] = "The War Within"

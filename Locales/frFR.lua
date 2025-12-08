@@ -9,6 +9,7 @@ if not L then return end
 L["DUNGEONS"] = "Donjons"
 L["CURRENT_SEASON"] = "Saison actuelle"
 L["NEXT_SEASON"] = "Prochaine saison"
+L["REMIX"] = "Remix"
 
 L["EXPANSION_MIDNIGHT"] = "Midnight"
 L["EXPANSION_WW"] = "The War Within"

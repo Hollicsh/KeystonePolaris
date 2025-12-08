@@ -12,6 +12,7 @@ if not L then return end
 L["DUNGEONS"] = "Подземелья"
 L["CURRENT_SEASON"] = "Текущий сезон"
 L["NEXT_SEASON"] = "Следующий сезон"
+L["REMIX"] = "Remix" -- To Translate
 
 L["EXPANSION_MIDNIGHT"] = "Midnight" -- To Translate
 L["EXPANSION_WW"] = "Война Внутри"

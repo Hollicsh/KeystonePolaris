@@ -770,10 +770,21 @@ function KeystonePolaris:GetAdvancedOptions()
     end
 
     -- Generic builder for section args (used for seasons and expansions)
-    local function CreateGenericSectionArgs(sectionLabel, dungeonKeys, dungeonFilter, getDefaultsFn)
+    local function CreateGenericSectionArgs(sectionLabel, dungeonKeys, dungeonFilter, getDefaultsFn, headerTitle)
         local args = {
-            disclaimer = {
+            title = {
                 order = 0,
+                type = "description",
+                fontSize = "large",
+                name = (headerTitle or ("|cffeda55f" .. sectionLabel .. "|r")) .. "\n"
+            },
+            separatorTitle = {
+                order = 0.2,
+                type = "header",
+                name = "",
+            },
+            disclaimer = {
+                order = 0.5,
                 type = "description",
                 fontSize = "medium",
                 name = L["ROUTES_DISCLAIMER"],
@@ -914,8 +925,9 @@ function KeystonePolaris:GetAdvancedOptions()
             end
             return nil
         end
-
-        dungeonArgs = CreateGenericSectionArgs(L["CURRENT_SEASON"], keys, filter, getDefaultsFn)
+        
+        local currentSeasonTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(mostRecentSeasonDate) .. "|r"
+        dungeonArgs = CreateGenericSectionArgs(L["CURRENT_SEASON"], keys, filter, getDefaultsFn, currentSeasonTitle)
     end
 
     -- Create next season dungeon args
@@ -992,7 +1004,8 @@ function KeystonePolaris:GetAdvancedOptions()
             return nil
         end
 
-        nextSeasonDungeonArgs = CreateGenericSectionArgs(L["NEXT_SEASON"], keys, filter, getDefaultsFn)
+        local nextSeasonTitle = "|cffff5733" .. L["NEXT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(nextSeasonDate) .. "|r"
+        nextSeasonDungeonArgs = CreateGenericSectionArgs(L["NEXT_SEASON"], keys, filter, getDefaultsFn, nextSeasonTitle)
     end
 
     -- Create expansion sections
@@ -1071,6 +1084,111 @@ function KeystonePolaris:GetAdvancedOptions()
         }
     end
 
+    -- Helper to add days to a YYYY-MM-DD string
+    local function AddDays(dateStr, days)
+        if not dateStr or days == 0 then return dateStr end
+        local year, month, day = strsplit("-", dateStr)
+        year, month, day = tonumber(year), tonumber(month), tonumber(day)
+        if not year or not month or not day then return dateStr end
+        
+        -- Convert to timestamp, add seconds, convert back
+        -- Note: os.time takes a table. Basic implementation for simple date math.
+        local time = time({year=year, month=month, day=day, hour=12}) -- noon to avoid DST issues
+        time = time + (days * 86400)
+        return date("%Y-%m-%d", time)
+    end
+
+    -- Helper to create a remix section
+    local function HandleRemixSection(key, data, args)
+        local expansionName = data.expansion:match("%d+_(.+)") or data.expansion
+        local expansionLocName = L["EXPANSION_" .. expansionName:upper()] or expansionName
+        
+        -- Collect dungeon keys
+        local remixDungeons = {}
+        for id, enabled in pairs(data) do
+            if id ~= "expansion" and id ~= "start_date" and id ~= "end_date" and enabled then
+                    local dungeonKey = self:GetDungeonKeyById(id)
+                    if dungeonKey then
+                        table.insert(remixDungeons, {key = dungeonKey, id = id})
+                    end
+            end
+        end
+        
+        -- Sort dungeons alphabetically by their localized names
+        table.sort(remixDungeons, function(a, b)
+            local mapIdA = a.id or self:GetDungeonIdByKey(a.key)
+            local mapIdB = b.id or self:GetDungeonIdByKey(b.key)
+
+            local nameA
+            if mapIdA then nameA = select(1, C_ChallengeMode.GetMapUIInfo(mapIdA)) end
+            nameA = nameA or a.key
+
+            local nameB
+            if mapIdB then nameB = select(1, C_ChallengeMode.GetMapUIInfo(mapIdB)) end
+            nameB = nameB or b.key
+
+            return nameA < nameB
+        end)
+
+        local keys = {}
+        local filter = {}
+        for _, d in ipairs(remixDungeons) do
+                table.insert(keys, d.key)
+                filter[d.key] = true
+        end
+        
+        local function getDefaultsFn(dungeonKey)
+            for _, expansion in ipairs(expansions) do
+                local ids = self[expansion.id .. "_DUNGEON_IDS"]
+                if ids and ids[dungeonKey] then
+                    local defaults = self[expansion.id .. "_DEFAULTS"]
+                    return defaults and defaults[dungeonKey] or nil
+                end
+            end
+            return nil
+        end
+        
+        local sectionName = expansionLocName .. " " .. (L["REMIX"] or "Remix")
+
+        -- Handle dates with region offset
+        local sDate = data.start_date
+        local eDate = data.end_date
+        
+        -- Add +1 day for non-US regions if dates are present
+        local portal = C_CVar.GetCVar("portal")
+        if portal ~= "US" then
+            if sDate and sDate ~= "" then sDate = AddDays(sDate, 1) end
+            if eDate and eDate ~= "" then eDate = AddDays(eDate, 1) end
+        end
+
+        -- Add dates to title if available
+        if sDate and sDate ~= "" then
+            sectionName = sectionName .. "|r - |cffbbbbbb" .. FormatSeasonDate(sDate)
+            if eDate and eDate ~= "" then
+                sectionName = sectionName .. " -> " .. FormatSeasonDate(eDate)
+            end
+            sectionName = sectionName .. "|r"
+        end
+        
+        local fullTitle = "|cffeda55f" .. sectionName .. "|r"
+        local sectionArgs = CreateGenericSectionArgs(sectionName, keys, filter, getDefaultsFn, fullTitle)
+
+        args["remix_" .. key] = {
+            name = fullTitle,
+            type = "group",
+            childGroups = "tree",
+            order = 5.5,
+            args = sectionArgs
+        }
+    end
+
+    -- Create remix season sections
+    for key, data in pairs(self) do
+        if type(key) == "string" and key:match("_DUNGEONS$") and type(data) == "table" and rawget(data, "expansion") then
+            HandleRemixSection(key, data, args)
+        end
+    end
+
     -- Create expansion sections
     for _, expansion in ipairs(expansions) do
         local sectionKey = expansion.id:lower()
@@ -1089,12 +1207,13 @@ function KeystonePolaris:GetAdvancedOptions()
             return defaults and defaults[dungeonKey] or nil
         end
 
+        local expansionTitle = "|cffffffff" .. L[expansion.name] .. "|r"
         args[sectionKey] = {
-            name = "|cffffffff" .. L[expansion.name] .. "|r",
+            name = expansionTitle,
             type = "group",
             childGroups = "tree",
             order = expansion.order + 4, -- Shift expansion orders to after next season
-            args = CreateGenericSectionArgs(L[expansion.name], keys, filter, getDefaultsFn)
+            args = CreateGenericSectionArgs(L[expansion.name], keys, filter, getDefaultsFn, expansionTitle)
         }
     end
     return {
