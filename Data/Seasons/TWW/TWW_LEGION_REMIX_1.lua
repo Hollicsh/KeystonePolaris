@@ -3,7 +3,6 @@ local AddOnName, KeystonePolaris = ...
 -- Define which dungeons are in the current season
 KeystonePolaris.TWW_LEGION_REMIX_1_DUNGEONS = {
     ['expansion'] = "7_Legion",
-    ['expansion_name'] = "LEGION",
     ['start_date'] = "2025-10-07",
     ['end_date'] = "2026-01-19",
     -- Legion Dungeons

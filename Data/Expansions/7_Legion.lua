@@ -8,9 +8,9 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
         mapID = 1501,
         teleportID = 424153,
         bosses = {
-            {1, 39.68, false, 1, 1518},
-            {2, 45.83, false, 2, 1653},
-            {3, 81.26, false, 3, 1664},
+            {1, 16.03, false, 1, 1518},
+            {2, 53.53, false, 2, 1653},
+            {3, 84.62, true, 3, 1664},
             {4, 100, true, 4, 1672}
         }
     },
@@ -30,8 +30,8 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
         mapID = 1571,
         teleportID = 393766,
         bosses = {
-            {1, 39.68, false, 1, 1718},
-            {2, 45.83, false, 2, 1719},
+            {1, 48.95, false, 1, 1718},
+            {2, 93.68, true, 2, 1719},
             {3, 100, true, 3, 1720}
         }
     },
@@ -40,9 +40,9 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
         mapID = 1466,
         teleportID = 424163,
         bosses = {
-            {1, 39.68, false, 1, 1654},
-            {2, 45.83, false, 2, 1655},
-            {3, 81.26, false, 3, 1656},
+            {1, 28.57, false, 1, 1654},
+            {2, 59.71, false, 2, 1655},
+            {3, 78.39, true, 3, 1656},
             {4, 100, true, 4, 1657}
         }
     },
@@ -51,10 +51,10 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
         mapID = 1456,
         teleportID = 0,
         bosses = {
-            {1, 39.68, false, 1, 1480},
-            {2, 45.83, false, 2, 1490},
-            {3, 81.26, false, 3, 1491},
-            {4, 100, false, 4, 1479},
+            {1, 19.42, false, 1, 1480},
+            {2, 40.78, false, 2, 1490},
+            {3, 62.14, false, 4, 1491},
+            {4, 92.24, false, 3, 1479},
             {5, 100, true, 5, 1492},
         }
     },
@@ -63,9 +63,9 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
         mapID = 1477,
         teleportID = 393764,
         bosses = {
-            {1, 39.68, false, 1, 1485},
-            {2, 45.83, false, 2, 1486},
-            {3, 81.26, false, 3, 1487},
+            {1, 11.85, false, 1, 1485},
+            {2, 79.63, false, 3, 1486},
+            {3, 54.44, false, 2, 1487},
             {4, 100, true, 4, 1488},
             {5, 100, true, 5, 1489},
         }
@@ -75,8 +75,8 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
         mapID = 1492,
         teleportID = 0,
         bosses = {
-            {1, 39.68, false, 1, 1502},
-            {2, 45.83, false, 2, 1512},
+            {1, 32.67, false, 1, 1502},
+            {2, 66, false, 2, 1512},
             {3, 100, true, 3, 1663},
         }
     },
@@ -85,9 +85,9 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
         mapID = 1458,
         teleportID = 410078,
         bosses = {
-            {1, 39.68, false, 1, 1662},
-            {2, 45.83, false, 2, 1665},
-            {3, 81.26, false, 3, 1673},
+            {1, 21.36, false, 1, 1662},
+            {2, 60.91, false, 2, 1665},
+            {3, 81.36, false, 3, 1673},
             {4, 100, true, 4, 1687}
         }
     },
