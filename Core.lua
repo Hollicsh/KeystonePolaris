@@ -176,6 +176,14 @@ function KeystonePolaris:ToggleConfig()
     Settings.OpenToCategory("Keystone Polaris")
 end
 
+-- Refresh the addon display (called when options change)
+function KeystonePolaris:Refresh()
+    if self.UpdateColorCache then self:UpdateColorCache() end
+    if self.UpdatePercentageText then self:UpdatePercentageText() end
+    if self.ApplyTextLayout then self:ApplyTextLayout() end
+    if self.AdjustDisplayFrameSize then self:AdjustDisplayFrameSize() end
+end
+
 -- Handler for addon compartment button click
 _G.KeystonePolaris_OnAddonCompartmentClick = function()
     KeystonePolaris:ToggleConfig()

@@ -5,7 +5,40 @@ local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 -- Display Initialization
 -- ---------------------------------------------------------------------------
 
+KeystonePolaris.colorCache = {}
+
+function KeystonePolaris:UpdateColorCache()
+    if not self.db or not self.db.profile then return end
+    
+    local function toHex(color)
+        return string.format("%02x%02x%02x",
+            math.floor((color.r or 1) * 255),
+            math.floor((color.g or 1) * 255),
+            math.floor((color.b or 1) * 255)
+        )
+    end
+
+    -- Cache Main Display Prefix Color
+    local cfg = self.db.profile.general.mainDisplay
+    if cfg and cfg.prefixColor then
+        self.colorCache.prefix = toHex(cfg.prefixColor)
+    else
+        self.colorCache.prefix = "cccccc" -- default gray-ish
+    end
+
+    -- Cache Status Colors
+    local colors = self.db.profile.color
+    if colors then
+        self.colorCache.finished = toHex(colors.finished or {r=0, g=1, b=0})
+        self.colorCache.inProgress = toHex(colors.inProgress or {r=1, g=1, b=1})
+        self.colorCache.missing = toHex(colors.missing or {r=1, g=0, b=0})
+    end
+end
+
 function KeystonePolaris:InitializeDisplay()
+    -- Initialize color cache
+    self:UpdateColorCache()
+
     -- Create overlay frame for positioning UI
     self.overlayFrame = CreateFrame("Frame", "KeystonePolarisOverlay", UIParent, "BackdropTemplate")
     self.overlayFrame:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -434,6 +467,11 @@ function KeystonePolaris:InformGroup(percentage)
     SendChatMessage("[Keystone Polaris]: " .. L["WE_STILL_NEED"] .. " " .. percentageStr, channel)
 end
 
+-- Helper for coloring prefix text
+local function colorizePrefix(text, hexColor)
+    return string.format("|cff%s%s|r", hexColor or "cccccc", tostring(text or ""))
+end
+
 -- FormatMainDisplayText: builds the final display string with optional Current/Pull/Required parts and projected values.
 function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, currentPullPercent, remainingNeeded, fmtData, isBossKilled, allBossesKilled)
     local cfg = self.db and self.db.profile and self.db.profile.general and self.db.profile.general.mainDisplay or nil
@@ -445,23 +483,21 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
     end
 
     local extras = {}
-    -- Build hex color for prefixes
-    local pc = cfg.prefixColor or { r = 0.8, g = 0.8, b = 0.8, a = 1 }
-    local hexPrefix = string.format("%02x%02x%02x",
-        math.floor((pc.r or 0.8) * 255),
-        math.floor((pc.g or 0.8) * 255),
-        math.floor((pc.b or 0.8) * 255)
-    )
-    local function colorizePrefix(text)
-        return string.format("|cff%s%s|r", hexPrefix, tostring(text or ""))
-    end
+    
+    -- Ensure cache is populated (lazy load if needed)
+    if not self.colorCache.prefix then self:UpdateColorCache() end
+
+    -- Use cached hex colors
+    local hexPrefix = self.colorCache.prefix or "cccccc"
+    local hexFinished = self.colorCache.finished or "00ff00"
+    
     -- Display logic notes:
     -- - Projected values (the parenthesized part) are shown only while in combat (showProj below).
     -- - Base Current can be highlighted even out of combat if it already meets the section requirement.
     -- - All comparisons use greater-than-or-equal (>=); values are already rounded to two decimals.
 
     if cfg.showCurrentPercent and (currentPercent ~= nil) then
-        local label = colorizePrefix(cfg.currentLabel or L["CURRENT_DEFAULT"])
+        local label = colorizePrefix(cfg.currentLabel or L["CURRENT_DEFAULT"], hexPrefix)
         local inCombat = self:IsCombatContext()
         local showProj = (cfg.showProjected and inCombat) and true or false
         if (cfg.formatMode == "count") and fmtData then
@@ -474,9 +510,7 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
             do
                 local reqC = tonumber(fmtData.sectionRequiredCount) or 0
                 if reqC > 0 and cc >= reqC then
-                    local col = self.db.profile.color.finished or { r = 0, g = 1, b = 0 }
-                    local hex = string.format("%02x%02x%02x", math.floor((col.r or 1)*255), math.floor((col.g or 1)*255), math.floor((col.b or 1)*255))
-                    ccStr = string.format("|cff%s%s|r", hex, ccStr)
+                    ccStr = string.format("|cff%s%s|r", hexFinished, ccStr)
                 end
             end
             local baseStr = string.format("%s %s/%d", label, ccStr, tt)
@@ -489,9 +523,7 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
                 local paren = string.format("%d/%d", projC, tt)
                 local reqC = tonumber(fmtData.sectionRequiredCount) or 0
                 if inCombat and reqC > 0 and projC >= reqC then
-                    local col = self.db.profile.color.finished or { r = 0, g = 1, b = 0 }
-                    local hex = string.format("%02x%02x%02x", math.floor((col.r or 1)*255), math.floor((col.g or 1)*255), math.floor((col.b or 1)*255))
-                    paren = string.format("|cff%s%s|r", hex, paren)
+                    paren = string.format("|cff%s%s|r", hexFinished, paren)
                 end
                 baseStr = string.format("%s (%s)", baseStr, paren)
             end
@@ -508,9 +540,7 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
             if fmtData and tonumber(fmtData.sectionRequiredPercent) then
                 local req = tonumber(fmtData.sectionRequiredPercent) or 0
                 if req > 0 and cur >= req then
-                    local col = self.db.profile.color.finished or { r = 0, g = 1, b = 0 }
-                    local hex = string.format("%02x%02x%02x", math.floor((col.r or 1)*255), math.floor((col.g or 1)*255), math.floor((col.b or 1)*255))
-                    curStr = string.format("|cff%s%s|r", hex, curStr)
+                    curStr = string.format("|cff%s%s|r", hexFinished, curStr)
                 end
             end
             local baseStr = string.format("%s %s", label, curStr)
@@ -521,9 +551,7 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
                 if inCombat and fmtData and tonumber(fmtData.sectionRequiredPercent) then
                     local req = tonumber(fmtData.sectionRequiredPercent) or 0
                     if req > 0 and proj >= req then
-                        local col = self.db.profile.color.finished or { r = 0, g = 1, b = 0 }
-                        local hex = string.format("%02x%02x%02x", math.floor((col.r or 1)*255), math.floor((col.g or 1)*255), math.floor((col.b or 1)*255))
-                        paren = string.format("|cff%s%s|r", hex, paren)
+                        paren = string.format("|cff%s%s|r", hexFinished, paren)
                     end
                 end
                 baseStr = string.format("%s (%s)", baseStr, paren)
@@ -534,16 +562,14 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
     if cfg.showCurrentPullPercent and (currentPullPercent ~= nil) and self:IsCombatContext() then
         -- Pull highlighting:
         -- If Pull >= section required (percent or count), color Pull in finished green. Not gated by combat.
-        local label = colorizePrefix(cfg.pullLabel or L["PULL_DEFAULT"])
+        local label = colorizePrefix(cfg.pullLabel or L["PULL_DEFAULT"], hexPrefix)
         if cfg.formatMode == "count" and fmtData then
             local pullCount = tonumber(fmtData.pullCount) or 0
             if pullCount > 0 then
                 local value = tostring(pullCount)
                 local reqC = tonumber(fmtData.sectionRequiredCount) or 0
                 if reqC > 0 and pullCount >= reqC then
-                    local col = self.db.profile.color.finished or { r = 0, g = 1, b = 0 }
-                    local hex = string.format("%02x%02x%02x", math.floor((col.r or 1)*255), math.floor((col.g or 1)*255), math.floor((col.b or 1)*255))
-                    value = string.format("|cff%s%s|r", hex, value)
+                    value = string.format("|cff%s%s|r", hexFinished, value)
                 end
                 table.insert(extras, string.format("%s %s", label, value))
             end
@@ -555,13 +581,13 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
                 if fmtData and tonumber(fmtData.sectionRequiredPercent) then
                     local req = tonumber(fmtData.sectionRequiredPercent) or 0
                     if req > 0 and pullPct >= req then
-                        local col = self.db.profile.color.finished or { r = 0, g = 1, b = 0 }
-                        local hex = string.format("%02x%02x%02x", math.floor((col.r or 1)*255), math.floor((col.g or 1)*255), math.floor((col.b or 1)*255))
+                        value = string.format("|cff%s%s|r", hexFinished, value)
                     end
                 end
                 table.insert(extras, string.format("%s %s", label, value))
             end
         end
+
     end
 
     -- Optionally show the base required text prefix if it's numeric
@@ -572,14 +598,14 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
         if cfg.showRequiredText == false then 
             base = baseText
         else
-            local rlabel = colorizePrefix(cfg.requiredLabel or L["REQUIRED_DEFAULT"])
+            local rlabel = colorizePrefix(cfg.requiredLabel or L["REQUIRED_DEFAULT"], hexPrefix)
             base = rlabel .. " " .. baseText
         end
     elseif isNumericCount and (cfg.formatMode == "count") then
         if cfg.showRequiredText == false then
             base = baseText
         else
-            local rlabel = colorizePrefix(cfg.requiredLabel or L["REQUIRED_DEFAULT"])
+            local rlabel = colorizePrefix(cfg.requiredLabel or L["REQUIRED_DEFAULT"], hexPrefix)
             base = rlabel .. " " .. baseText
         end
     else
@@ -620,9 +646,7 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
                 else
                     suffix = L["DONE"]
                 end
-                local col = self.db.profile.color.finished or { r = 0, g = 1, b = 0 }
-                local hex = string.format("%02x%02x%02x", math.floor((col.r or 1)*255), math.floor((col.g or 1)*255), math.floor((col.b or 1)*255))
-                base = string.format("%s (|cff%s%s|r)", base, hex, suffix)
+                base = string.format("%s (|cff%s%s|r)", base, hexFinished, suffix)
             else
                 base = string.format("%s (%.2f%%)", base, projReqRounded)
             end
@@ -651,16 +675,16 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
                 end
                 local col = self.db.profile.color.finished or { r = 0, g = 1, b = 0 }
                 local hex = string.format("%02x%02x%02x", math.floor((col.r or 1)*255), math.floor((col.g or 1)*255), math.floor((col.b or 1)*255))
-                base = string.format("%s (|cff%s%s|r)", base, hex, suffix)
+                base = formatProjectedValue(base, projC, hex, suffix)
             else
-                base = string.format("%s (%d)", base, projC)
+                base = formatProjectedValue(base, projC, hexFinished, tostring(projC))
             end
         end
     end
 
     -- Optionally insert the section required value right after the base required and before Current percent
     if (isNumericPercent or isNumericCount) and cfg.showSectionRequiredText and fmtData then
-        local sLabel = colorizePrefix(cfg.sectionRequiredLabel or L["REQUIRED_DEFAULT"])
+        local sLabel = colorizePrefix(cfg.sectionRequiredLabel or L["REQUIRED_DEFAULT"], hexPrefix)
         local sValue
         if cfg.formatMode == "count" and tonumber(fmtData.totalCount or 0) > 0 then
             if fmtData.sectionRequiredCount then sValue = tostring(tonumber(fmtData.sectionRequiredCount) or 0) end

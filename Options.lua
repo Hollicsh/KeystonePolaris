@@ -340,9 +340,16 @@ function KeystonePolaris:GetMainDisplayOptions()
                     return c.r, c.g, c.b, c.a
                 end,
                 set = function(_, r, g, b, a)
-                    local c = self.db.profile.general.mainDisplay.prefixColor
-                    c.r, c.g, c.b, c.a = r, g, b, a
+                    local cfg = self.db.profile.general.mainDisplay
+                    if not cfg.prefixColor then
+                        cfg.prefixColor = { r = r, g = g, b = b, a = a }
+                    else
+                        local c = cfg.prefixColor
+                        c.r, c.g, c.b, c.a = r, g, b, a
+                    end
+                    if self.UpdateColorCache then self:UpdateColorCache() end
                     if self.UpdatePercentageText then self:UpdatePercentageText() end
+                    if self.Refresh then self:Refresh() end
                 end
             },
             showRequiredText = {
