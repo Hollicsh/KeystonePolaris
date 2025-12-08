@@ -149,6 +149,7 @@ function KeystonePolaris:OnInitialize()
                             mobPercentages = self:GetMobPercentagesOptions(),
                         }
                     },
+                    groupReminder = self:GetGroupReminderOptions(),
                 }
             },
             advanced = self:GetAdvancedOptions()
@@ -164,10 +165,18 @@ function KeystonePolaris:OnInitialize()
     self:RegisterChatCommand('kph', 'ToggleConfig')
     -- Quick test command to force migration popup
     self:RegisterChatCommand('kpl_mig', 'ShowMigrationPopup')
+    
+    -- Test command for Group Reminder
+    self:RegisterChatCommand('kpl_gr', 'TestGroupReminder')
 
     -- Initialize mob percentages module if enabled
     if self.db.profile.mobPercentages and self.db.profile.mobPercentages.enabled then
         self:InitializeMobPercentages()
+    end
+
+    -- Initialize group reminder module if enabled
+    if self.db.profile.groupReminder and self.db.profile.groupReminder.enabled then
+        self:InitializeGroupReminder()
     end
 end
 

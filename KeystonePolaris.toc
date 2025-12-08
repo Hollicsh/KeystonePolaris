@@ -41,6 +41,7 @@ Data/Seasons/Seasons.xml
 
 Modules/DungeonManager.lua
 Modules/PullTracker.lua
+Modules/GroupReminder.lua
 Modules/Display.lua
 Modules/Changelog/Changelog.lua
 Options.lua
