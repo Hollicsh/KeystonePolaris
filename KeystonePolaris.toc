@@ -40,6 +40,7 @@ Data/Expansions/Expansions.xml
 Data/Seasons/Seasons.xml
 
 Modules/DungeonManager.lua
+Modules/PullTracker.lua
 Modules/Display.lua
 Modules/Changelog/Changelog.lua
 Options.lua
