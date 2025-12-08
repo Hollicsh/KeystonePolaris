@@ -214,16 +214,6 @@ end
 
 -- Optimization: Define helper functions outside of the event handler
 -- to avoid creating new closures on every event.
-local function IsGroup(flags)
-    local mask = bit.bor(
-        COMBATLOG_OBJECT_AFFILIATION_MINE or 0,
-        COMBATLOG_OBJECT_AFFILIATION_PARTY or 0,
-        COMBATLOG_OBJECT_AFFILIATION_RAID or 0
-    )
-    local f = tonumber(flags) or 0
-    return bit.band(f, mask) ~= 0
-end
-
 local function IsNPCGuid(guid)
     return type(guid) == "string" and (guid:find("^Creature%-") or guid:find("^Vehicle%-"))
 end
@@ -231,11 +221,9 @@ end
 -- Listen to combat log to track engaged NPCs even when nameplates are not visible
 function KeystonePolaris:COMBAT_LOG_EVENT_UNFILTERED()
     if not C_ChallengeMode.IsChallengeModeActive() then return end
-    local info = { CombatLogGetCurrentEventInfo() }
-    local subEvent = info[2]
-    -- WoW API order: 4=sourceGUID, 6=sourceFlags, 8=destGUID, 10=destFlags
-    local srcGUID, srcFlags = info[4], info[6]
-    local destGUID, destFlags = info[8], info[10]
+    
+    -- Optimize: get return values directly instead of creating a table payload
+    local _, subEvent, _, _, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
 
     if subEvent == "UNIT_DIED" or subEvent == "UNIT_DESTROYED" or subEvent == "UNIT_DISSIPATES" or subEvent == "SPELL_INSTAKILL" or subEvent == "PARTY_KILL" then
         if IsNPCGuid(destGUID) then
@@ -244,11 +232,5 @@ function KeystonePolaris:COMBAT_LOG_EVENT_UNFILTERED()
             self:RemoveEngagedMobByGUID(destGUID)
             self:_QueuePullUpdate()
         end
-        return
     end
-
-    -- Detect engagement in both directions (group -> npc or npc -> group)
-    -- Do NOT treat aura applications (e.g., CC) as engagement. We no longer add via CLEU;
-    -- additions are handled by UNIT_THREAT_LIST_UPDATE to avoid false positives and match WarpDeplete behavior.
-    return
 end
