@@ -228,3 +228,20 @@ L["MOB_INDICATOR_TINT"] = "Tint the indicator"
 L["MOB_INDICATOR_TINT_DESC"] = "Tint the indicator icon"
 L["MOB_INDICATOR_TINT_COLOR"] = "Color"
 L["MOB_INDICATOR_POSITION_HEADER"] = "Positioning"
+
+-- Group Reminder (Popup labels)
+L["KPH_GR_HEADER"] = "Keystone Polaris - Group Reminder"
+L["KPH_GR_DUNGEON"] = "Dungeon:"
+L["KPH_GR_GROUP"] = "Group:"
+L["KPH_GR_DESCRIPTION"] = "Description:"
+L["KPH_GR_ROLE"] = "Role:"
+L["KPH_GR_TELEPORT"] = "Teleport to dungeon"
+
+-- Group Reminder (Options)
+L["KPH_GR_SUPPRESS_TOAST"] = "Suppress Blizzard quick-join toast"
+L["KPH_GR_SHOW_POPUP"] = "Show popup"
+L["KPH_GR_SHOW_CHAT"] = "Show chat message"
+L["KPH_GR_SHOW_DUNGEON"] = "Show dungeon name"
+L["KPH_GR_SHOW_GROUP"] = "Show group name"
+L["KPH_GR_SHOW_DESC"] = "Show group description"
+L["KPH_GR_SHOW_ROLE"] = "Show applied role"

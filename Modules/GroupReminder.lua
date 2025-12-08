@@ -212,10 +212,11 @@ local function EnsureGroupReminderStyledFrame(self)
 
     f:SetBackdrop({
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", -- Standard Blizzard Border
-        tile = true, tileSize = 32, edgeSize = 32,
-        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+        edgeFile = "Interface\\Buttons\\WHITE8x8", -- Simple solid texture
+        tile = true, tileSize = 32, edgeSize = 1, -- 1px border
+        insets = { left = 0, right = 0, top = 0, bottom = 0 }
     })
+    f:SetBackdropBorderColor(0, 0, 0, 1) -- Black border
 
     table.insert(UISpecialFrames, "KPL_GroupReminderStyled")
 
@@ -480,6 +481,12 @@ function KeystonePolaris:GetGroupReminderOptions()
         order = 7, -- Place it after Colors
         args = {
             header = { order = 0, type = "header", name = L["KPH_GR_HEADER"] or "Group Reminder" },
+            description = {
+                order = 0.5,
+                type = "description",
+                name = L["KPH_GR_DESC_LONG"] or "Displays a reminder popup and/or chat message when you are accepted into a Mythic+ group, with a button to teleport to the dungeon.",
+                fontSize = "medium",
+            },
             enable = {
                 name = L["ENABLE"] or "Enable",
                 type = "toggle",
@@ -491,76 +498,83 @@ function KeystonePolaris:GetGroupReminderOptions()
                     if value then self:InitializeGroupReminder() else self:DisableGroupReminder() end
                 end,
             },
-            behavior = {
-                name = L["OPTIONS"] or "Options",
-                type = "group",
-                inline = true,
+            notificationsHeader = {
                 order = 2,
-                args = {
-                    suppressQuickJoinToast = {
-                        name = L["KPH_GR_SUPPRESS_TOAST"] or "Suppress Blizzard quick-join toast",
-                        type = "toggle",
-                        order = 0,
-                        width = "full",
-                        get = function() return self.db.profile.groupReminder.suppressQuickJoinToast end,
-                        set = function(_, v)
-                            self.db.profile.groupReminder.suppressQuickJoinToast = v
-                            -- If turning suppression OFF while not in group, restore Blizzard UI now for future invites
-                            if (not v) and (not IsInGroup()) and self.RestoreBlizzardJoinUI then
-                                self:RestoreBlizzardJoinUI()
-                            end
-                        end,
-                        disabled = function() return not self.db.profile.groupReminder.enabled end,
-                    },
-                    showPopup = {
-                        name = L["KPH_GR_SHOW_POPUP"] or "Show popup",
-                        type = "toggle",
-                        order = 1,
-                        get = function() return self.db.profile.groupReminder.showPopup end,
-                        set = function(_, v) self.db.profile.groupReminder.showPopup = v end,
-                        disabled = function() return not self.db.profile.groupReminder.enabled end,
-                    },
-                    showChat = {
-                        name = L["KPH_GR_SHOW_CHAT"] or "Show chat message",
-                        type = "toggle",
-                        order = 2,
-                        get = function() return self.db.profile.groupReminder.showChat end,
-                        set = function(_, v) self.db.profile.groupReminder.showChat = v end,
-                        disabled = function() return not self.db.profile.groupReminder.enabled end,
-                    },
-                    showDungeonName = {
-                        name = L["KPH_GR_SHOW_DUNGEON"] or "Show dungeon name",
-                        type = "toggle",
-                        order = 3,
-                        get = function() return self.db.profile.groupReminder.showDungeonName end,
-                        set = function(_, v) self.db.profile.groupReminder.showDungeonName = v end,
-                        disabled = function() return not self.db.profile.groupReminder.enabled end,
-                    },
-                    showGroupName = {
-                        name = L["KPH_GR_SHOW_GROUP"] or "Show group name",
-                        type = "toggle",
-                        order = 4,
-                        get = function() return self.db.profile.groupReminder.showGroupName end,
-                        set = function(_, v) self.db.profile.groupReminder.showGroupName = v end,
-                        disabled = function() return not self.db.profile.groupReminder.enabled end,
-                    },
-                    showGroupDescription = {
-                        name = L["KPH_GR_SHOW_DESC"] or "Show group description",
-                        type = "toggle",
-                        order = 5,
-                        get = function() return self.db.profile.groupReminder.showGroupDescription end,
-                        set = function(_, v) self.db.profile.groupReminder.showGroupDescription = v end,
-                        disabled = function() return not self.db.profile.groupReminder.enabled end,
-                    },
-                    showAppliedRole = {
-                        name = L["KPH_GR_SHOW_ROLE"] or "Show applied role",
-                        type = "toggle",
-                        order = 6,
-                        get = function() return self.db.profile.groupReminder.showAppliedRole end,
-                        set = function(_, v) self.db.profile.groupReminder.showAppliedRole = v end,
-                        disabled = function() return not self.db.profile.groupReminder.enabled end,
-                    },
-                },
+                type = "header",
+                name = L["KPH_GR_NOTIFICATIONS"] or "Notifications",
+            },
+            showPopup = {
+                name = L["KPH_GR_SHOW_POPUP"] or "Show popup",
+                desc = L["KPH_GR_SHOW_POPUP_DESC"] or "Display the reminder window in the center of the screen.",
+                type = "toggle",
+                width = "full",
+                order = 3,
+                get = function() return self.db.profile.groupReminder.showPopup end,
+                set = function(_, v) self.db.profile.groupReminder.showPopup = v end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            showChat = {
+                name = L["KPH_GR_SHOW_CHAT"] or "Show chat message",
+                desc = L["KPH_GR_SHOW_CHAT_DESC"] or "Print the reminder details in the chat window.",
+                type = "toggle",
+                width = "full",
+                order = 4,
+                get = function() return self.db.profile.groupReminder.showChat end,
+                set = function(_, v) self.db.profile.groupReminder.showChat = v end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            suppressQuickJoinToast = {
+                name = L["KPH_GR_SUPPRESS_TOAST"] or "Suppress Blizzard quick-join toast",
+                desc = L["KPH_GR_SUPPRESS_TOAST_DESC"] or "Hide the default Blizzard popup that appears at the bottom of the screen when invited.",
+                type = "toggle",
+                width = "full",
+                order = 5,
+                get = function() return self.db.profile.groupReminder.suppressQuickJoinToast end,
+                set = function(_, v)
+                    self.db.profile.groupReminder.suppressQuickJoinToast = v
+                    -- If turning suppression OFF while not in group, restore Blizzard UI now for future invites
+                    if (not v) and (not IsInGroup()) and self.RestoreBlizzardJoinUI then
+                        self:RestoreBlizzardJoinUI()
+                    end
+                end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            contentHeader = {
+                order = 10,
+                type = "header",
+                name = L["KPH_GR_CONTENT"] or "Content",
+            },
+            showDungeonName = {
+                name = L["KPH_GR_SHOW_DUNGEON"] or "Show dungeon name",
+                type = "toggle",
+                order = 11,
+                get = function() return self.db.profile.groupReminder.showDungeonName end,
+                set = function(_, v) self.db.profile.groupReminder.showDungeonName = v end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            showGroupName = {
+                name = L["KPH_GR_SHOW_GROUP"] or "Show group name",
+                type = "toggle",
+                order = 12,
+                get = function() return self.db.profile.groupReminder.showGroupName end,
+                set = function(_, v) self.db.profile.groupReminder.showGroupName = v end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            showGroupDescription = {
+                name = L["KPH_GR_SHOW_DESC"] or "Show group description",
+                type = "toggle",
+                order = 13,
+                get = function() return self.db.profile.groupReminder.showGroupDescription end,
+                set = function(_, v) self.db.profile.groupReminder.showGroupDescription = v end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            showAppliedRole = {
+                name = L["KPH_GR_SHOW_ROLE"] or "Show applied role",
+                type = "toggle",
+                order = 14,
+                get = function() return self.db.profile.groupReminder.showAppliedRole end,
+                set = function(_, v) self.db.profile.groupReminder.showAppliedRole = v end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
             },
         },
     }
