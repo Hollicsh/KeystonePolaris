@@ -5,24 +5,24 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "ruRU", false, false);
 if not L then return end
 
--- Last translated November 17th, 2025.
+-- Last translated December 9th, 2025.
 -- Translation by Hollicsh (https://github.com/Hollicsh)
 
 -- Dungeons Group
 L["DUNGEONS"] = "Подземелья"
 L["CURRENT_SEASON"] = "Текущий сезон"
 L["NEXT_SEASON"] = "Следующий сезон"
-L["REMIX"] = "Remix" -- To Translate
+L["REMIX"] = "Ремикс"
 
-L["EXPANSION_MIDNIGHT"] = "Midnight" -- To Translate
+L["EXPANSION_MIDNIGHT"] = "Полночь"
 L["EXPANSION_WW"] = "Война Внутри"
 L["EXPANSION_DF"] = "Драконы"
 L["EXPANSION_SL"] = "Темные Земли"
 L["EXPANSION_BFA"] = "Битва за Азерот"
 L["EXPANSION_LEGION"] = "Легион"
-L["EXPANSION_WOD"] = "Warlords of Draenor" -- To Translate
+L["EXPANSION_WOD"] = "Дренор"
 L["EXPANSION_CATA"] = "Катаклизм"
-L["EXPANSION_WOTLK"] = "Wrath of the Lich King" -- To Translate
+L["EXPANSION_WOTLK"] = "Король-лич"
 
 -- UI Strings
 L["MODULES"] = "Модули"
@@ -230,3 +230,20 @@ L["MOB_INDICATOR_TINT"] = "Оттенок индикатора"
 L["MOB_INDICATOR_TINT_DESC"] = "Оттенок значка индикатора"
 L["MOB_INDICATOR_TINT_COLOR"] = "Цвет"
 L["MOB_INDICATOR_POSITION_HEADER"] = "Позиционирование"
+
+-- Group Reminder (Popup labels)
+L["KPH_GR_HEADER"] = "Keystone Polaris - Напоминание"
+L["KPH_GR_DUNGEON"] = "Подземелье:"
+L["KPH_GR_GROUP"] = "Группа:"
+L["KPH_GR_DESCRIPTION"] = "Описание:"
+L["KPH_GR_ROLE"] = "Роль:"
+L["KPH_GR_TELEPORT"] = "Телепорт в подземелье"
+
+-- Group Reminder (Options)
+L["KPH_GR_SUPPRESS_TOAST"] = "Пресекать уведомление о быстром присоединении"
+L["KPH_GR_SHOW_POPUP"] = "Показывать всплывающее окно"
+L["KPH_GR_SHOW_CHAT"] = "Показывать сообщение в чате"
+L["KPH_GR_SHOW_DUNGEON"] = "Показывать название подземелья"
+L["KPH_GR_SHOW_GROUP"] = "Показать название группы"
+L["KPH_GR_SHOW_DESC"] = "Показать описание группы"
+L["KPH_GR_SHOW_ROLE"] = "Показать примененную роль"
