@@ -774,16 +774,19 @@ function KeystonePolaris:GetAdvancedOptions()
         return math.floor((target - time()) / 86400)
     end
 
-    local function GetSeasonCountdownText(daysUntilEnd)
-        if not daysUntilEnd or daysUntilEnd < 0 then return nil end
-        if daysUntilEnd <= 7 then
-            return "|TInterface\\DialogFrame\\UI-Dialog-Icon-AlertNew:16:16:0:0|t " .. (L["SEASON_ENDS_IN_DAYS"]):format(daysUntilEnd)
+    local function GetSeasonCountdownText(daysUntil, prefixKey, withIcon)
+        if not daysUntil or daysUntil < 0 then return nil end
+        local iconPrefix = withIcon and
+                               "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t " or
+                               ""
+        if daysUntil <= 7 then
+            return iconPrefix .. (L[prefixKey .. "_DAYS"]):format(daysUntil)
         end
-        if daysUntilEnd <= 14 then
-            return "|TInterface\\DialogFrame\\UI-Dialog-Icon-AlertNew:16:16:0:0|t " .. L["SEASON_ENDS_IN_TWO_WEEKS"]
+        if daysUntil <= 14 then
+            return iconPrefix .. L[prefixKey .. "_TWO_WEEKS"]
         end
-        if daysUntilEnd <= 30 then
-            return "|TInterface\\DialogFrame\\UI-Dialog-Icon-AlertNew:16:16:0:0|t " .. L["SEASON_ENDS_IN_ONE_MONTH"]
+        if daysUntil <= 30 then
+            return iconPrefix .. L[prefixKey .. "_ONE_MONTH"]
         end
         return nil
     end
@@ -959,7 +962,7 @@ function KeystonePolaris:GetAdvancedOptions()
         end
         
         local daysUntilEnd = currentSeasonEnd and GetDaysUntil(currentSeasonEnd)
-        local countdownText = GetSeasonCountdownText(daysUntilEnd)
+        local countdownText = GetSeasonCountdownText(daysUntilEnd, "SEASON_ENDS_IN", true)
         local hasEndSoon = countdownText ~= nil
         currentSeasonTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(currentSeasonStart)
         if currentSeasonEnd and currentSeasonEnd ~= "" then
@@ -968,7 +971,7 @@ function KeystonePolaris:GetAdvancedOptions()
         currentSeasonTitle = currentSeasonTitle .. "|r"
         currentSeasonListTitle = currentSeasonTitle
         if hasEndSoon then
-            currentSeasonListTitle = "|TInterface\\DialogFrame\\UI-Dialog-Icon-AlertNew:16:16:0:0|t " ..
+            currentSeasonListTitle = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t " ..
                 currentSeasonTitle
             currentSeasonAlertText = countdownText
         end
@@ -978,6 +981,7 @@ function KeystonePolaris:GetAdvancedOptions()
     -- Create next season dungeon args
     local nextSeasonDungeons = {}
     local nextSeasonTitle = "|cffff5733" .. L["NEXT_SEASON"] .. "|r"
+    local nextSeasonListTitle = nextSeasonTitle
 
     -- Get the current date
     local currentDate = date("%Y-%m-%d")
@@ -1042,6 +1046,7 @@ function KeystonePolaris:GetAdvancedOptions()
         end
 
         nextSeasonTitle = "|cffff5733" .. L["NEXT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(nextSeasonDate)
+        local nextSeasonAlertText
         local nextSeasonEnd
         if nextSeasonId then
             local nextSeasonTable = self[nextSeasonId .. "_DUNGEONS"]
@@ -1061,7 +1066,14 @@ function KeystonePolaris:GetAdvancedOptions()
             nextSeasonTitle = nextSeasonTitle .. " -> " .. FormatSeasonDate(nextSeasonEnd)
         end
         nextSeasonTitle = nextSeasonTitle .. "|r"
-        nextSeasonDungeonArgs = CreateGenericSectionArgs(L["NEXT_SEASON"], keys, filter, getDefaultsFn, nextSeasonTitle)
+        local nextSeasonDaysUntilStart = nextSeasonDate and GetDaysUntil(nextSeasonDate)
+        nextSeasonAlertText = GetSeasonCountdownText(nextSeasonDaysUntilStart, "SEASON_STARTS_IN", true)
+        nextSeasonListTitle = nextSeasonTitle
+        if nextSeasonAlertText then
+            nextSeasonListTitle = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t " ..
+                nextSeasonTitle
+        end
+        nextSeasonDungeonArgs = CreateGenericSectionArgs(L["NEXT_SEASON"], keys, filter, getDefaultsFn, nextSeasonTitle, nextSeasonAlertText)
     end
 
     -- Create expansion sections
@@ -1136,7 +1148,7 @@ function KeystonePolaris:GetAdvancedOptions()
     -- Only add next season section if there are next season dungeons
     if nextSeasonId and #nextSeasonDungeons > 0 then
         args.nextseason = {
-            name = nextSeasonTitle,
+            name = nextSeasonListTitle,
             type = "group",
             childGroups = "tree",
             order = 4,
