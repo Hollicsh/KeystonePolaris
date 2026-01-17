@@ -794,10 +794,20 @@ function KeystonePolaris:GetAdvancedOptions()
                     end
                 end
             end
-            return iconPrefix .. (L[prefixKey .. "_DAYS"]):format(daysUntil) .. weekdaySuffix
+            if daysUntil == 1 then
+                return iconPrefix .. L[prefixKey .. "_TOMORROW"]
+            end
+            local dayText = L[prefixKey .. "_DAYS"]:format(daysUntil)
+            return iconPrefix .. dayText .. weekdaySuffix
         end
         if daysUntil <= 14 then
-            return iconPrefix .. L[prefixKey .. "_TWO_WEEKS"]
+            local weeks = math.ceil(daysUntil / 7)
+            local weekKey = weeks == 1 and "_WEEK" or "_WEEKS"
+            local weekText = L[prefixKey .. weekKey]
+            if weeks ~= 1 then
+                weekText = weekText:format(weeks)
+            end
+            return iconPrefix .. weekText
         end
         if daysUntil <= 30 then
             return iconPrefix .. L[prefixKey .. "_ONE_MONTH"]
