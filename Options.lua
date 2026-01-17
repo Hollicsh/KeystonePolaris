@@ -115,6 +115,18 @@ KeystonePolaris.defaults = {
     }
 }
 
+KeystonePolaris.defaults.profile.groupReminder = {
+    enabled = true,
+    showPopup = true,
+    showChat = true,
+    suppressQuickJoinToast = false,
+    showDungeonName = true,
+    showGroupName = true,
+    showGroupDescription = true,
+    showAppliedRole = true,
+    lastReminder = nil,
+}
+
 local expansions = KeystonePolaris.Expansions
 
 function KeystonePolaris:GetPositioningOptions()

@@ -168,6 +168,8 @@ function KeystonePolaris:OnInitialize()
     
     -- Test command for Group Reminder
     self:RegisterChatCommand('kpl_gr', 'TestGroupReminder')
+    -- Command to show last Group Reminder while in group
+    self:RegisterChatCommand('kpl_grlast', 'ShowLastGroupReminder')
 
     -- Initialize mob percentages module if enabled
     if self.db.profile.mobPercentages and self.db.profile.mobPercentages.enabled then
