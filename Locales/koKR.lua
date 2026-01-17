@@ -102,6 +102,8 @@ L["RESET_CHANGED_ONLY"] = "변경 사항만 초기화"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "다음 던전의 경로가 업데이트 되었습니다.:"
 L["BOSS"] = "Boss" -- To Translate
 L["BOSS_ORDER"] = "Boss Order" -- To Translate
+L["SHOW_COMPARTMENT_ICON"] = "Compartment icon" -- To Translate
+L["SHOW_MINIMAP_ICON"] = "Minimap icon" -- To Translate
 
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "전체 선택 후 Ctrl+C로 복사하세요. 선택 사항: DeepL https://www.deepl.com/translator"

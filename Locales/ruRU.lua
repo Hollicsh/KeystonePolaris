@@ -104,6 +104,8 @@ L["RESET_CHANGED_ONLY"] = "Сбросить только измененные"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "Обновлены маршруты следующих подземелий:"
 L["BOSS"] = "Босс"
 L["BOSS_ORDER"] = "Порядок босса"
+L["SHOW_COMPARTMENT_ICON"] = "Compartment icon" -- To Translate
+L["SHOW_MINIMAP_ICON"] = "Minimap icon" -- To Translate
 
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "Выделите всё, затем нажмите Ctrl+C, чтобы скопировать. Дополнительно: DeepL - https://www.deepl.com/translator"

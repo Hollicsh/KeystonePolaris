@@ -100,6 +100,8 @@ L["RESET_CHANGED_ONLY"] = "Réinitialiser uniquement ces donjons"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "Les donjons suivants ont des routes mises à jour :"
 L["BOSS"] = "Boss"
 L["BOSS_ORDER"] = "Ordre des boss"
+L["SHOW_COMPARTMENT_ICON"] = "Icône de compartiment"
+L["SHOW_MINIMAP_ICON"] = "Icône de la mini-carte"
 
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "Sélectionner tout, puis Ctrl+C pour copier. Optionnel : DeepL https://www.deepl.com/translator"

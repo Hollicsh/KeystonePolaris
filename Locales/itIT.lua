@@ -102,6 +102,8 @@ L["RESET_CHANGED_ONLY"] = "Reset Changed Only"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "The following dungeons have updated routes:"
 L["BOSS"] = "Boss"
 L["BOSS_ORDER"] = "Boss Order"
+L["SHOW_COMPARTMENT_ICON"] = "Compartment icon"
+L["SHOW_MINIMAP_ICON"] = "Minimap icon"
 
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "Select All, then Ctrl+C to copy. Optional: DeepL https://www.deepl.com/translator"

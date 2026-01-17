@@ -3,7 +3,6 @@
 ## Author: ZelionGG
 ## Version: @project-version@
 ## IconTexture: Interface\Addons\KeystonePolaris\icon.png
-## AddonCompartmentFunc: KeystonePolaris_OnAddonCompartmentClick
 
 ## Notes: Addon designed to help you keep track of the percentage to make in each M+ dungeon section.
 ## Notes-frFR: Addon conçu pour vous aider à savoir le pourcentage requis avant chaque boss en Mythique+.

@@ -35,6 +35,9 @@ KeystonePolaris.LSM = LibStub('LibSharedMedia-3.0');
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName, true)
 KeystonePolaris.L = L
 
+local LDB = LibStub("LibDataBroker-1.1", true)
+local LDBIcon = LibStub("LibDBIcon-1.0", true)
+
 local function Lerp(a, b, t)
     return a + (b - a) * t
 end
@@ -93,6 +96,130 @@ function KeystonePolaris:GetChatPrefix(bracketed)
     return name
 end
 
+local function EnsureMinimapSettings(self)
+    if not (self.db and self.db.profile and self.db.profile.general) then return end
+    local general = self.db.profile.general
+    general.minimap = general.minimap or {}
+    if general.minimap.minimapPos == nil and general.minimapAngle ~= nil then
+        general.minimap.minimapPos = general.minimapAngle
+    end
+    if general.minimap.hide == nil then
+        general.minimap.hide = not general.showMinimapIcon
+    end
+    if general.minimap.showInCompartment == nil then
+        general.minimap.showInCompartment = general.showCompartmentIcon ~= false
+    end
+end
+
+local function EnsureAddonCompartmentLoaded()
+    if AddonCompartmentFrame then return end
+    if C_AddOns and C_AddOns.LoadAddOn then
+        C_AddOns.LoadAddOn("Blizzard_AddonCompartment")
+    end
+end
+
+local function CleanupCompartmentEntries(self)
+    if not AddonCompartmentFrame or not AddonCompartmentFrame.registeredAddons then return end
+    local label = (self.GetGradientAddonName and self:GetGradientAddonName()) or "Keystone Polaris"
+    for i = #AddonCompartmentFrame.registeredAddons, 1, -1 do
+        local entry = AddonCompartmentFrame.registeredAddons[i]
+        if entry and (entry.text == AddOnName or entry.text == label) then
+            table.remove(AddonCompartmentFrame.registeredAddons, i)
+        end
+    end
+    if AddonCompartmentFrame.UpdateDisplay then
+        AddonCompartmentFrame:UpdateDisplay()
+    end
+end
+
+local function UpdateCompartmentEntryLabel(self)
+    if not AddonCompartmentFrame or not AddonCompartmentFrame.registeredAddons then return end
+    local label = (self.GetGradientAddonName and self:GetGradientAddonName()) or "Keystone Polaris"
+    for i = 1, #AddonCompartmentFrame.registeredAddons do
+        local entry = AddonCompartmentFrame.registeredAddons[i]
+        if entry and entry.text == AddOnName then
+            entry.text = label
+            entry.icon = entry.icon or "Interface\\AddOns\\KeystonePolaris\\icon.png"
+            if AddonCompartmentFrame.UpdateDisplay then
+                AddonCompartmentFrame:UpdateDisplay()
+            end
+            return
+        end
+    end
+end
+
+function KeystonePolaris:UpdateMinimapIconVisibility()
+    if not LDBIcon then return end
+    EnsureMinimapSettings(self)
+    if not (self.db and self.db.profile and self.db.profile.general) then return end
+    local general = self.db.profile.general
+    local hide = not general.showMinimapIcon
+    general.minimap.hide = hide
+    if hide then
+        LDBIcon:Hide(AddOnName)
+    else
+        LDBIcon:Show(AddOnName)
+    end
+end
+
+function KeystonePolaris:InitializeMinimapIcon()
+    if self._minimapIconInitialized or not (LDB and LDBIcon) then return end
+    EnsureMinimapSettings(self)
+
+    if not self._ldbObject then
+        self._ldbObject = LDB:NewDataObject(AddOnName, {
+            type = "data source",
+            text = "Keystone Polaris",
+            icon = "Interface\\AddOns\\KeystonePolaris\\icon.png",
+            OnClick = function()
+                if self.ToggleConfig then
+                    self:ToggleConfig()
+                end
+            end,
+            OnTooltipShow = function(tooltip)
+                if not tooltip or not tooltip.AddLine then return end
+                tooltip:AddLine("Keystone Polaris")
+                tooltip:AddLine("Click to open options", 1, 1, 1)
+            end,
+        })
+    end
+
+    LDBIcon:Register(AddOnName, self._ldbObject, self.db.profile.general.minimap)
+    self._minimapIconInitialized = true
+    self:UpdateMinimapIconVisibility()
+end
+
+function KeystonePolaris:UpdateCompartmentIconVisibility()
+    if not (self.db and self.db.profile and self.db.profile.general) then return end
+    local show = self.db.profile.general.showCompartmentIcon ~= false
+    if not LDBIcon then return end
+    EnsureAddonCompartmentLoaded()
+    if not AddonCompartmentFrame then
+        if not self._pendingCompartmentUpdate and C_Timer and C_Timer.After then
+            self._pendingCompartmentUpdate = true
+            C_Timer.After(1, function()
+                self._pendingCompartmentUpdate = false
+                if self.UpdateCompartmentIconVisibility then
+                    self:UpdateCompartmentIconVisibility()
+                end
+            end)
+        end
+        return
+    end
+    EnsureMinimapSettings(self)
+    if self.db.profile.general.minimap then
+        self.db.profile.general.minimap.showInCompartment = show
+    end
+    if LDBIcon.RemoveButtonFromCompartment then
+        LDBIcon:RemoveButtonFromCompartment(AddOnName)
+    end
+    CleanupCompartmentEntries(self)
+    if show and LDBIcon.AddButtonToCompartment then
+        LDBIcon:AddButtonToCompartment(AddOnName)
+        UpdateCompartmentEntryLabel(self)
+    end
+end
+
 -- Initialize dungeons table to store all dungeon data
 KeystonePolaris.DUNGEONS = {}
 
@@ -124,6 +251,9 @@ function KeystonePolaris:OnInitialize()
         self:InitializeDisplay()
     end
 
+    self:InitializeMinimapIcon()
+    self:UpdateCompartmentIconVisibility()
+
     -- Register options with Ace3 config system
     local optionsAddonName = (self.GetGradientAddonNameFromSecondLetter and self:GetGradientAddonNameFromSecondLetter()) or "Keystone Polaris"
     local optionsAddonDisplayName = (self.GetGradientAddonName and self:GetGradientAddonName()) or optionsAddonName
@@ -136,8 +266,39 @@ function KeystonePolaris:OnInitialize()
                 type = "group",
                 order = 1,
                 args = {
-                    testMode = {
+                    showCompartmentIcon = {
                         order = 0,
+                        type = "toggle",
+                        name = L["SHOW_COMPARTMENT_ICON"],
+                        width = "2",
+                        get = function()
+                            return self.db.profile.general.showCompartmentIcon
+                        end,
+                        set = function(_, value)
+                            self.db.profile.general.showCompartmentIcon = not not value
+                            self:UpdateCompartmentIconVisibility()
+                        end,
+                    },
+                    showMinimapIcon = {
+                        order = 1,
+                        type = "toggle",
+                        name = L["SHOW_MINIMAP_ICON"],
+                        --[[ width = "full", ]]
+                        get = function()
+                            return self.db.profile.general.showMinimapIcon
+                        end,
+                        set = function(_, value)
+                            self.db.profile.general.showMinimapIcon = not not value
+                            self:UpdateMinimapIconVisibility()
+                        end,
+                    },
+                    testModeHeader = {
+                        order = 2,
+                        type = "header",
+                        name = "",
+                    },
+                    testMode = {
+                        order = 3,
                         type = "toggle",
                         name = L["TEST_MODE"] or "Test Mode",
                         desc = L["TEST_MODE_DESC"],
@@ -161,7 +322,7 @@ function KeystonePolaris:OnInitialize()
                         end,
                     },
                     generalHeader = {
-                        order = 0.1,
+                        order = 4,
                         type = "header",
                         name = L["GENERAL_SETTINGS"],
                     },
