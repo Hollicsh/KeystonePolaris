@@ -351,6 +351,60 @@ local function EnsureGroupReminderStyledFrame(self)
 
     f.Close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.Close:SetPoint("TOPRIGHT", -5, -5)
+    local closeAtlas
+    local closeTexture
+    if SettingsPanel and SettingsPanel.ClosePanelButton and SettingsPanel.ClosePanelButton.Texture then
+        local textureRegion = SettingsPanel.ClosePanelButton.Texture
+        if textureRegion.GetAtlas then
+            closeAtlas = textureRegion:GetAtlas()
+        end
+        if not closeAtlas and textureRegion.GetTexture then
+            closeTexture = textureRegion:GetTexture()
+        end
+    end
+    if not closeAtlas and not closeTexture and IsAddOnLoaded and IsAddOnLoaded("ElvUI") and ElvUI then
+        local E = ElvUI[1]
+        closeTexture = E and E.Media and E.Media.Textures and E.Media.Textures.Close
+        if not closeTexture then
+            closeTexture = "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Close"
+        end
+    end
+    if closeAtlas or closeTexture then
+        f.Close:Hide()
+        if not f.ElvClose then
+            local btn = CreateFrame("Button", nil, f)
+            btn:SetPoint("TOPRIGHT", -9, -8)
+            btn:SetSize(14, 14)
+
+            if closeAtlas then
+                btn:SetNormalTexture(0)
+                btn:SetPushedTexture(0)
+                btn:SetHighlightTexture(0)
+                local nt = btn:GetNormalTexture()
+                local pt = btn:GetPushedTexture()
+                local ht = btn:GetHighlightTexture()
+                if nt and nt.SetAtlas then nt:SetAtlas(closeAtlas) end
+                if pt and pt.SetAtlas then pt:SetAtlas(closeAtlas) end
+                if ht and ht.SetAtlas then ht:SetAtlas(closeAtlas) end
+            else
+                btn:SetNormalTexture(closeTexture)
+                btn:SetPushedTexture(closeTexture)
+                btn:SetHighlightTexture(closeTexture)
+            end
+            local nt = btn:GetNormalTexture()
+            local pt = btn:GetPushedTexture()
+            local ht = btn:GetHighlightTexture()
+            if nt then nt:SetVertexColor(1, 1, 1, 1) end
+            if pt then pt:SetVertexColor(0.8, 0.8, 0.8, 1) end
+            if ht then ht:SetVertexColor(1, 1, 1, 0.85) end
+            btn:SetScript("OnClick", function()
+                f:Hide()
+            end)
+            f.ElvClose = btn
+        else
+            f.ElvClose:Show()
+        end
+    end
 
     f:Hide()
     self.groupReminderStyledFrame = f
