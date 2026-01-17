@@ -1119,15 +1119,19 @@ function KeystonePolaris:GetAdvancedOptions()
             func = function()
                 KeystonePolaris:ShowImportDialog(nil)
             end
-        },
-        dungeons = {
+        }
+    }
+
+    -- Only add current season section if a current season exists and has dungeons
+    if currentSeasonId and #currentSeasonDungeons > 0 then
+        args.dungeons = {
             name = currentSeasonListTitle,
             type = "group",
             childGroups = "tree",
             order = 5,
             args = dungeonArgs
         }
-    }
+    end
 
     -- Only add next season section if there are next season dungeons
     if nextSeasonId and #nextSeasonDungeons > 0 then
