@@ -24,31 +24,6 @@ KeystonePolaris.Expansions = {
 
 local expansions = KeystonePolaris.Expansions
 
--- Initialize Season Start Dates
-local portal = C_CVar.GetCVar("portal")
-if portal == "US" then
-    KeystonePolaris.SEASON_START_DATES = {
-        ["2024-09-10"] = "TWW_1", -- TWW Season 1 start date
-        ["2025-03-04"] = "TWW_2", -- TWW Season 2 start date
-        ["2025-08-12"] = "TWW_3",  -- TWW Season 3 start date
-        ["2026-03-24"] = "MIDNIGHT_1" -- Midnight Season 1 start date
-    }
-elseif portal == "EU" then
-    KeystonePolaris.SEASON_START_DATES = {
-        ["2024-09-10"] = "TWW_1", -- TWW Season 1 start date
-        ["2025-03-05"] = "TWW_2", -- TWW Season 2 start date
-        ["2025-08-13"] = "TWW_3",  -- TWW Season 3 start date
-        ["2026-03-25"] = "MIDNIGHT_1" -- Midnight Season 1 start date
-    }
-else
-    KeystonePolaris.SEASON_START_DATES = {
-        ["2024-09-10"] = "TWW_1", -- TWW Season 1 start date
-        ["2025-03-05"] = "TWW_2", -- TWW Season 2 start date
-        ["2025-08-13"] = "TWW_3",  -- TWW Season 3 start date
-        ["2026-03-25"] = "MIDNIGHT_1" -- Midnight Season 1 start date
-    }
-end
-
 -- Deep clone helper
 local function CloneTable(tbl)
     if type(CopyTable) == "function" then return CopyTable(tbl) end
@@ -63,6 +38,53 @@ local function CloneTable(tbl)
         end
     end
     return t
+end
+
+-- ---------------------------------------------------------------------------
+-- Season Date Helpers
+-- ---------------------------------------------------------------------------
+-- start_date/end_date can be:
+--   - a string "YYYY-MM-DD"
+--   - a table keyed by portal (US/EU) with optional "default"
+local function ResolveSeasonDate(dateValue)
+    if not dateValue then return nil end
+    if type(dateValue) ~= "table" then return dateValue end
+    local portal = C_CVar.GetCVar("portal")
+    return dateValue[portal] or dateValue.default or dateValue.US or
+               dateValue.EU
+end
+
+-- Returns current/next season ids and their resolved start/end dates.
+-- Current season: start_date <= today and (no end_date or today <= end_date).
+-- If end_date is missing, the season is considered active until the next
+-- start_date is reached.
+function KeystonePolaris:GetSeasonByDate(dateStr)
+    local currentId, currentStart, currentEnd
+    local nextId, nextStart
+
+    for key, tbl in pairs(self) do
+        if type(tbl) == "table" and key:match("_DUNGEONS$") and tbl.start_date and
+            not tbl.is_remix then
+            local startDate = ResolveSeasonDate(tbl.start_date)
+            local endDate = ResolveSeasonDate(tbl.end_date)
+
+            if startDate and startDate <= dateStr and
+                (not endDate or dateStr <= endDate) then
+                if not currentStart or startDate > currentStart then
+                    currentId = key:gsub("_DUNGEONS$", "")
+                    currentStart = startDate
+                    currentEnd = endDate
+                end
+            elseif startDate and startDate > dateStr then
+                if not nextStart or startDate < nextStart then
+                    nextId = key:gsub("_DUNGEONS$", "")
+                    nextStart = startDate
+                end
+            end
+        end
+    end
+
+    return currentId, currentStart, currentEnd, nextId, nextStart
 end
 
 function KeystonePolaris:GetBossNumberString(num)
@@ -289,17 +311,7 @@ function KeystonePolaris:IsCurrentSeasonDungeon(dungeonId)
     -- Get the current date
     local currentDate = date("%Y-%m-%d")
 
-    -- Find the most recent season
-    local mostRecentSeasonDate = nil
-    local currentSeasonId = nil
-
-    for seasonDate, _ in pairs(self.SEASON_START_DATES) do
-        if seasonDate <= currentDate and
-            (not mostRecentSeasonDate or seasonDate > mostRecentSeasonDate) then
-            currentSeasonId = self.SEASON_START_DATES[seasonDate]
-            mostRecentSeasonDate = seasonDate
-        end
-    end
+    local currentSeasonId = self:GetSeasonByDate(currentDate)
 
     if currentSeasonId then
         local seasonDungeonsTabName = currentSeasonId .. "_DUNGEONS"
@@ -315,17 +327,7 @@ function KeystonePolaris:IsNextSeasonDungeon(dungeonId)
     -- Get the current date
     local currentDate = date("%Y-%m-%d")
 
-    -- Find the next season (first season that starts after current date)
-    local nextSeasonDate = nil
-    local nextSeasonId = nil
-
-    for seasonDate, _ in pairs(self.SEASON_START_DATES) do
-        if seasonDate > currentDate and
-            (not nextSeasonDate or seasonDate < nextSeasonDate) then
-            nextSeasonId = self.SEASON_START_DATES[seasonDate]
-            nextSeasonDate = seasonDate
-        end
-    end
+    local _, _, _, nextSeasonId = self:GetSeasonByDate(currentDate)
 
     if nextSeasonId then
         local nextSeasonDungeonsTabName = nextSeasonId .. "_DUNGEONS"
@@ -383,17 +385,7 @@ function KeystonePolaris:ResetCurrentSeasonDungeons(specificDungeons)
     -- Get the current date
     local currentDate = date("%Y-%m-%d")
 
-    -- Find the most recent season
-    local mostRecentSeasonDate = nil
-    local currentSeasonId = nil
-
-    for seasonDate, _ in pairs(self.SEASON_START_DATES) do
-        if seasonDate <= currentDate and
-            (not mostRecentSeasonDate or seasonDate > mostRecentSeasonDate) then
-            currentSeasonId = self.SEASON_START_DATES[seasonDate]
-            mostRecentSeasonDate = seasonDate
-        end
-    end
+    local currentSeasonId = self:GetSeasonByDate(currentDate)
 
     if currentSeasonId then
         local seasonDungeonsTabName = currentSeasonId .. "_DUNGEONS"
@@ -460,18 +452,12 @@ function KeystonePolaris:CheckForNewSeason()
         return
     end
 
-    -- Find the most recent season start date
-    local mostRecentSeasonDate = nil
-    for seasonDate, _ in pairs(self.SEASON_START_DATES) do
-        if seasonDate <= currentDate and
-            (not mostRecentSeasonDate or seasonDate > mostRecentSeasonDate) then
-            mostRecentSeasonDate = seasonDate
-        end
-    end
+    -- Find the current season start date
+    local _, currentSeasonStart = self:GetSeasonByDate(currentDate)
 
     -- If last check was before the most recent season start, show popup
-    if mostRecentSeasonDate and self.db.profile.lastSeasonCheck <
-        mostRecentSeasonDate and not InCombatLockdown() then
+    if currentSeasonStart and self.db.profile.lastSeasonCheck <
+        currentSeasonStart and not InCombatLockdown() then
         StaticPopupDialogs["KPL_NEW_SEASON"] = {
             text = "|cffffd100Keystone Polaris|r\n\n" ..
                 L["NEW_SEASON_RESET_PROMPT"] .. "\n\n",

@@ -1,7 +1,14 @@
 local AddOnName, KeystonePolaris = ...
 
 -- Define which dungeons are in the current season
+-- start_date: YYYY-MM-DD (required) or table keyed by portal (US/EU)
+-- end_date: YYYY-MM-DD (optional) or table keyed by portal (US/EU)
 KeystonePolaris.MIDNIGHT_1_DUNGEONS = {
+    start_date = {
+        US = "2026-03-24",
+        EU = "2026-03-25",
+        default = "2026-03-25"
+    },
     -- Midnight dungeons
     [557] = true, -- Windrunner Spire
     [558] = true, -- Magisters' Terrace

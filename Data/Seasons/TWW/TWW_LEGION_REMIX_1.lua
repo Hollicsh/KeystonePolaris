@@ -1,10 +1,14 @@
 local AddOnName, KeystonePolaris = ...
 
 -- Define which dungeons are in the current season
+-- start_date: YYYY-MM-DD (required) or table keyed by portal (US/EU)
+-- end_date: YYYY-MM-DD (optional) or table keyed by portal (US/EU)
+-- is_remix: true for bonus remix seasons (excluded from current/next logic)
 KeystonePolaris.TWW_LEGION_REMIX_1_DUNGEONS = {
-    ['expansion'] = "7_Legion",
-    ['start_date'] = "2025-10-07",
-    ['end_date'] = "2026-01-19",
+    expansion = "7_Legion",
+    is_remix = true,
+    start_date = "2025-10-07",
+    end_date = "2026-01-19",
     -- Legion Dungeons
     [199] = true, -- BRH (Black Rook Hold)
     [233] = true, -- CoEN (Cathedral of Eternal Night)

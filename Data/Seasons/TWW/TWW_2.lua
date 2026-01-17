@@ -1,7 +1,19 @@
 local AddOnName, KeystonePolaris = ...
 
 -- Define which dungeons are in the current season
+-- start_date: YYYY-MM-DD (required) or table keyed by portal (US/EU)
+-- end_date: YYYY-MM-DD (optional) or table keyed by portal (US/EU)
 KeystonePolaris.TWW_2_DUNGEONS = {
+    start_date = {
+        US = "2025-03-04",
+        EU = "2025-03-05",
+        default = "2025-03-05"
+    },
+    end_date = {
+        US = "2025-08-11",
+        EU = "2025-08-12",
+        default = "2025-08-12"
+    },
     -- War Within dungeons
     [506] = true, -- CBM (Cinderbrew Meadery)
     [504] = true, -- DFC (Darkflame Cleft)

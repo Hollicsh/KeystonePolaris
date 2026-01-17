@@ -1,7 +1,19 @@
 local AddOnName, KeystonePolaris = ...
 
 -- Define which dungeons are in the current season
+-- start_date: YYYY-MM-DD (required) or table keyed by portal (US/EU)
+-- end_date: YYYY-MM-DD (optional) or table keyed by portal (US/EU)
 KeystonePolaris.TWW_3_DUNGEONS = {
+    start_date = {
+        US = "2025-08-12",
+        EU = "2025-08-13",
+        default = "2025-08-13"
+    },
+    end_date = {
+        US = "2026-01-20",
+        EU = "2026-01-21",
+        default = "2026-01-21"
+    },
     -- War Within dungeons
     [503] = true, -- AKCE (Ara-Kara, City of Echoes)
     [499] = true, -- PotSF (Priory of the Sacred Flame)
