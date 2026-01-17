@@ -209,58 +209,6 @@ local function BuildMessages(db, titleText, zoneText, groupName, groupComment, r
     return popupMsg, body
 end
 
-local function EnsureTeleportClickFrame(self)
-    if self.teleportClickFrame then return self.teleportClickFrame end
-    local f = CreateFrame("Frame", "KPL_TeleportClickSecure", UIParent, "BackdropTemplate")
-    f:SetSize(260, 80)
-    f:SetPoint("CENTER")
-    f:SetFrameStrata("DIALOG")
-    f:SetClampedToScreen(true)
-    f:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 32, edgeSize = 12,
-        insets = { left = 8, right = 8, top = 8, bottom = 8 }
-    })
-
-    f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    f.Title:SetPoint("TOP", 0, -12)
-    f.Title:SetText(GetGroupReminderHeaderLabel())
-
-    -- Create a text-like secure button
-    f.LinkButton = CreateFrame("Button", nil, f, "SecureActionButtonTemplate")
-    f.LinkButton:SetPoint("CENTER", 0, -5)
-    f.LinkButton:SetSize(200, 18)
-    local fs = f.LinkButton:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    fs:SetPoint("LEFT")
-    fs:SetText("|cff00aaff[" .. (L["KPH_GR_TELEPORT"] or "Teleport to dungeon") .. "]|r")
-    f.LinkButtonText = fs
-
-    f.Close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
-    f.Close:SetPoint("TOPRIGHT", 0, 0)
-
-    f:Hide()
-    self.teleportClickFrame = f
-    return f
-end
-
-function KeystonePolaris:ShowTeleportClickFrame(spellID)
-    local f = EnsureTeleportClickFrame(self)
-    local spellName
-    if C_Spell and C_Spell.GetSpellName then
-        spellName = C_Spell.GetSpellName(spellID)
-    elseif GetSpellInfo then
-        spellName = (GetSpellInfo(spellID))
-    end
-    if spellID and spellName and IsSpellKnown and IsSpellKnown(spellID) then
-        f.LinkButton:SetAttribute("type", "macro")
-        f.LinkButton:SetAttribute("macrotext", "/cast " .. spellName)
-        f:Show()
-    else
-        f:Hide()
-    end
-end
-
 -- Clickable chat link handler: opens the reminder popup again
 if not KeystonePolaris._KPL_ReminderChatLinkHooked then
     KeystonePolaris._KPL_ReminderChatLinkHooked = true
