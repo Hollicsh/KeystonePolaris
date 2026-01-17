@@ -774,13 +774,27 @@ function KeystonePolaris:GetAdvancedOptions()
         return math.floor((target - time()) / 86400)
     end
 
-    local function GetSeasonCountdownText(daysUntil, prefixKey, withIcon)
+    local function GetSeasonCountdownText(daysUntil, prefixKey, withIcon, targetDate)
         if not daysUntil or daysUntil < 0 then return nil end
         local iconPrefix = withIcon and
                                "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t " or
                                ""
         if daysUntil <= 7 then
-            return iconPrefix .. (L[prefixKey .. "_DAYS"]):format(daysUntil)
+            local weekdaySuffix = ""
+            if targetDate then
+                local year, month, day = strsplit("-", targetDate)
+                year, month, day = tonumber(year), tonumber(month), tonumber(day)
+                if year and month and day then
+                    local target = time({year = year, month = month, day = day, hour = 12})
+                    local wday = date("*t", target).wday
+                    local weekdayName = CALENDAR_WEEKDAY_NAMES and
+                                            CALENDAR_WEEKDAY_NAMES[wday]
+                    if weekdayName then
+                        weekdaySuffix = " (next " .. weekdayName .. ")"
+                    end
+                end
+            end
+            return iconPrefix .. (L[prefixKey .. "_DAYS"]):format(daysUntil) .. weekdaySuffix
         end
         if daysUntil <= 14 then
             return iconPrefix .. L[prefixKey .. "_TWO_WEEKS"]
@@ -962,7 +976,7 @@ function KeystonePolaris:GetAdvancedOptions()
         end
         
         local daysUntilEnd = currentSeasonEnd and GetDaysUntil(currentSeasonEnd)
-        local countdownText = GetSeasonCountdownText(daysUntilEnd, "SEASON_ENDS_IN", true)
+        local countdownText = GetSeasonCountdownText(daysUntilEnd, "SEASON_ENDS_IN", true, currentSeasonEnd)
         local hasEndSoon = countdownText ~= nil
         currentSeasonTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(currentSeasonStart)
         if currentSeasonEnd and currentSeasonEnd ~= "" then
@@ -1067,7 +1081,7 @@ function KeystonePolaris:GetAdvancedOptions()
         end
         nextSeasonTitle = nextSeasonTitle .. "|r"
         local nextSeasonDaysUntilStart = nextSeasonDate and GetDaysUntil(nextSeasonDate)
-        nextSeasonAlertText = GetSeasonCountdownText(nextSeasonDaysUntilStart, "SEASON_STARTS_IN", true)
+        nextSeasonAlertText = GetSeasonCountdownText(nextSeasonDaysUntilStart, "SEASON_STARTS_IN", true, nextSeasonDate)
         nextSeasonListTitle = nextSeasonTitle
         if nextSeasonAlertText then
             nextSeasonListTitle = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t " ..
