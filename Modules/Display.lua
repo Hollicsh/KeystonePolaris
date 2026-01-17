@@ -1023,7 +1023,8 @@ function KeystonePolaris:DisableTestMode(reason)
         suffix = " (" .. localized .. ")"
     end
     local loc = (self.L and self.L["TEST_MODE_DISABLED"]) or (L and L["TEST_MODE_DISABLED"]) or "Test Mode disabled automatically%s"
-    local msg = "|cffdb6233Keystone Polaris:|r " .. string.format(loc, suffix)
+    local prefix = (self.GetChatPrefix and self:GetChatPrefix()) or "Keystone Polaris"
+    local msg = prefix .. ": " .. string.format(loc, suffix)
     if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
         DEFAULT_CHAT_FRAME:AddMessage(msg)
     else

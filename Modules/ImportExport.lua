@@ -197,22 +197,23 @@ function KeystonePolaris:ImportDungeonSettings(importString,
                                                         sectionName,
                                                         dungeonFilter)
     local addon = self
+    local prefix = (addon.GetChatPrefix and addon:GetChatPrefix()) or "Keystone Polaris"
     local decoded = LibStub("LibDeflate"):DecodeForPrint(importString)
     if not decoded then
-        print("|cffdb6233Keystone Polaris:|r " .. L["IMPORT_ERROR"])
+        print(prefix .. ": " .. L["IMPORT_ERROR"])
         return false
     end
 
     local decompressed = LibStub("LibDeflate"):DecompressDeflate(decoded)
     if not decompressed then
-        print("|cffdb6233Keystone Polaris:|r " .. L["IMPORT_ERROR"])
+        print(prefix .. ": " .. L["IMPORT_ERROR"])
         return false
     end
 
     local success, importData = LibStub("AceSerializer-3.0"):Deserialize(
                                     decompressed)
     if not success then
-        print("|cffdb6233Keystone Polaris:|r " .. L["IMPORT_ERROR"])
+        print(prefix .. ": " .. L["IMPORT_ERROR"])
         return false
     end
 
@@ -282,22 +283,23 @@ function KeystonePolaris:ImportDungeonSettings(importString,
                 LibStub("AceConfigRegistry-3.0"):NotifyChange(
                     "KeystonePolaris")
                 if addon.UpdatePercentageText then addon:UpdatePercentageText() end
-                print("|cffdb6233Keystone Polaris:|r " ..
+                print(prefix .. ": " ..
                           L["IMPORT_SUCCESS"]:format(
                               addon:GetDungeonDisplayName(dungeonKey)))
                 return true
             end
         end
-        print("|cffdb6233Keystone Polaris:|r " .. L["IMPORT_ERROR"])
+        print(prefix .. ": " .. L["IMPORT_ERROR"])
         return false
     else
-        print("|cffdb6233Keystone Polaris:|r " .. L["IMPORT_ERROR"])
+        print(prefix .. ": " .. L["IMPORT_ERROR"])
         return false
     end
 
     -- Update data and notify of changes
     if importCount > 0 then
         addon:UpdateDungeonData()
+
         if addon.currentDungeonID and addon.BuildSectionOrder then
             addon:BuildSectionOrder(addon.currentDungeonID)
         end
@@ -306,15 +308,15 @@ function KeystonePolaris:ImportDungeonSettings(importString,
 
         -- Determine success message based on import type
         if importData.type == "all_dungeons" then
-            print("|cffdb6233Keystone Polaris:|r " ..
+            print(prefix .. ": " ..
                       (L["IMPORT_ALL_SUCCESS"]))
         elseif importData.type == "section" then
-            print("|cffdb6233Keystone Polaris:|r " ..
+            print(prefix .. ": " ..
                       (L["IMPORT_SUCCESS"]):format(sectionName))
         end
         return true
     else
-        print("|cffdb6233Keystone Polaris:|r " .. (L["IMPORT_ERROR"]))
+        print(prefix .. ": " .. (L["IMPORT_ERROR"]))
         return false
     end
 end

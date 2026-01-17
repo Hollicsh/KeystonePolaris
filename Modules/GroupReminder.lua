@@ -161,6 +161,12 @@ local function GetRoleIconTag(roleText)
     return string.format("|T%s:%d:%d:0:0:64:64:%.3f:%.3f:%.3f:%.3f|t", "Interface\\LFGFrame\\UI-LFG-ICON-ROLES", size, size, left, right, top, bottom)
 end
 
+local function GetGroupReminderHeaderLabel()
+    local headerText = (L["KPH_GR_HEADER"] or "Group Reminder")
+    local addonName = (KeystonePolaris.GetGradientAddonName and KeystonePolaris:GetGradientAddonName()) or "Keystone Polaris"
+    return addonName .. "|r - |cffffd700" .. headerText .. "|r"
+end
+
 local function BuildMessages(db, titleText, zoneText, groupName, groupComment, roleText)
     local details = {}
     local valueColor = "|cff00aaff"
@@ -192,11 +198,12 @@ local function BuildMessages(db, titleText, zoneText, groupName, groupComment, r
         end
     end
 
+    local headerLabel = GetGroupReminderHeaderLabel()
     local popupMsg
     if body ~= "" then
-        popupMsg = "|cffffd700" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r " .. body
+        popupMsg = headerLabel .. " " .. body
     else
-        popupMsg = "|cffffd700" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r"
+        popupMsg = headerLabel
     end
 
     return popupMsg, body
@@ -218,7 +225,7 @@ local function EnsureTeleportClickFrame(self)
 
     f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     f.Title:SetPoint("TOP", 0, -12)
-    f.Title:SetText(L["KPH_GR_TELEPORT"] or "Teleport to dungeon")
+    f.Title:SetText(GetGroupReminderHeaderLabel())
 
     -- Create a text-like secure button
     f.LinkButton = CreateFrame("Button", nil, f, "SecureActionButtonTemplate")
@@ -303,7 +310,7 @@ local function EnsureGroupReminderStyledFrame(self)
 
     f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
     f.Title:SetPoint("TOP", 0, -16)
-    f.Title:SetText(L["KPH_GR_HEADER"] or "Group Reminder")
+    f.Title:SetText(GetGroupReminderHeaderLabel())
 
     f.RoleIcon = f:CreateTexture(nil, "OVERLAY")
     f.RoleIcon:SetSize(22, 22)
@@ -414,7 +421,7 @@ end
 function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, groupComment, roleText, teleportSpellID)
     local db = self.db.profile.groupReminder
     local f = EnsureGroupReminderStyledFrame(self)
-    f.Title:SetText(L["KPH_GR_HEADER"] or "Group Reminder")
+    f.Title:SetText(GetGroupReminderHeaderLabel())
 
     local lines = {}
     local labelColor = "|cffffd100"
@@ -527,7 +534,8 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
 
     function KeystonePolaris:ShowLastGroupReminder()
         if not IsInGroup or not IsInGroup() then
-            print("|cffffa500Keystone Polaris:|r No active group to show the reminder.")
+            local prefix = (self.GetChatPrefix and self:GetChatPrefix()) or "Keystone Polaris"
+            print(prefix .. ": No active group to show the reminder.")
             return
         end
 
@@ -536,7 +544,8 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
             data = self.db.profile.groupReminder.lastReminder
         end
         if not data then
-            print("|cffffa500Keystone Polaris:|r No reminder data stored yet.")
+            local prefix = (self.GetChatPrefix and self:GetChatPrefix()) or "Keystone Polaris"
+            print(prefix .. ": No reminder data stored yet.")
             return
         end
 
@@ -589,7 +598,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
 
         -- Chat
         if db.showChat then
-            local chatHeader = "|cffdb6233" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. " :|r"
+            local chatHeader = "|cffdb6233" .. GetGroupReminderHeaderLabel() .. "|r:"
             local linkText = "|cffffd100[" .. (L["KPH_GR_OPEN_REMINDER"] or "Open reminder") .. "]|r"
             local link = string.format("|Hkphreminder:1|h%s|h", linkText)
             if body ~= "" then
@@ -700,7 +709,8 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
         local comment = "Testing group reminder with a very long description to validate layout behavior. This text should wrap across multiple lines and show how the popup behaves when the description is much longer than usual."
 
         if not mapID then
-            print("|cffffa500[Keystone Polaris]|r Could not resolve a current-season dungeon. Falling back to The Stonevault.")
+            local prefix = (self.GetChatPrefix and self:GetChatPrefix(true)) or "[Keystone Polaris]"
+            print(prefix .. " Could not resolve a current-season dungeon. Falling back to The Stonevault.")
             mapID = 2652
             zone = "The Stonevault"
         end
@@ -713,7 +723,8 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
         -- Force show even if disabled, for testing purposes? 
         -- Better to respect "enabled" flag or print a warning.
         if not self.db.profile.groupReminder.enabled then
-            print("|cffff0000[Keystone Polaris]|r Group Reminder is currently disabled in options.")
+            local prefix = (self.GetChatPrefix and self:GetChatPrefix(true)) or "[Keystone Polaris]"
+            print(prefix .. " Group Reminder is currently disabled in options.")
             self._testingGroupReminder = false
             return
         end

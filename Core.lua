@@ -35,6 +35,54 @@ KeystonePolaris.LSM = LibStub('LibSharedMedia-3.0');
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName, true)
 KeystonePolaris.L = L
 
+local function Lerp(a, b, t)
+    return a + (b - a) * t
+end
+
+local function GradientText(text)
+    local len = text and #text or 0
+    if len == 0 then return "" end
+    local colors = {
+        {1, 0.2, 0.2},   -- red
+        {1, 0.55, 0},    -- orange
+        {1, 0.9, 0.2},   -- yellow
+    }
+    local out = {}
+    for i = 1, len do
+        local t = (len == 1) and 0 or (i - 1) / (len - 1)
+        local c1, c2, lt
+        if t <= 0.5 then
+            c1, c2, lt = colors[1], colors[2], t * 2
+        else
+            c1, c2, lt = colors[2], colors[3], (t - 0.5) * 2
+        end
+        local r = Lerp(c1[1], c2[1], lt)
+        local g = Lerp(c1[2], c2[2], lt)
+        local b = Lerp(c1[3], c2[3], lt)
+        out[i] = string.format("|cff%02x%02x%02x%s|r",
+            math.floor((r * 255) + 0.5),
+            math.floor((g * 255) + 0.5),
+            math.floor((b * 255) + 0.5),
+            text:sub(i, i))
+    end
+    return table.concat(out)
+end
+
+function KeystonePolaris:GetGradientAddonName()
+    if not self._gradientAddonName then
+        self._gradientAddonName = GradientText("Keystone Polaris")
+    end
+    return self._gradientAddonName
+end
+
+function KeystonePolaris:GetChatPrefix(bracketed)
+    local name = self:GetGradientAddonName()
+    if bracketed then
+        return "|cffffd100[|r" .. name .. "|cffffd100]|r"
+    end
+    return name
+end
+
 -- Initialize dungeons table to store all dungeon data
 KeystonePolaris.DUNGEONS = {}
 
@@ -348,7 +396,8 @@ function KeystonePolaris:InformGroup(percentage)
     local percentageStr = string.format("%.2f%%", percentage)
     -- Don't send message if percentage is 0
     if percentageStr == "0.00%" then return end
-    SendChatMessage("[Keystone Polaris]: " .. L["WE_STILL_NEED"] .. " " .. percentageStr, channel)
+    local prefix = (self.GetChatPrefix and self:GetChatPrefix(true)) or "[Keystone Polaris]"
+    SendChatMessage(prefix .. ": " .. L["WE_STILL_NEED"] .. " " .. percentageStr, channel)
 end
 
 

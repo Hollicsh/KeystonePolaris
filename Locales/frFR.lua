@@ -234,7 +234,7 @@ L["MOB_INDICATOR_TINT_COLOR"] = "Couleur"
 L["MOB_INDICATOR_POSITION_HEADER"] = "Positionnement"
 
 -- Group Reminder (Popup labels)
-L["KPH_GR_HEADER"] = "Keystone Polaris - Rappel de Groupe"
+L["KPH_GR_HEADER"] = "Rappel de Groupe"
 L["KPH_GR_DUNGEON"] = "Donjon :"
 L["KPH_GR_GROUP"] = "Groupe :"
 L["KPH_GR_DESCRIPTION"] = "Description :"
