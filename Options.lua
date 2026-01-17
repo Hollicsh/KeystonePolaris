@@ -705,7 +705,7 @@ function KeystonePolaris:GetAdvancedOptions()
     end
 
     -- Helper function to format dungeon text
-    local function FormatDungeonText(self, dungeonKey, defaults)
+    local function FormatDungeonText(addon, dungeonKey, defaults)
         local text = ""
         if defaults then
             text = text .. "|cffffd700" .. GetDungeonNameWithIcon(dungeonKey) ..
@@ -764,6 +764,30 @@ function KeystonePolaris:GetAdvancedOptions()
         return text
     end
 
+    -- Helper: days until a YYYY-MM-DD date (nil if invalid)
+    local function GetDaysUntil(dateStr)
+        if not dateStr or dateStr == "" then return nil end
+        local year, month, day = strsplit("-", dateStr)
+        year, month, day = tonumber(year), tonumber(month), tonumber(day)
+        if not year or not month or not day then return nil end
+        local target = time({year = year, month = month, day = day, hour = 12})
+        return math.floor((target - time()) / 86400)
+    end
+
+    local function GetSeasonCountdownText(daysUntilEnd)
+        if not daysUntilEnd or daysUntilEnd < 0 then return nil end
+        if daysUntilEnd <= 7 then
+            return "|TInterface\\DialogFrame\\UI-Dialog-Icon-AlertNew:16:16:0:0|t " .. (L["SEASON_ENDS_IN_DAYS"]):format(daysUntilEnd)
+        end
+        if daysUntilEnd <= 14 then
+            return "|TInterface\\DialogFrame\\UI-Dialog-Icon-AlertNew:16:16:0:0|t " .. L["SEASON_ENDS_IN_TWO_WEEKS"]
+        end
+        if daysUntilEnd <= 30 then
+            return "|TInterface\\DialogFrame\\UI-Dialog-Icon-AlertNew:16:16:0:0|t " .. L["SEASON_ENDS_IN_ONE_MONTH"]
+        end
+        return nil
+    end
+
     -- Create shared dungeon options
     local sharedDungeonOptions = {}
     for _, expansion in ipairs(expansions) do
@@ -777,7 +801,7 @@ function KeystonePolaris:GetAdvancedOptions()
     end
 
     -- Generic builder for section args (used for seasons and expansions)
-    local function CreateGenericSectionArgs(sectionLabel, dungeonKeys, dungeonFilter, getDefaultsFn, headerTitle)
+    local function CreateGenericSectionArgs(sectionLabel, dungeonKeys, dungeonFilter, getDefaultsFn, headerTitle, extraDisclaimerText)
         local args = {
             title = {
                 order = 0,
@@ -785,6 +809,12 @@ function KeystonePolaris:GetAdvancedOptions()
                 fontSize = "large",
                 name = (headerTitle or ("|cffeda55f" .. sectionLabel .. "|r")) .. "\n"
             },
+            seasonAlert = extraDisclaimerText and {
+                order = 0.1,
+                type = "description",
+                fontSize = "medium",
+                name = extraDisclaimerText,
+            } or nil,
             separatorTitle = {
                 order = 0.2,
                 type = "header",
@@ -861,21 +891,16 @@ function KeystonePolaris:GetAdvancedOptions()
 
     -- Create current season options
     local currentSeasonDungeons = {}
+    local currentSeasonTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r"
+    local currentSeasonListTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r"
+    local currentSeasonAlertText
 
     -- Get the current date
     local currentDate = date("%Y-%m-%d")
 
-    -- Find the most recent season
-    local mostRecentSeasonDate = nil
-    local currentSeasonId = nil
-
-    for seasonDate, _ in pairs(self.SEASON_START_DATES) do
-        if seasonDate <= currentDate and
-            (not mostRecentSeasonDate or seasonDate > mostRecentSeasonDate) then
-            currentSeasonId = self.SEASON_START_DATES[seasonDate]
-            mostRecentSeasonDate = seasonDate
-        end
-    end
+    -- Resolve the current season based on start/end dates
+    local currentSeasonId, currentSeasonStart, currentSeasonEnd =
+        self:GetSeasonByDate(currentDate)
 
     if currentSeasonId then
         local seasonDungeonsTabName = currentSeasonId .. "_DUNGEONS"
@@ -933,27 +958,32 @@ function KeystonePolaris:GetAdvancedOptions()
             return nil
         end
         
-        local currentSeasonTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(mostRecentSeasonDate) .. "|r"
-        dungeonArgs = CreateGenericSectionArgs(L["CURRENT_SEASON"], keys, filter, getDefaultsFn, currentSeasonTitle)
+        local daysUntilEnd = currentSeasonEnd and GetDaysUntil(currentSeasonEnd)
+        local countdownText = GetSeasonCountdownText(daysUntilEnd)
+        local hasEndSoon = countdownText ~= nil
+        currentSeasonTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(currentSeasonStart)
+        if currentSeasonEnd and currentSeasonEnd ~= "" then
+            currentSeasonTitle = currentSeasonTitle .. " -> " .. FormatSeasonDate(currentSeasonEnd)
+        end
+        currentSeasonTitle = currentSeasonTitle .. "|r"
+        currentSeasonListTitle = currentSeasonTitle
+        if hasEndSoon then
+            currentSeasonListTitle = "|TInterface\\DialogFrame\\UI-Dialog-Icon-AlertNew:16:16:0:0|t " ..
+                currentSeasonTitle
+            currentSeasonAlertText = countdownText
+        end
+        dungeonArgs = CreateGenericSectionArgs(L["CURRENT_SEASON"], keys, filter, getDefaultsFn, currentSeasonTitle, currentSeasonAlertText)
     end
 
     -- Create next season dungeon args
     local nextSeasonDungeons = {}
+    local nextSeasonTitle = "|cffff5733" .. L["NEXT_SEASON"] .. "|r"
 
     -- Get the current date
     local currentDate = date("%Y-%m-%d")
 
     -- Find the next season (first season that starts after current date)
-    local nextSeasonDate = nil
-    local nextSeasonId = nil
-
-    for seasonDate, _ in pairs(self.SEASON_START_DATES) do
-        if seasonDate > currentDate and
-            (not nextSeasonDate or seasonDate < nextSeasonDate) then
-            nextSeasonId = self.SEASON_START_DATES[seasonDate]
-            nextSeasonDate = seasonDate
-        end
-    end
+    local _, _, _, nextSeasonId, nextSeasonDate = self:GetSeasonByDate(currentDate)
 
     if nextSeasonId then
         local nextSeasonDungeonsTabName = nextSeasonId .. "_DUNGEONS"
@@ -1011,7 +1041,26 @@ function KeystonePolaris:GetAdvancedOptions()
             return nil
         end
 
-        local nextSeasonTitle = "|cffff5733" .. L["NEXT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(nextSeasonDate) .. "|r"
+        nextSeasonTitle = "|cffff5733" .. L["NEXT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(nextSeasonDate)
+        local nextSeasonEnd
+        if nextSeasonId then
+            local nextSeasonTable = self[nextSeasonId .. "_DUNGEONS"]
+            if nextSeasonTable and nextSeasonTable.end_date then
+                local portal = C_CVar.GetCVar("portal")
+                if type(nextSeasonTable.end_date) == "table" then
+                    nextSeasonEnd = nextSeasonTable.end_date[portal] or
+                                    nextSeasonTable.end_date.default or
+                                    nextSeasonTable.end_date.US or
+                                    nextSeasonTable.end_date.EU
+                else
+                    nextSeasonEnd = nextSeasonTable.end_date
+                end
+            end
+        end
+        if nextSeasonEnd and nextSeasonEnd ~= "" then
+            nextSeasonTitle = nextSeasonTitle .. " -> " .. FormatSeasonDate(nextSeasonEnd)
+        end
+        nextSeasonTitle = nextSeasonTitle .. "|r"
         nextSeasonDungeonArgs = CreateGenericSectionArgs(L["NEXT_SEASON"], keys, filter, getDefaultsFn, nextSeasonTitle)
     end
 
@@ -1072,7 +1121,7 @@ function KeystonePolaris:GetAdvancedOptions()
             end
         },
         dungeons = {
-            name = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(mostRecentSeasonDate) .. "|r",
+            name = currentSeasonListTitle,
             type = "group",
             childGroups = "tree",
             order = 5,
@@ -1083,7 +1132,7 @@ function KeystonePolaris:GetAdvancedOptions()
     -- Only add next season section if there are next season dungeons
     if nextSeasonId and #nextSeasonDungeons > 0 then
         args.nextseason = {
-            name = "|cffff5733" .. L["NEXT_SEASON"] .. "|r - |cffbbbbbb" .. FormatSeasonDate(nextSeasonDate) .. "|r",
+            name = nextSeasonTitle,
             type = "group",
             childGroups = "tree",
             order = 4,
