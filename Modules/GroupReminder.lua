@@ -241,7 +241,7 @@ local function EnsureGroupReminderStyledFrame(self)
 
     -- Text label "Teleport to dungeon" above the icon
     f.TeleportLabel = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    f.TeleportLabel:SetPoint("BOTTOM", 0, 65) -- Position above the icon
+    f.TeleportLabel:SetPoint("BOTTOM", 0, 55) -- Position above the icon
     f.TeleportLabel:SetText(L["KPH_GR_TELEPORT"] or "Teleport to dungeon")
     f.TeleportLabel:SetTextColor(1, 0.82, 0, 1) -- Gold color
 
@@ -250,7 +250,6 @@ local function EnsureGroupReminderStyledFrame(self)
     f.Content:SetPoint("TOP", f.RoleIcon, "BOTTOM", 0, -8)
     f.Content:SetPoint("LEFT", 20, 0)
     f.Content:SetPoint("RIGHT", -20, 0)
-    f.Content:SetPoint("BOTTOM", f.TeleportLabel, "TOP", 0, 10)
     f.Content:SetJustifyH("CENTER")
     f.Content:SetJustifyV("TOP")
     f.Content:SetSpacing(4) -- Add some breathing room between lines
@@ -302,12 +301,6 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
     -- Join all lines with newlines
     local fullText = table.concat(lines, "\n")
     f.Content:SetText(fullText)
-
-    -- Dynamic height adjustment based on text content
-    local textHeight = f.Content:GetStringHeight()
-    local baseHeight = 150 -- Increased base height for label + icon + spacing
-
-    f:SetHeight(baseHeight + textHeight)
 
     -- Role icon under the title
     local roleKey = GuessRoleKey(roleText)
@@ -382,6 +375,26 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
         f.TeleportLink:Hide()
         f.TeleportLabel:Hide()
     end
+
+    -- Layout dynamique + hauteur (après visibilité réelle des éléments)
+    f.TeleportLabel:ClearAllPoints()
+    if f.TeleportLink:IsShown() then
+        f.TeleportLabel:SetPoint("BOTTOM", f.TeleportLink, "TOP", 0, 2)
+    elseif f.TeleportLabel:IsShown() then
+        f.TeleportLabel:SetPoint("TOP", f.Content, "BOTTOM", 0, -8)
+    end
+
+    local textHeight = f.Content:GetStringHeight()
+    local labelHeight = f.TeleportLabel:IsShown() and f.TeleportLabel:GetStringHeight() or 0
+    local iconHeight = f.TeleportLink:IsShown() and 40 or 0
+    local baseHeight = 120
+    local teleportHeight = 0
+    if f.TeleportLink:IsShown() then
+        teleportHeight = teleportHeight + iconHeight + labelHeight + 10
+    elseif f.TeleportLabel:IsShown() then
+        teleportHeight = teleportHeight + labelHeight + 8
+    end
+    f:SetHeight(baseHeight + textHeight + teleportHeight)
 
     f:Show()
 end
