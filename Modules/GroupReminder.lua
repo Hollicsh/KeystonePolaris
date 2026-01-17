@@ -169,7 +169,7 @@ end
 
 local function BuildMessages(db, titleText, zoneText, groupName, groupComment, roleText)
     local details = {}
-    local valueColor = "|cff00aaff"
+    local valueColor = "|cffff6a00"
 
     if db.showDungeonName then
         table.insert(details, valueColor .. (zoneText or "-") .. "|r")
