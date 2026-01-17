@@ -12,6 +12,14 @@ L["DUNGEONS"] = "当前赛季"
 L["CURRENT_SEASON"] = "当前赛季"
 L["NEXT_SEASON"] = "下个赛季"
 L["REMIX"] = "Remix" -- To Translate
+L["SEASON_ENDS_IN_ONE_MONTH"] = "Current season ends in less than one month." -- To Translate
+L["SEASON_ENDS_IN_WEEKS"] = "Current season ends in less than %d weeks." -- To Translate
+L["SEASON_ENDS_IN_DAYS"] = "Current season ends in %d days." -- To Translate
+L["SEASON_ENDS_IN_TOMORROW"] = "Current season ends tomorrow." -- To Translate
+L["SEASON_STARTS_IN_ONE_MONTH"] = "Next season starts in less than one month." -- To Translate
+L["SEASON_STARTS_IN_WEEKS"] = "Next season starts in less than %d weeks." -- To Translate
+L["SEASON_STARTS_IN_DAYS"] = "Next season starts in %d days." -- To Translate
+L["SEASON_STARTS_IN_TOMORROW"] = "Next season starts tomorrow." -- To Translate
 
 L["EXPANSION_MIDNIGHT"] = "Midnight" -- To Translate
 L["EXPANSION_WW"] = "地心之战"

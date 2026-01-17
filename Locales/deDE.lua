@@ -12,6 +12,14 @@ L["DUNGEONS"] = "Dungeons"
 L["CURRENT_SEASON"] = "Aktuelle Saison"
 L["NEXT_SEASON"] = "Nächste Saison"
 L["REMIX"] = "Remix" -- To Translate
+L["SEASON_ENDS_IN_ONE_MONTH"] = "Current season ends in less than one month." -- To Translate
+L["SEASON_ENDS_IN_WEEKS"] = "Current season ends in less than %d weeks." -- To Translate
+L["SEASON_ENDS_IN_DAYS"] = "Current season ends in %d days." -- To Translate
+L["SEASON_ENDS_IN_TOMORROW"] = "Current season ends tomorrow." -- To Translate
+L["SEASON_STARTS_IN_ONE_MONTH"] = "Next season starts in less than one month." -- To Translate
+L["SEASON_STARTS_IN_WEEKS"] = "Next season starts in less than %d weeks." -- To Translate
+L["SEASON_STARTS_IN_DAYS"] = "Next season starts in %d days." -- To Translate
+L["SEASON_STARTS_IN_TOMORROW"] = "Next season starts tomorrow." -- To Translate
 
 L["EXPANSION_MIDNIGHT"] = "Midnight"
 L["EXPANSION_WW"] = "The War Within"
