@@ -382,333 +382,337 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
         f.TeleportLabel:SetPoint("BOTTOM", f.TeleportLink, "TOP", 0, 2)
     elseif f.TeleportLabel:IsShown() then
         f.TeleportLabel:SetPoint("TOP", f.Content, "BOTTOM", 0, -8)
-    end
-
-    local textHeight = f.Content:GetStringHeight()
-    local labelHeight = f.TeleportLabel:IsShown() and f.TeleportLabel:GetStringHeight() or 0
-    local iconHeight = f.TeleportLink:IsShown() and 40 or 0
-    local baseHeight = 120
-    local teleportHeight = 0
-    if f.TeleportLink:IsShown() then
-        teleportHeight = teleportHeight + iconHeight + labelHeight + 10
-    elseif f.TeleportLabel:IsShown() then
-        teleportHeight = teleportHeight + labelHeight + 8
-    end
-    f:SetHeight(baseHeight + textHeight + teleportHeight)
-
-    f:Show()
-end
-
-function KeystonePolaris:ShowLastGroupReminder()
-    if not IsInGroup or not IsInGroup() then
-        print("|cffffa500Keystone Polaris:|r No active group to show the reminder.")
-        return
-    end
-
-    local data = self.lastGroupReminder
-    if not data and self.db and self.db.profile and self.db.profile.groupReminder then
-        data = self.db.profile.groupReminder.lastReminder
-    end
-    if not data then
-        print("|cffffa500Keystone Polaris:|r No reminder data stored yet.")
-        return
-    end
-
-    self:ShowStyledGroupReminderPopup(
-        data.title,
-        data.zone,
-        data.groupName,
-        data.comment,
-        data.roleText,
-        data.teleportSpellID
-    )
-end
-
-function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment, activityMapID)
-    local db = self.db and self.db.profile and self.db.profile.groupReminder
-    if not db or not db.enabled then return end
-
-    local roleText = GetAppliedRoleText(searchResultID)
-    local popupMsg, body = BuildMessages(db, title, zone, title, comment, roleText)
-
-    -- Resolve teleport spell for this dungeon
-    local teleportSpellID = self.GetTeleportSpellForMapID and self:GetTeleportSpellForMapID(activityMapID) or nil
-    if not teleportSpellID then
-        local candidates = GetTeleportCandidatesForMapIDLocal(self, activityMapID)
-        if type(candidates) == "number" then
-            teleportSpellID = candidates
-        elseif type(candidates) == "table" then
-            teleportSpellID = candidates[1]
         end
-    end
 
-    -- Store last reminder data (for chat link + command)
-    local reminderData = {
-        title = title,
-        zone = zone,
-        groupName = title,
-        comment = comment,
-        roleText = roleText,
-        teleportSpellID = teleportSpellID,
-    }
-    self.lastGroupReminder = reminderData
-    if self.db and self.db.profile and self.db.profile.groupReminder then
-        self.db.profile.groupReminder.lastReminder = reminderData
-    end
-
-    -- Popup
-    if db.showPopup then
-        self:ShowStyledGroupReminderPopup(title, zone, title, comment, roleText, teleportSpellID)
-    end
-
-    -- Chat
-    if db.showChat then
-        local chatHeader = "|cffdb6233" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r :"
-        if body ~= "" then
-            print(chatHeader .. "\n" .. body)
-        else
-            print(chatHeader)
+        local textHeight = f.Content:GetStringHeight()
+        local labelHeight = f.TeleportLabel:IsShown() and f.TeleportLabel:GetStringHeight() or 0
+        local iconHeight = f.TeleportLink:IsShown() and 40 or 0
+        local baseHeight = 112
+        local teleportHeight = 0
+        if f.TeleportLink:IsShown() then
+            teleportHeight = teleportHeight + iconHeight + labelHeight + 8
+        elseif f.TeleportLabel:IsShown() then
+            teleportHeight = teleportHeight + labelHeight + 8
         end
-        local linkText = L["KPH_GR_OPEN_REMINDER"] or "Open reminder"
-        local link = string.format("|Hkphreminder:1|h[%s]|h", linkText)
-        print(link)
-    end
-end
+        f:SetHeight(baseHeight + textHeight + teleportHeight)
 
-function KeystonePolaris:InitializeGroupReminder()
-    if self.groupReminderFrame then
-        -- Ensure registration reflects current settings
-        self:UpdateGroupReminderRegistration()
-        return
+        f:Show()
     end
 
-    self.groupReminderFrame = CreateFrame("Frame")
-    self.groupReminderFrame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-    self.groupReminderFrame:RegisterEvent("GROUP_LEFT")
-
-    self.groupReminderFrame:SetScript("OnEvent", function(_, event, ...)
-        if event == "GROUP_LEFT" then
-            self.lastGroupReminder = nil
-            if self.db and self.db.profile and self.db.profile.groupReminder then
-                self.db.profile.groupReminder.lastReminder = nil
-            end
+    function KeystonePolaris:ShowLastGroupReminder()
+        if not IsInGroup or not IsInGroup() then
+            print("|cffffa500Keystone Polaris:|r No active group to show the reminder.")
             return
         end
-        if event ~= "LFG_LIST_APPLICATION_STATUS_UPDATED" then return end
 
-        local searchResultID, newStatus = ...
-        if not searchResultID or not newStatus then return end
+        local data = self.lastGroupReminder
+        if not data and self.db and self.db.profile and self.db.profile.groupReminder then
+            data = self.db.profile.groupReminder.lastReminder
+        end
+        if not data then
+            print("|cffffa500Keystone Polaris:|r No reminder data stored yet.")
+            return
+        end
 
-        -- Show reminder when the invite is accepted (joined)
-        if newStatus ~= "inviteaccepted" then return end
+        self:ShowStyledGroupReminderPopup(
+            data.title,
+            data.zone,
+            data.groupName,
+            data.comment,
+            data.roleText,
+            data.teleportSpellID
+        )
+    end
 
-        local srd = C_LFGList.GetSearchResultInfo and C_LFGList.GetSearchResultInfo(searchResultID)
-        if not srd then return end
+    function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment, activityMapID)
+        local db = self.db and self.db.profile and self.db.profile.groupReminder
+        if not db or not db.enabled then return end
 
-        -- Some APIs return multiple activityIDs; prefer the first when present
-        local activityID = (srd.activityIDs and srd.activityIDs[1]) or srd.activityID
-        if not activityID then return end
+        local roleText = GetAppliedRoleText(searchResultID)
+        local popupMsg, body = BuildMessages(db, title, zone, title, comment, roleText)
 
-        if not IsMythicPlusActivity(activityID) then return end
-
-        local activity = C_LFGList.GetActivityInfoTable and C_LFGList.GetActivityInfoTable(activityID)
-        if not activity then return end
-
-        -- Hide Blizzard's LFG invite dialog if it's still visible (post-accept)
-        if self.db.profile.groupReminder.suppressQuickJoinToast and type(LFGListInviteDialog) == "table" and LFGListInviteDialog.Hide then
-            if LFGListInviteDialog:IsShown() then
-                LFGListInviteDialog:Hide()
+        -- Resolve teleport spell for this dungeon
+        local teleportSpellID = self.GetTeleportSpellForMapID and self:GetTeleportSpellForMapID(activityMapID) or nil
+        if not teleportSpellID then
+            local candidates = GetTeleportCandidatesForMapIDLocal(self, activityMapID)
+            if type(candidates) == "number" then
+                teleportSpellID = candidates
+            elseif type(candidates) == "table" then
+                teleportSpellID = candidates[1]
             end
         end
 
-        local title = srd.name or ""
-        local zone = activity.fullName or ""
-        local comment = srd.comment or ""
-        local mapID = activity.mapID
-        -- Delay slightly to allow group roster to update so UnitGroupRolesAssigned returns the accepted role
-        C_Timer.After(0.2, function()
-            self:ShowGroupReminder(searchResultID, title, zone, comment, mapID)
-        end)
+        -- Store last reminder data (for chat link + command)
+        local reminderData = {
+            title = title,
+            zone = zone,
+            groupName = title,
+            comment = comment,
+            roleText = roleText,
+            teleportSpellID = teleportSpellID,
+        }
+        self.lastGroupReminder = reminderData
+        if self.db and self.db.profile and self.db.profile.groupReminder then
+            self.db.profile.groupReminder.lastReminder = reminderData
+        end
 
-        -- Cleanup stored role for this application
-        self.groupReminderRoleByResult[searchResultID] = nil
-    end)
-end
+        -- Popup
+        if db.showPopup then
+            self:ShowStyledGroupReminderPopup(title, zone, title, comment, roleText, teleportSpellID)
+        end
 
-function KeystonePolaris:DisableGroupReminder()
-    if self.groupReminderFrame then
-        self.groupReminderFrame:UnregisterAllEvents()
+        -- Chat
+        if db.showChat then
+            local chatHeader = "|cffdb6233" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r :"
+            if body ~= "" then
+                print(chatHeader .. "\n" .. body)
+            else
+                print(chatHeader)
+            end
+            local linkText = L["KPH_GR_OPEN_REMINDER"] or "Open reminder"
+            local link = string.format("|Hkphreminder:1|h[%s]|h", linkText)
+            print(link)
+        end
     end
-end
 
-function KeystonePolaris:UpdateGroupReminderRegistration()
-    local db = self.db and self.db.profile and self.db.profile.groupReminder
-    if not db then return end
-    if db.enabled then
-        if not self.groupReminderFrame then
-            self:InitializeGroupReminder()
+    function KeystonePolaris:InitializeGroupReminder()
+        if self.groupReminderFrame then
+            -- Ensure registration reflects current settings
+            self:UpdateGroupReminderRegistration()
             return
         end
+
+        self.groupReminderFrame = CreateFrame("Frame")
         self.groupReminderFrame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-    else
-        self:DisableGroupReminder()
+        self.groupReminderFrame:RegisterEvent("GROUP_LEFT")
+
+        self.groupReminderFrame:SetScript("OnEvent", function(_, event, ...)
+            if event == "GROUP_LEFT" then
+                self.lastGroupReminder = nil
+                if self.db and self.db.profile and self.db.profile.groupReminder then
+                    self.db.profile.groupReminder.lastReminder = nil
+                end
+                return
+            end
+            if event ~= "LFG_LIST_APPLICATION_STATUS_UPDATED" then return end
+
+            local searchResultID, newStatus = ...
+            if not searchResultID or not newStatus then return end
+
+            -- Show reminder when the invite is accepted (joined)
+            if newStatus ~= "inviteaccepted" then return end
+
+            local srd = C_LFGList.GetSearchResultInfo and C_LFGList.GetSearchResultInfo(searchResultID)
+            if not srd then return end
+
+            -- Some APIs return multiple activityIDs; prefer the first when present
+            local activityID = (srd.activityIDs and srd.activityIDs[1]) or srd.activityID
+            if not activityID then return end
+
+            if not IsMythicPlusActivity(activityID) then return end
+
+            local activity = C_LFGList.GetActivityInfoTable and C_LFGList.GetActivityInfoTable(activityID)
+            if not activity then return end
+
+            -- Hide Blizzard's LFG invite dialog if it's still visible (post-accept)
+            if self.db.profile.groupReminder.suppressQuickJoinToast and type(LFGListInviteDialog) == "table" and LFGListInviteDialog.Hide then
+                if LFGListInviteDialog:IsShown() then
+                    LFGListInviteDialog:Hide()
+                end
+            end
+
+            local title = srd.name or ""
+            local zone = activity.fullName or ""
+            local comment = srd.comment or ""
+            local mapID = activity.mapID
+            -- Delay slightly to allow group roster to update so UnitGroupRolesAssigned returns the accepted role
+            C_Timer.After(0.2, function()
+                self:ShowGroupReminder(searchResultID, title, zone, comment, mapID)
+            end)
+
+            -- Cleanup stored role for this application
+            self.groupReminderRoleByResult[searchResultID] = nil
+        end)
     end
-end
 
--- Ensure Blizzard UI related to group invites/toasts is visible again
-function KeystonePolaris:RestoreBlizzardJoinUI()
-    if type(LFGListInviteDialog) == "table" and LFGListInviteDialog.Show then
-        LFGListInviteDialog:Show()
-    end
-end
-
-function KeystonePolaris:TestGroupReminder()
-    self._testingGroupReminder = true
-    local fakeID = 999999
-    -- Fake a role application
-    self.groupReminderRoleByResult = self.groupReminderRoleByResult or {}
-    self.groupReminderRoleByResult[fakeID] = "Damage"
-
-    -- Fake data
-    local title = "Test Group (+10)"
-    local dungeonId, mapID, zone = GetCurrentSeasonDungeonInfo(self)
-    local comment = "Testing group reminder."
-
-    if not mapID then
-        print("|cffffa500[Keystone Polaris]|r Could not resolve a current-season dungeon. Falling back to The Stonevault.")
-        mapID = 2652
-        zone = "The Stonevault"
+    function KeystonePolaris:DisableGroupReminder()
+        if self.groupReminderFrame then
+            self.groupReminderFrame:UnregisterAllEvents()
+        end
     end
 
-    -- Ensure options are loaded so we don't crash
-    if not self.db.profile.groupReminder then
-        self.db.profile.groupReminder = self.defaults.profile.groupReminder
+    function KeystonePolaris:UpdateGroupReminderRegistration()
+        local db = self.db and self.db.profile and self.db.profile.groupReminder
+        if not db then return end
+        if db.enabled then
+            if not self.groupReminderFrame then
+                self:InitializeGroupReminder()
+                return
+            end
+            self.groupReminderFrame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+        else
+            self:DisableGroupReminder()
+        end
     end
-    
-    -- Force show even if disabled, for testing purposes? 
-    -- Better to respect "enabled" flag or print a warning.
-    if not self.db.profile.groupReminder.enabled then
-        print("|cffff0000[Keystone Polaris]|r Group Reminder is currently disabled in options.")
+
+    -- Ensure Blizzard UI related to group invites/toasts is visible again
+    function KeystonePolaris:RestoreBlizzardJoinUI()
+        if type(LFGListInviteDialog) == "table" and LFGListInviteDialog.Show then
+            LFGListInviteDialog:Show()
+        end
+    end
+
+    function KeystonePolaris:TestGroupReminder()
+        self._testingGroupReminder = true
+        local fakeID = 999999
+        -- Fake a role application
+        self.groupReminderRoleByResult = self.groupReminderRoleByResult or {}
+        self.groupReminderRoleByResult[fakeID] = "Damage"
+
+        -- Fake data
+        local title = "Test Group (+10)"
+        local dungeonId, mapID, zone = GetCurrentSeasonDungeonInfo(self)
+        local comment = "Testing group reminder with a very long description to validate layout behavior. This text should wrap across multiple lines and show how the popup behaves when the description is much longer than usual."
+
+        if not mapID then
+            print("|cffffa500[Keystone Polaris]|r Could not resolve a current-season dungeon. Falling back to The Stonevault.")
+            mapID = 2652
+            zone = "The Stonevault"
+        end
+
+        -- Ensure options are loaded so we don't crash
+        if not self.db.profile.groupReminder then
+            self.db.profile.groupReminder = self.defaults.profile.groupReminder
+        end
+        
+        -- Force show even if disabled, for testing purposes? 
+        -- Better to respect "enabled" flag or print a warning.
+        if not self.db.profile.groupReminder.enabled then
+            print("|cffff0000[Keystone Polaris]|r Group Reminder is currently disabled in options.")
+            self._testingGroupReminder = false
+            return
+        end
+
+        self:ShowGroupReminder(fakeID, title, zone, comment, mapID)
         self._testingGroupReminder = false
-        return
     end
 
-    self:ShowGroupReminder(fakeID, title, zone, comment, mapID)
-    self._testingGroupReminder = false
-end
-
-function KeystonePolaris:GetGroupReminderOptions()
-    local self = KeystonePolaris
-    return {
-        name = L["KPH_GR_HEADER"] or "Group Reminder",
-        type = "group",
-        order = 7, -- Place it after Colors
-        args = {
-            header = { order = 0, type = "header", name = L["KPH_GR_HEADER"] or "Group Reminder" },
-            description = {
-                order = 0.5,
-                type = "description",
-                name = L["KPH_GR_DESC_LONG"] or "Displays a reminder popup and/or chat message when you are accepted into a Mythic+ group, with a button to teleport to the dungeon.",
-                fontSize = "medium",
+    function KeystonePolaris:GetGroupReminderOptions()
+        local self = KeystonePolaris
+        return {
+            name = L["KPH_GR_HEADER"] or "Group Reminder",
+            type = "group",
+            order = 7, -- Place it after Colors
+            args = {
+                header = { 
+                    order = 0, 
+                    type = "header", 
+                    name = "|cffffd100" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r"
+                },
+                description = {
+                    order = 0.5,
+                    type = "description",
+                    name = L["KPH_GR_DESC_LONG"] or "Displays a reminder popup and/or chat message when you are accepted into a Mythic+ group, with a button to teleport to the dungeon.",
+                    fontSize = "medium",
+                },
+                enable = {
+                    name = L["ENABLE"] or "Enable",
+                    type = "toggle",
+                    width = "full",
+                    order = 1,
+                    get = function() return self.db.profile.groupReminder.enabled end,
+                    set = function(_, value)
+                        self.db.profile.groupReminder.enabled = value
+                        if value then self:InitializeGroupReminder() else self:DisableGroupReminder() end
+                    end,
+                },
+                notificationsHeader = {
+                    order = 2,
+                    type = "header",
+                    name = L["KPH_GR_NOTIFICATIONS"] or "Notifications",
+                },
+                showPopup = {
+                    name = L["KPH_GR_SHOW_POPUP"] or "Show popup",
+                    desc = L["KPH_GR_SHOW_POPUP_DESC"] or "Display the reminder window in the center of the screen.",
+                    type = "toggle",
+                    width = "full",
+                    order = 3,
+                    get = function() return self.db.profile.groupReminder.showPopup end,
+                    set = function(_, v) self.db.profile.groupReminder.showPopup = v end,
+                    disabled = function() return not self.db.profile.groupReminder.enabled end,
+                },
+                showChat = {
+                    name = L["KPH_GR_SHOW_CHAT"] or "Show chat message",
+                    desc = L["KPH_GR_SHOW_CHAT_DESC"] or "Print the reminder details in the chat window.",
+                    type = "toggle",
+                    width = "full",
+                    order = 4,
+                    get = function() return self.db.profile.groupReminder.showChat end,
+                    set = function(_, v) self.db.profile.groupReminder.showChat = v end,
+                    disabled = function() return not self.db.profile.groupReminder.enabled end,
+                },
+                suppressQuickJoinToast = {
+                    name = L["KPH_GR_SUPPRESS_TOAST"] or "Suppress Blizzard quick-join toast",
+                    desc = L["KPH_GR_SUPPRESS_TOAST_DESC"] or "Hide the default Blizzard popup that appears at the bottom of the screen when invited.",
+                    type = "toggle",
+                    width = "full",
+                    order = 5,
+                    get = function() return self.db.profile.groupReminder.suppressQuickJoinToast end,
+                    set = function(_, v)
+                        self.db.profile.groupReminder.suppressQuickJoinToast = v
+                        -- If turning suppression OFF while not in group, restore Blizzard UI now for future invites
+                        if (not v) and (not IsInGroup()) and self.RestoreBlizzardJoinUI then
+                            self:RestoreBlizzardJoinUI()
+                        end
+                    end,
+                    disabled = function() return not self.db.profile.groupReminder.enabled end,
+                },
+                testCurrentSeason = {
+                    name = L["KPH_GR_TEST_CURRENT_SEASON"] or "Simulate current season acceptance",
+                    desc = L["KPH_GR_TEST_CURRENT_SEASON_DESC"] or "Show the group reminder using a dungeon from the current season.",
+                    type = "execute",
+                    width = "full",
+                    order = 6,
+                    func = function() self:TestGroupReminder() end,
+                    disabled = function() return not self.db.profile.groupReminder.enabled end,
+                },
+                contentHeader = {
+                    order = 10,
+                    type = "header",
+                    name = L["KPH_GR_CONTENT"] or "Content",
+                },
+                showDungeonName = {
+                    name = L["KPH_GR_SHOW_DUNGEON"] or "Show dungeon name",
+                    type = "toggle",
+                    order = 11,
+                    get = function() return self.db.profile.groupReminder.showDungeonName end,
+                    set = function(_, v) self.db.profile.groupReminder.showDungeonName = v end,
+                    disabled = function() return not self.db.profile.groupReminder.enabled end,
+                },
+                showGroupName = {
+                    name = L["KPH_GR_SHOW_GROUP"] or "Show group name",
+                    type = "toggle",
+                    order = 12,
+                    get = function() return self.db.profile.groupReminder.showGroupName end,
+                    set = function(_, v) self.db.profile.groupReminder.showGroupName = v end,
+                    disabled = function() return not self.db.profile.groupReminder.enabled end,
+                },
+                showGroupDescription = {
+                    name = L["KPH_GR_SHOW_DESC"] or "Show group description",
+                    type = "toggle",
+                    order = 13,
+                    get = function() return self.db.profile.groupReminder.showGroupDescription end,
+                    set = function(_, v) self.db.profile.groupReminder.showGroupDescription = v end,
+                    disabled = function() return not self.db.profile.groupReminder.enabled end,
+                },
+                showAppliedRole = {
+                    name = L["KPH_GR_SHOW_ROLE"] or "Show applied role",
+                    type = "toggle",
+                    order = 14,
+                    get = function() return self.db.profile.groupReminder.showAppliedRole end,
+                    set = function(_, v) self.db.profile.groupReminder.showAppliedRole = v end,
+                    disabled = function() return not self.db.profile.groupReminder.enabled end,
+                },
             },
-            enable = {
-                name = L["ENABLE"] or "Enable",
-                type = "toggle",
-                width = "full",
-                order = 1,
-                get = function() return self.db.profile.groupReminder.enabled end,
-                set = function(_, value)
-                    self.db.profile.groupReminder.enabled = value
-                    if value then self:InitializeGroupReminder() else self:DisableGroupReminder() end
-                end,
-            },
-            notificationsHeader = {
-                order = 2,
-                type = "header",
-                name = L["KPH_GR_NOTIFICATIONS"] or "Notifications",
-            },
-            showPopup = {
-                name = L["KPH_GR_SHOW_POPUP"] or "Show popup",
-                desc = L["KPH_GR_SHOW_POPUP_DESC"] or "Display the reminder window in the center of the screen.",
-                type = "toggle",
-                width = "full",
-                order = 3,
-                get = function() return self.db.profile.groupReminder.showPopup end,
-                set = function(_, v) self.db.profile.groupReminder.showPopup = v end,
-                disabled = function() return not self.db.profile.groupReminder.enabled end,
-            },
-            showChat = {
-                name = L["KPH_GR_SHOW_CHAT"] or "Show chat message",
-                desc = L["KPH_GR_SHOW_CHAT_DESC"] or "Print the reminder details in the chat window.",
-                type = "toggle",
-                width = "full",
-                order = 4,
-                get = function() return self.db.profile.groupReminder.showChat end,
-                set = function(_, v) self.db.profile.groupReminder.showChat = v end,
-                disabled = function() return not self.db.profile.groupReminder.enabled end,
-            },
-            suppressQuickJoinToast = {
-                name = L["KPH_GR_SUPPRESS_TOAST"] or "Suppress Blizzard quick-join toast",
-                desc = L["KPH_GR_SUPPRESS_TOAST_DESC"] or "Hide the default Blizzard popup that appears at the bottom of the screen when invited.",
-                type = "toggle",
-                width = "full",
-                order = 5,
-                get = function() return self.db.profile.groupReminder.suppressQuickJoinToast end,
-                set = function(_, v)
-                    self.db.profile.groupReminder.suppressQuickJoinToast = v
-                    -- If turning suppression OFF while not in group, restore Blizzard UI now for future invites
-                    if (not v) and (not IsInGroup()) and self.RestoreBlizzardJoinUI then
-                        self:RestoreBlizzardJoinUI()
-                    end
-                end,
-                disabled = function() return not self.db.profile.groupReminder.enabled end,
-            },
-            testCurrentSeason = {
-                name = L["KPH_GR_TEST_CURRENT_SEASON"] or "Simulate current season acceptance",
-                desc = L["KPH_GR_TEST_CURRENT_SEASON_DESC"] or "Show the group reminder using a dungeon from the current season.",
-                type = "execute",
-                width = "full",
-                order = 6,
-                func = function() self:TestGroupReminder() end,
-                disabled = function() return not self.db.profile.groupReminder.enabled end,
-            },
-            contentHeader = {
-                order = 10,
-                type = "header",
-                name = L["KPH_GR_CONTENT"] or "Content",
-            },
-            showDungeonName = {
-                name = L["KPH_GR_SHOW_DUNGEON"] or "Show dungeon name",
-                type = "toggle",
-                order = 11,
-                get = function() return self.db.profile.groupReminder.showDungeonName end,
-                set = function(_, v) self.db.profile.groupReminder.showDungeonName = v end,
-                disabled = function() return not self.db.profile.groupReminder.enabled end,
-            },
-            showGroupName = {
-                name = L["KPH_GR_SHOW_GROUP"] or "Show group name",
-                type = "toggle",
-                order = 12,
-                get = function() return self.db.profile.groupReminder.showGroupName end,
-                set = function(_, v) self.db.profile.groupReminder.showGroupName = v end,
-                disabled = function() return not self.db.profile.groupReminder.enabled end,
-            },
-            showGroupDescription = {
-                name = L["KPH_GR_SHOW_DESC"] or "Show group description",
-                type = "toggle",
-                order = 13,
-                get = function() return self.db.profile.groupReminder.showGroupDescription end,
-                set = function(_, v) self.db.profile.groupReminder.showGroupDescription = v end,
-                disabled = function() return not self.db.profile.groupReminder.enabled end,
-            },
-            showAppliedRole = {
-                name = L["KPH_GR_SHOW_ROLE"] or "Show applied role",
-                type = "toggle",
-                order = 14,
-                get = function() return self.db.profile.groupReminder.showAppliedRole end,
-                set = function(_, v) self.db.profile.groupReminder.showAppliedRole = v end,
-                disabled = function() return not self.db.profile.groupReminder.enabled end,
-            },
-        },
-    }
-end
+        }
+    end
