@@ -241,6 +241,8 @@ L["KPH_GR_DESCRIPTION"] = "Description :"
 L["KPH_GR_ROLE"] = "Rôle :"
 L["KPH_GR_TELEPORT"] = "Se téléporter au donjon"
 L["KPH_GR_OPEN_REMINDER"] = "Ouvrir le rappel"
+L["KPH_GR_INVITED"] = "Vous avez été invité à"
+L["KPH_GR_AS_ROLE"] = "en tant que %s"
 
 -- Group Reminder (Options)
 L["KPH_GR_DESC_LONG"] = "Affiche une fenêtre de rappel et/ou un message dans le chat quand vous êtes accepté dans un groupe Mythic+, avec un bouton pour se téléporter au donjon."

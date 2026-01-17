@@ -111,19 +111,90 @@ local function GetTeleportCandidatesForMapIDLocal(self, mapID)
     return nil
 end
 
-local function BuildMessages(db, titleText, zoneText, groupName, groupComment, roleText)
-    -- Build body (without header) once
-    local bodyLines = {}
-    if db.showDungeonName then table.insert(bodyLines, (L["KPH_GR_DUNGEON"] or "Dungeon:") .. " " .. (zoneText or "-")) end
-    if db.showGroupName then table.insert(bodyLines, (L["KPH_GR_GROUP"] or "Group:") .. " " .. (groupName or "-")) end
-    if db.showGroupDescription then table.insert(bodyLines, (L["KPH_GR_DESCRIPTION"] or "Description:") .. " " .. (groupComment or "-")) end
-    if db.showAppliedRole then table.insert(bodyLines, (L["KPH_GR_ROLE"] or "Role:") .. " " .. (roleText or "-")) end
+local function GetRoleIconTag(roleText)
+    if type(roleText) ~= "string" then return "" end
+    local up = string.upper(roleText)
+    local roleKey
 
-    local body = table.concat(bodyLines, "\n")
+    if up == "TANK" or roleText == TANK then
+        roleKey = "TANK"
+    elseif up == "HEALER" or roleText == HEALER then
+        roleKey = "HEALER"
+    elseif up == "DAMAGER" or up == "DAMAGE" or roleText == DAMAGER then
+        roleKey = "DAMAGER"
+    end
+    if not roleKey then return "" end
+
+    local size = 14
+    local atlasCandidates = {
+        TANK = {"roleicon-tank", "roleicon-tiny-tank"},
+        HEALER = {"roleicon-healer", "roleicon-tiny-healer"},
+        DAMAGER = {"roleicon-dps", "roleicon-tiny-dps"},
+    }
+    local candidates = atlasCandidates[roleKey]
+    if candidates then
+        if C_Texture and C_Texture.GetAtlasInfo then
+            for _, name in ipairs(candidates) do
+                if C_Texture.GetAtlasInfo(name) then
+                    return string.format("|A:%s:%d:%d|a", name, size, size)
+                end
+            end
+        else
+            return string.format("|A:%s:%d:%d|a", candidates[1], size, size)
+        end
+    end
+
+    local left, right, top, bottom
+    if GetTexCoordsForRoleSmallCircle then
+        left, right, top, bottom = GetTexCoordsForRoleSmallCircle(roleKey)
+
+    elseif GetTexCoordsForRole then
+        left, right, top, bottom = GetTexCoordsForRole(roleKey)
+    elseif roleKey == "TANK" then
+        left, right, top, bottom = 0, 0.25, 0, 0.25
+    elseif roleKey == "HEALER" then
+        left, right, top, bottom = 0.25, 0.5, 0, 0.25
+    else
+        left, right, top, bottom = 0.5, 0.75, 0, 0.25
+    end
+
+    return string.format("|T%s:%d:%d:0:0:64:64:%.3f:%.3f:%.3f:%.3f|t", "Interface\\LFGFrame\\UI-LFG-ICON-ROLES", size, size, left, right, top, bottom)
+end
+
+local function BuildMessages(db, titleText, zoneText, groupName, groupComment, roleText)
+    local details = {}
+    local valueColor = "|cff00aaff"
+
+    if db.showDungeonName then
+        table.insert(details, valueColor .. (zoneText or "-") .. "|r")
+    end
+    if db.showGroupName then
+        table.insert(details, valueColor .. (groupName or "-") .. "|r")
+    end
+
+    local body = ""
+    if #details > 0 or db.showAppliedRole then
+        body = (L["KPH_GR_INVITED"] or "You have been invited to")
+        if #details > 0 then
+            body = body .. " " .. table.concat(details, ", ")
+        end
+        if db.showAppliedRole then
+            local roleLabel = string.format((L["KPH_GR_AS_ROLE"] or "as a %s"), valueColor .. (roleText or "-") .. "|r")
+            local roleIcon = GetRoleIconTag(roleText)
+            if roleIcon ~= "" then
+                roleLabel = roleLabel .. " " .. roleIcon
+            end
+            if #details > 0 then
+                body = body .. ", " .. roleLabel
+            else
+                body = body .. " " .. roleLabel
+            end
+        end
+    end
 
     local popupMsg
     if body ~= "" then
-        popupMsg = "|cffffd700" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r\n\n" .. body
+        popupMsg = "|cffffd700" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r " .. body
     else
         popupMsg = "|cffffd700" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r"
     end
@@ -297,6 +368,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
     if db.showDungeonName then table.insert(lines, labelColor .. (L["KPH_GR_DUNGEON"] or "Dungeon:") .. "|r " .. valueColor .. (zone or "-") .. "|r") end
     if db.showGroupName then table.insert(lines, labelColor .. (L["KPH_GR_GROUP"] or "Group:") .. "|r " .. valueColor .. (groupName or "-") .. "|r") end
     if db.showGroupDescription then table.insert(lines, labelColor .. (L["KPH_GR_DESCRIPTION"] or "Description:") .. "|r " .. valueColor .. (groupComment or "-") .. "|r") end
+    if db.showAppliedRole then table.insert(lines, labelColor .. (L["KPH_GR_ROLE"] or "Role:") .. "|r " .. valueColor .. (roleText or "-") .. "|r") end
 
     -- Join all lines with newlines
     local fullText = table.concat(lines, "\n")
@@ -463,15 +535,14 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
 
         -- Chat
         if db.showChat then
-            local chatHeader = "|cffdb6233" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r :"
+            local chatHeader = "|cffdb6233" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. " :|r"
+            local linkText = "|cffffd100[" .. (L["KPH_GR_OPEN_REMINDER"] or "Open reminder") .. "]|r"
+            local link = string.format("|Hkphreminder:1|h%s|h", linkText)
             if body ~= "" then
-                print(chatHeader .. "\n" .. body)
+                print(chatHeader .. " " .. body .. " " .. link)
             else
-                print(chatHeader)
+                print(chatHeader .. " " .. link)
             end
-            local linkText = L["KPH_GR_OPEN_REMINDER"] or "Open reminder"
-            local link = string.format("|Hkphreminder:1|h[%s]|h", linkText)
-            print(link)
         end
     end
 

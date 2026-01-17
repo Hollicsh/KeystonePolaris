@@ -245,6 +245,8 @@ L["KPH_GR_DESCRIPTION"] = "Description:"
 L["KPH_GR_ROLE"] = "Role:"
 L["KPH_GR_TELEPORT"] = "Teleport to dungeon:"
 L["KPH_GR_OPEN_REMINDER"] = "Open reminder"
+L["KPH_GR_INVITED"] = "You have been invited to"
+L["KPH_GR_AS_ROLE"] = "as a %s"
 
 -- Group Reminder (Options)
 L["KPH_GR_DESC_LONG"] = "Displays a reminder popup and/or chat message when you are accepted into a Mythic+ group, with a button to teleport to the dungeon."
