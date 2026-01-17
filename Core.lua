@@ -75,6 +75,16 @@ function KeystonePolaris:GetGradientAddonName()
     return self._gradientAddonName
 end
 
+function KeystonePolaris:GetGradientAddonNameFromSecondLetter()
+    if not self._gradientAddonNameFromSecond then
+        local name = "Keystone Polaris"
+        local first = name:sub(1, 1)
+        local rest = name:sub(2)
+        self._gradientAddonNameFromSecond = first .. GradientText(rest)
+    end
+    return self._gradientAddonNameFromSecond
+end
+
 function KeystonePolaris:GetChatPrefix(bracketed)
     local name = self:GetGradientAddonName()
     if bracketed then
@@ -115,8 +125,10 @@ function KeystonePolaris:OnInitialize()
     end
 
     -- Register options with Ace3 config system
+    local optionsAddonName = (self.GetGradientAddonNameFromSecondLetter and self:GetGradientAddonNameFromSecondLetter()) or "Keystone Polaris"
+    local optionsAddonDisplayName = (self.GetGradientAddonName and self:GetGradientAddonName()) or optionsAddonName
     AceConfig:RegisterOptionsTable(AddOnName, {
-        name = "Keystone Polaris",
+        name = optionsAddonDisplayName,
         type = "group",
         args = {
             general = {
@@ -205,8 +217,8 @@ function KeystonePolaris:OnInitialize()
     })
     AceConfig:RegisterOptionsTable(AddOnName .. "_Changelog", self.changelogOptions)
 
-    AceConfigDialog:AddToBlizOptions(AddOnName, "Keystone Polaris")
-    AceConfigDialog:AddToBlizOptions(AddOnName .. "_Changelog", L['Changelog'], "Keystone Polaris")
+    AceConfigDialog:AddToBlizOptions(AddOnName, optionsAddonName)
+    AceConfigDialog:AddToBlizOptions(AddOnName .. "_Changelog", L['Changelog'], optionsAddonName)
 
 
     -- Register chat command and events

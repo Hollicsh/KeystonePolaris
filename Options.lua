@@ -1650,6 +1650,7 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
 end
 
 function KeystonePolaris:ToggleConfig()
-    Settings.OpenToCategory("Keystone Polaris")
+    local optionsAddonName = (self.GetGradientAddonName and self:GetGradientAddonName()) or "Keystone Polaris"
+    Settings.OpenToCategory(optionsAddonName)
 end
 
