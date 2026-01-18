@@ -672,18 +672,70 @@ function KeystonePolaris:TestGroupReminder()
     local fakeID = 999999
     -- Fake a role application
     self.groupReminderRoleByResult = self.groupReminderRoleByResult or {}
-    self.groupReminderRoleByResult[fakeID] = "Damage"
+    local roles = {L["TANK"], L["HEALER"], L["DPS"]}
+    self.groupReminderRoleByResult[fakeID] = roles[math.random(#roles)]
 
-    -- Fake data
-    local title = "Test Group (+10)"
-    local dungeonId, mapID, zone = GetCurrentSeasonDungeonInfo(self)
-    local comment = "Testing group reminder with a very long description to validate layout behavior. This text should wrap across multiple lines and show how the popup behaves when the description is much longer than usual."
+    -- Fake data (randomized)
+    local titles = {
+        "Push +10 chill",
+        "+10 Weekly vault run",
+        "Fast +12 no leavers",
+        "Timed +15 key",
+        "Casual +2 keys",
+    }
+    local lorem = {
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    }
+
+    local title = titles[math.random(#titles)]
+    local comment = lorem[math.random(#lorem)]
+
+    local dungeonId, mapID, zone
+    if type(self.GetSeasonByDate) == "function" then
+        local currentSeasonId = self:GetSeasonByDate(date("%Y-%m-%d"))
+        local seasonDungeons = currentSeasonId and self[currentSeasonId .. "_DUNGEONS"]
+        if type(seasonDungeons) == "table" then
+            local dungeonIds = {}
+            for id, enabled in pairs(seasonDungeons) do
+                if type(id) == "number" and enabled then
+                    table.insert(dungeonIds, id)
+                end
+            end
+            if #dungeonIds > 0 then
+                dungeonId = dungeonIds[math.random(#dungeonIds)]
+                if C_ChallengeMode and C_ChallengeMode.GetMapUIInfo then
+                    local name = C_ChallengeMode.GetMapUIInfo(dungeonId)
+                    zone = name or zone
+                end
+                local shortName = self.GlobalDungeonIDLookup and self.GlobalDungeonIDLookup[dungeonId]
+                local dungeonData = shortName and self.GlobalDungeonLookup and self.GlobalDungeonLookup[shortName]
+                mapID = dungeonData and dungeonData.mapID
+                if not zone and mapID and C_Map and C_Map.GetMapInfo then
+                    local info = C_Map.GetMapInfo(mapID)
+                    zone = info and info.name or zone
+                end
+                zone = zone or (dungeonData and (dungeonData.displayName or dungeonData.name)) or (shortName or tostring(dungeonId))
+            end
+        end
+    end
 
     if not mapID then
         local prefix = (self.GetChatPrefix and self:GetChatPrefix(true)) or "[Keystone Polaris]"
         print(prefix .. " Could not resolve a current-season dungeon. Falling back to The Stonevault.")
         mapID = 2652
         zone = "The Stonevault"
+    end
+
+    if not zone and dungeonId and C_ChallengeMode and C_ChallengeMode.GetMapUIInfo then
+        local name = C_ChallengeMode.GetMapUIInfo(dungeonId)
+        zone = name or zone
+    end
+    if not zone and mapID and C_Map and C_Map.GetMapInfo then
+        local info = C_Map.GetMapInfo(mapID)
+        zone = info and info.name or zone
     end
 
     -- Ensure options are loaded so we don't crash
