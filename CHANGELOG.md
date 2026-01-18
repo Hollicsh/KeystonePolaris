@@ -1,19 +1,20 @@
-## [3.2.0](https://github.com/ZelionGG/KeystonePolaris/releases/tag/3.2.0) (2025-12-08)
+## [3.3.0](https://github.com/ZelionGG/KeystonePolaris/releases/tag/3.3.0) (2026-01-17)
 
-[Full Changelog](https://github.com/ZelionGG/KeystonePolaris/compare/3.1.1...3.2.0) [Previous Releases](https://github.com/ZelionGG/KeystonePolaris/releases)
+[Full Changelog](https://github.com/ZelionGG/KeystonePolaris/compare/3.2.0...3.3.0) [Previous Releases](https://github.com/ZelionGG/KeystonePolaris/releases)
+
+### Important
+- Gradient addon name in chat and UI headers.
 
 ### New
-- Added full support for all **Legion Dungeons**.
-- Introduced the new **Legion Remix** options category for upcoming seasons.
-- Season start dates (and end dates) are now displayed directly in the Options menu.
-- Automated the retrieval of boss names using Blizzard's API for better accuracy.
-- Initial preparation for the upcoming **Midnight Season 1**.
+- Standard LibDBIcon minimap icon with toggle.
+- Compartment icon toggle added.
 
 ### Improvements
-- Massive code reorganization and cleanup for better performance.
-- Added informative placeholders in the options menu for dungeons that are not yet implemented.
-- Optimized locale initialization to reduce load times.
+- Group Reminder header now uses localized text with dynamic gradient prefix.
+- Chat reminders recolored to a warmer orange.
+- Options category keeps alphabetical order while showing gradient name.
 
 ### Bug Fixes
-- Reimplemented missing helper functions that caused issues in previous builds.
+- Fixed chat link handling in Group Reminder.
+- Removed obsolete teleport popup code.
 
