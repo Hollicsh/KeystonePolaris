@@ -57,6 +57,7 @@ L["LEADER"] = "파장"
 L["TANK"] = "탱커"
 L["HEALER"] = "힐러"
 L["DPS"] = "딜러"
+L["ENABLE"] = "Enable" -- To Translate
 L["ENABLE_ADVANCED_OPTIONS"] = "커스텀 루트 활성화"
 L["ADVANCED_OPTIONS_DESC"] = "이를 통해 각 보스가 도달하기 전에 사용자 정의 백분율을 설정하고 누락된 백분율을 그룹에 알릴지 여부를 선택할 수 있습니다."
 L["INFORM_GROUP"] = "그룹 알림"
