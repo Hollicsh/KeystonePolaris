@@ -111,6 +111,7 @@ L["SHOW_MINIMAP_ICON"] = "Minimap icon" -- To Translate
 L["COMMANDS_HEADER"] = "Commands"
 L["COMMANDS_HELP_DESC"] = "Available slash commands:\n• /kpl or /polaris - Open options\n• /kpl reminder or /polaris reminder - Show last group reminder\n• /kpl help or /polaris help - Show this help"
 L["COMMANDS_HELP_OPEN"] = "/kpl or /polaris - Open options"
+L["COMMANDS_HELP_CHANGELOG"] = "/kpl changelog or /polaris changelog - Open changelog"
 L["COMMANDS_HELP_REMINDER"] = "/kpl reminder or /polaris reminder - Show last group reminder"
 L["COMMANDS_HELP_HELP"] = "/kpl help or /polaris help - Show this help"
 

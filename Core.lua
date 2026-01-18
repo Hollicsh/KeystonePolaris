@@ -389,8 +389,8 @@ function KeystonePolaris:OnInitialize()
     })
     AceConfig:RegisterOptionsTable(AddOnName .. "_Changelog", self.changelogOptions)
 
-    AceConfigDialog:AddToBlizOptions(AddOnName, optionsAddonName)
-    AceConfigDialog:AddToBlizOptions(AddOnName .. "_Changelog", L['Changelog'], optionsAddonName)
+    self.optionsCategoryId = select(2, AceConfigDialog:AddToBlizOptions(AddOnName, optionsAddonName))
+    self.changelogCategoryId = select(2, AceConfigDialog:AddToBlizOptions(AddOnName .. "_Changelog", L["Changelog"], optionsAddonName))
 
 
     -- Register chat command and events
@@ -416,12 +416,18 @@ function KeystonePolaris:ToggleConfig(input)
         if self.ShowHelp then self:ShowHelp() end
         return
     end
+    if command == "changelog" then
+        if Settings and Settings.OpenToCategory then
+            Settings.OpenToCategory(self.changelogCategoryId or self.optionsCategoryId or optionsAddonName)
+        end
+        return
+    end
     if command == "reminder" then
         self:ShowLastGroupReminder()
         return
     end
 
-    Settings.OpenToCategory(optionsAddonName)
+    Settings.OpenToCategory(self.optionsCategoryId or optionsAddonName)
 end
 
 function KeystonePolaris:ShowHelp()
@@ -429,6 +435,7 @@ function KeystonePolaris:ShowHelp()
     local prefix = (self.GetChatPrefix and self:GetChatPrefix(true)) or "[Keystone Polaris]"
     local lines = {
         L["COMMANDS_HELP_OPEN"] or "/kpl or /polaris - Open options",
+        L["COMMANDS_HELP_CHANGELOG"] or "/kpl changelog or /polaris changelog - Open changelog",
         L["COMMANDS_HELP_REMINDER"] or "/kpl reminder - Show last group reminder",
         L["COMMANDS_HELP_HELP"] or "/kpl help - Show this help",
     }

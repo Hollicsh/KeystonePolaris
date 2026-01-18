@@ -109,6 +109,7 @@ L["SHOW_MINIMAP_ICON"] = "Icône de la mini-carte"
 L["COMMANDS_HEADER"] = "Commandes"
 L["COMMANDS_HELP_DESC"] = "Commandes slash disponibles:\n• /kpl or /polaris - Ouvrir les options\n• /kpl reminder or /polaris reminder - Afficher le dernier rappel de groupe\n• /kpl help or /polaris help - Afficher cette aide"
 L["COMMANDS_HELP_OPEN"] = "/kpl or /polaris - Ouvrir les options"
+L["COMMANDS_HELP_CHANGELOG"] = "/kpl changelog or /polaris changelog - Afficher les notes de mise à jour"
 L["COMMANDS_HELP_REMINDER"] = "/kpl reminder or /polaris reminder - Afficher le dernier rappel de groupe"
 L["COMMANDS_HELP_HELP"] = "/kpl help or /polaris help - Afficher cette aide"
 
