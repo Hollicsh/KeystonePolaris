@@ -8,7 +8,11 @@ KeystonePolaris.TWW_LEGION_REMIX_1_DUNGEONS = {
     expansion = "7_Legion",
     is_remix = true,
     start_date = "2025-10-07",
-    end_date = "2026-01-19",
+    end_date = {
+        US = "2026-01-19",
+        EU = "2026-01-20",
+        default = "2026-01-20"
+    },
     -- Legion Dungeons
     [199] = true, -- BRH (Black Rook Hold)
     [233] = true, -- CoEN (Cathedral of Eternal Night)

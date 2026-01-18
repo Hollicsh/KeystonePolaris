@@ -18,6 +18,7 @@ L["SEASON_STARTS_IN_ONE_MONTH"] = "La prochaine saison commence dans moins d’u
 L["SEASON_STARTS_IN_WEEKS"] = "La prochaine saison commence dans moins de %d semaines."
 L["SEASON_STARTS_IN_DAYS"] = "La prochaine saison commence dans %d jours."
 L["SEASON_STARTS_IN_TOMORROW"] = "La prochaine saison commence demain."
+L["WEEKDAY_NEXT_FORMAT"] = "(%s prochain)"
 
 L["EXPANSION_MIDNIGHT"] = "Midnight"
 L["EXPANSION_WW"] = "The War Within"

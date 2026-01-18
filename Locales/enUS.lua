@@ -17,6 +17,7 @@ L["SEASON_STARTS_IN_ONE_MONTH"] = "Next season starts in less than one month."
 L["SEASON_STARTS_IN_WEEKS"] = "Next season starts in less than %d weeks."
 L["SEASON_STARTS_IN_DAYS"] = "Next season starts in %d days."
 L["SEASON_STARTS_IN_TOMORROW"] = "Next season starts tomorrow."
+L["WEEKDAY_NEXT_FORMAT"] = "(next %s)"
 
 L["EXPANSION_MIDNIGHT"] = "Midnight"
 L["EXPANSION_WW"] = "The War Within"

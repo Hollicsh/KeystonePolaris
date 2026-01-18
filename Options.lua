@@ -785,8 +785,15 @@ function KeystonePolaris:GetAdvancedOptions()
         local year, month, day = strsplit("-", dateStr)
         year, month, day = tonumber(year), tonumber(month), tonumber(day)
         if not year or not month or not day then return nil end
+
+        local currentDate = date("%Y-%m-%d")
+        local cYear, cMonth, cDay = strsplit("-", currentDate)
+        cYear, cMonth, cDay = tonumber(cYear), tonumber(cMonth), tonumber(cDay)
+        if not cYear or not cMonth or not cDay then return nil end
+
         local target = time({year = year, month = month, day = day, hour = 12})
-        return math.floor((target - time()) / 86400)
+        local current = time({year = cYear, month = cMonth, day = cDay, hour = 12})
+        return math.floor((target - current) / 86400)
     end
 
     local function GetSeasonCountdownText(daysUntil, prefixKey, withIcon, targetDate)
@@ -805,7 +812,8 @@ function KeystonePolaris:GetAdvancedOptions()
                     local weekdayName = CALENDAR_WEEKDAY_NAMES and
                                             CALENDAR_WEEKDAY_NAMES[wday]
                     if weekdayName then
-                        weekdaySuffix = " (next " .. weekdayName .. ")"
+                        local weekdayFormat = L["WEEKDAY_NEXT_FORMAT"]
+                        weekdaySuffix = " " .. weekdayFormat:format(weekdayName)
                     end
                 end
             end
@@ -1267,9 +1275,23 @@ function KeystonePolaris:GetAdvancedOptions()
         
         -- Add +1 day for non-US regions if dates are present
         local portal = C_CVar.GetCVar("portal")
+        local sDateFromTable = false
+        local eDateFromTable = false
+        if type(sDate) == "table" then
+            sDate = sDate[portal] or sDate.default or sDate.US or sDate.EU
+            sDateFromTable = true
+        end
+        if type(eDate) == "table" then
+            eDate = eDate[portal] or eDate.default or eDate.US or eDate.EU
+            eDateFromTable = true
+        end
         if portal ~= "US" then
-            if sDate and sDate ~= "" then sDate = AddDays(sDate, 1) end
-            if eDate and eDate ~= "" then eDate = AddDays(eDate, 1) end
+            if sDate and sDate ~= "" and not sDateFromTable then
+                sDate = AddDays(sDate, 1)
+            end
+            if eDate and eDate ~= "" and not eDateFromTable then
+                eDate = AddDays(eDate, 1)
+            end
         end
 
         -- Add dates to title if available
@@ -1282,10 +1304,21 @@ function KeystonePolaris:GetAdvancedOptions()
         end
         
         local fullTitle = "|cffeda55f" .. sectionName .. "|r"
-        local sectionArgs = CreateGenericSectionArgs(sectionName, keys, filter, getDefaultsFn, fullTitle)
+        local remixAlertText
+        if eDate and eDate ~= "" then
+            local daysUntilEnd = GetDaysUntil(eDate)
+            remixAlertText = GetSeasonCountdownText(daysUntilEnd, "SEASON_ENDS_IN", true, eDate)
+        end
+        local sectionArgs = CreateGenericSectionArgs(sectionName, keys, filter, getDefaultsFn, fullTitle, remixAlertText)
+
+        local listTitle = fullTitle
+        if remixAlertText then
+            listTitle = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t " ..
+                fullTitle
+        end
 
         args["remix_" .. key] = {
-            name = fullTitle,
+            name = listTitle,
             type = "group",
             childGroups = "tree",
             order = 5.5,
