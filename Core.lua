@@ -385,9 +385,7 @@ function KeystonePolaris:OnInitialize()
     -- Register chat command and events
     self:RegisterChatCommand('kpl', 'ToggleConfig')
     self:RegisterChatCommand('polaris', 'ToggleConfig')
-    
-    -- Test command for Group Reminder
-    self:RegisterChatCommand('kpl_gr', 'TestGroupReminder')
+
     -- Command to show last Group Reminder while in group
     self:RegisterChatCommand('kpl_grlast', 'ShowLastGroupReminder')
 
