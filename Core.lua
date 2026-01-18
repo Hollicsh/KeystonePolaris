@@ -386,9 +386,6 @@ function KeystonePolaris:OnInitialize()
     self:RegisterChatCommand('kpl', 'ToggleConfig')
     self:RegisterChatCommand('polaris', 'ToggleConfig')
 
-    -- Command to show last Group Reminder while in group
-    self:RegisterChatCommand('kpl_grlast', 'ShowLastGroupReminder')
-
     -- Initialize mob percentages module if enabled
     if self.db.profile.mobPercentages and self.db.profile.mobPercentages.enabled then
         self:InitializeMobPercentages()
@@ -401,8 +398,15 @@ function KeystonePolaris:OnInitialize()
 end
 
 -- Open configuration panel when command is used
-function KeystonePolaris:ToggleConfig()
-    Settings.OpenToCategory("Keystone Polaris")
+function KeystonePolaris:ToggleConfig(input)
+     local optionsAddonName = (self.GetGradientAddonNameFromSecondLetter and self:GetGradientAddonNameFromSecondLetter()) or "Keystone Polaris"
+    local command = strtrim((input or "")):lower()
+    if command == "reminder" then
+        self:ShowLastGroupReminder()
+        return
+    end
+
+    Settings.OpenToCategory(optionsAddonName)
 end
 
 -- Refresh the addon display (called when options change)
