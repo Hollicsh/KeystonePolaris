@@ -162,7 +162,7 @@ local function GetRoleIconTag(roleText)
 end
 
 local function GetGroupReminderHeaderLabel()
-    local headerText = (L["KPH_GR_HEADER"] or "Group Reminder")
+    local headerText = (L["KPL_GR_HEADER"] or "Group Reminder")
     local addonName = (KeystonePolaris.GetGradientAddonName and KeystonePolaris:GetGradientAddonName()) or "Keystone Polaris"
     return addonName .. "|r - |cffffd700" .. headerText .. "|r"
 end
@@ -180,12 +180,12 @@ local function BuildMessages(db, titleText, zoneText, groupName, groupComment, r
 
     local body = ""
     if #details > 0 or db.showAppliedRole then
-        body = (L["KPH_GR_INVITED"] or "You have been invited to")
+        body = (L["KPL_GR_INVITED"] or "You have been invited to")
         if #details > 0 then
             body = body .. " " .. table.concat(details, ", ")
         end
         if db.showAppliedRole then
-            local roleLabel = string.format((L["KPH_GR_AS_ROLE"] or "as a %s"), valueColor .. (roleText or "-") .. "|r")
+            local roleLabel = string.format((L["KPL_GR_AS_ROLE"] or "as a %s"), valueColor .. (roleText or "-") .. "|r")
             local roleIcon = GetRoleIconTag(roleText)
             if roleIcon ~= "" then
                 roleLabel = roleLabel .. " " .. roleIcon
@@ -268,7 +268,7 @@ local function EnsureGroupReminderStyledFrame(self)
     -- Text label "Teleport to dungeon" above the icon
     f.TeleportLabel = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     f.TeleportLabel:SetPoint("BOTTOM", 0, 55) -- Position above the icon
-    f.TeleportLabel:SetText(L["KPH_GR_TELEPORT"] or "Teleport to dungeon")
+    f.TeleportLabel:SetText(L["KPL_GR_TELEPORT"] or "Teleport to dungeon")
     f.TeleportLabel:SetTextColor(1, 0.82, 0, 1) -- Gold color
 
     -- Single centered content block
@@ -374,10 +374,10 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
     local lines = {}
     local labelColor = "|cffffd100"
     local valueColor = "|cffffffff"
-    if db.showDungeonName then table.insert(lines, labelColor .. (L["KPH_GR_DUNGEON"] or "Dungeon:") .. "|r " .. valueColor .. (zone or "-") .. "|r") end
-    if db.showGroupName then table.insert(lines, labelColor .. (L["KPH_GR_GROUP"] or "Group:") .. "|r " .. valueColor .. (groupName or "-") .. "|r") end
-    if db.showGroupDescription then table.insert(lines, labelColor .. (L["KPH_GR_DESCRIPTION"] or "Description:") .. "|r " .. valueColor .. (groupComment or "-") .. "|r") end
-    if db.showAppliedRole then table.insert(lines, labelColor .. (L["KPH_GR_ROLE"] or "Role:") .. "|r " .. valueColor .. (roleText or "-") .. "|r") end
+    if db.showDungeonName then table.insert(lines, labelColor .. (L["KPL_GR_DUNGEON"] or "Dungeon:") .. "|r " .. valueColor .. (zone or "-") .. "|r") end
+    if db.showGroupName then table.insert(lines, labelColor .. (L["KPL_GR_GROUP"] or "Group:") .. "|r " .. valueColor .. (groupName or "-") .. "|r") end
+    if db.showGroupDescription then table.insert(lines, labelColor .. (L["KPL_GR_DESCRIPTION"] or "Description:") .. "|r " .. valueColor .. (groupComment or "-") .. "|r") end
+    if db.showAppliedRole then table.insert(lines, labelColor .. (L["KPL_GR_ROLE"] or "Role:") .. "|r " .. valueColor .. (roleText or "-") .. "|r") end
 
     -- Join all lines with newlines
     local fullText = table.concat(lines, "\n")
@@ -552,7 +552,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
         -- Chat
         if db.showChat then
             local chatHeader = "|cffdb6233" .. GetGroupReminderHeaderLabel() .. "|r:"
-            local linkText = "|cffffd100[" .. (L["KPH_GR_OPEN_REMINDER"] or "Open reminder") .. "]|r"
+            local linkText = "|cffffd100[" .. (L["KPL_GR_OPEN_REMINDER"] or "Open reminder") .. "]|r"
             local link = string.format("|Hkphreminder:1|h%s|h", linkText)
             if body ~= "" then
                 print(chatHeader .. " " .. body .. " " .. link)
@@ -689,19 +689,19 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
     function KeystonePolaris:GetGroupReminderOptions()
         local self = KeystonePolaris
         return {
-            name = L["KPH_GR_HEADER"] or "Group Reminder",
+            name = L["KPL_GR_HEADER"] or "Group Reminder",
             type = "group",
             order = 7, -- Place it after Colors
             args = {
                 header = { 
                     order = 0, 
                     type = "header", 
-                    name = "|cffffd100" .. (L["KPH_GR_HEADER"] or "Group Reminder") .. "|r"
+                    name = "|cffffd100" .. (L["KPL_GR_HEADER"] or "Group Reminder") .. "|r"
                 },
                 description = {
                     order = 0.5,
                     type = "description",
-                    name = L["KPH_GR_DESC_LONG"] or "Displays a reminder popup and/or chat message when you are accepted into a Mythic+ group, with a button to teleport to the dungeon.",
+                    name = L["KPL_GR_DESC_LONG"] or "Displays a reminder popup and/or chat message when you are accepted into a Mythic+ group, with a button to teleport to the dungeon.",
                     fontSize = "medium",
                 },
                 enable = {
@@ -718,11 +718,11 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
                 notificationsHeader = {
                     order = 2,
                     type = "header",
-                    name = L["KPH_GR_NOTIFICATIONS"] or "Notifications",
+                    name = L["KPL_GR_NOTIFICATIONS"] or "Notifications",
                 },
                 showPopup = {
-                    name = L["KPH_GR_SHOW_POPUP"] or "Show popup",
-                    desc = L["KPH_GR_SHOW_POPUP_DESC"] or "Display the reminder window in the center of the screen.",
+                    name = L["KPL_GR_SHOW_POPUP"] or "Show popup",
+                    desc = L["KPL_GR_SHOW_POPUP_DESC"] or "Display the reminder window in the center of the screen.",
                     type = "toggle",
                     width = "full",
                     order = 3,
@@ -731,8 +731,8 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
                     disabled = function() return not self.db.profile.groupReminder.enabled end,
                 },
                 showChat = {
-                    name = L["KPH_GR_SHOW_CHAT"] or "Show chat message",
-                    desc = L["KPH_GR_SHOW_CHAT_DESC"] or "Print the reminder details in the chat window.",
+                    name = L["KPL_GR_SHOW_CHAT"] or "Show chat message",
+                    desc = L["KPL_GR_SHOW_CHAT_DESC"] or "Print the reminder details in the chat window.",
                     type = "toggle",
                     width = "full",
                     order = 4,
@@ -741,8 +741,8 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
                     disabled = function() return not self.db.profile.groupReminder.enabled end,
                 },
                 suppressQuickJoinToast = {
-                    name = L["KPH_GR_SUPPRESS_TOAST"] or "Suppress Blizzard quick-join toast",
-                    desc = L["KPH_GR_SUPPRESS_TOAST_DESC"] or "Hide the default Blizzard popup that appears at the bottom of the screen when invited.",
+                    name = L["KPL_GR_SUPPRESS_TOAST"] or "Suppress Blizzard quick-join toast",
+                    desc = L["KPL_GR_SUPPRESS_TOAST_DESC"] or "Hide the default Blizzard popup that appears at the bottom of the screen when invited.",
                     type = "toggle",
                     width = "full",
                     order = 5,
@@ -757,8 +757,8 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
                     disabled = function() return not self.db.profile.groupReminder.enabled end,
                 },
                 testCurrentSeason = {
-                    name = L["KPH_GR_TEST_CURRENT_SEASON"] or "Simulate current season acceptance",
-                    desc = L["KPH_GR_TEST_CURRENT_SEASON_DESC"] or "Show the group reminder using a dungeon from the current season.",
+                    name = L["KPL_GR_TEST_CURRENT_SEASON"] or "Simulate current season acceptance",
+                    desc = L["KPL_GR_TEST_CURRENT_SEASON_DESC"] or "Show the group reminder using a dungeon from the current season.",
                     type = "execute",
                     width = "full",
                     order = 6,
@@ -768,10 +768,10 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
                 contentHeader = {
                     order = 10,
                     type = "header",
-                    name = L["KPH_GR_CONTENT"] or "Content",
+                    name = L["KPL_GR_CONTENT"] or "Content",
                 },
                 showDungeonName = {
-                    name = L["KPH_GR_SHOW_DUNGEON"] or "Show dungeon name",
+                    name = L["KPL_GR_SHOW_DUNGEON"] or "Show dungeon name",
                     type = "toggle",
                     order = 11,
                     get = function() return self.db.profile.groupReminder.showDungeonName end,
@@ -779,7 +779,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
                     disabled = function() return not self.db.profile.groupReminder.enabled end,
                 },
                 showGroupName = {
-                    name = L["KPH_GR_SHOW_GROUP"] or "Show group name",
+                    name = L["KPL_GR_SHOW_GROUP"] or "Show group name",
                     type = "toggle",
                     order = 12,
                     get = function() return self.db.profile.groupReminder.showGroupName end,
@@ -787,7 +787,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
                     disabled = function() return not self.db.profile.groupReminder.enabled end,
                 },
                 showGroupDescription = {
-                    name = L["KPH_GR_SHOW_DESC"] or "Show group description",
+                    name = L["KPL_GR_SHOW_DESC"] or "Show group description",
                     type = "toggle",
                     order = 13,
                     get = function() return self.db.profile.groupReminder.showGroupDescription end,
@@ -795,7 +795,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
                     disabled = function() return not self.db.profile.groupReminder.enabled end,
                 },
                 showAppliedRole = {
-                    name = L["KPH_GR_SHOW_ROLE"] or "Show applied role",
+                    name = L["KPL_GR_SHOW_ROLE"] or "Show applied role",
                     type = "toggle",
                     order = 14,
                     get = function() return self.db.profile.groupReminder.showAppliedRole end,
