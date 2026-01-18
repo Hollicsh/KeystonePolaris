@@ -106,6 +106,13 @@ L["BOSS_ORDER"] = "Boss Order"
 L["SHOW_COMPARTMENT_ICON"] = "Compartment icon"
 L["SHOW_MINIMAP_ICON"] = "Minimap icon"
 
+-- Commands / Help
+L["COMMANDS_HEADER"] = "Commands"
+L["COMMANDS_HELP_DESC"] = "Available slash commands:\n• /kpl or /polaris - Open options\n• /kpl reminder or /polaris reminder - Show last group reminder\n• /kpl help or /polaris help - Show this help"
+L["COMMANDS_HELP_OPEN"] = "/kpl or /polaris - Open options"
+L["COMMANDS_HELP_REMINDER"] = "/kpl reminder or /polaris reminder - Show last group reminder"
+L["COMMANDS_HELP_HELP"] = "/kpl help or /polaris help - Show this help"
+
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "Select All, then Ctrl+C to copy. Optional: DeepL https://www.deepl.com/translator"
 L["SELECT_ALL"] = "Select All"

@@ -321,6 +321,17 @@ function KeystonePolaris:OnInitialize()
                             if self.Refresh then self:Refresh() end
                         end,
                     },
+                    commandsHeader = {
+                        order = 3.5,
+                        type = "header",
+                        name = L["COMMANDS_HEADER"] or "Commands",
+                    },
+                    commandsDescription = {
+                        order = 3.6,
+                        type = "description",
+                        name = L["COMMANDS_HELP_DESC"],
+                        fontSize = "medium",
+                    },
                     generalHeader = {
                         order = 4,
                         type = "header",
@@ -401,12 +412,37 @@ end
 function KeystonePolaris:ToggleConfig(input)
      local optionsAddonName = (self.GetGradientAddonNameFromSecondLetter and self:GetGradientAddonNameFromSecondLetter()) or "Keystone Polaris"
     local command = strtrim((input or "")):lower()
+    if command == "help" or command == "?" then
+        if self.ShowHelp then self:ShowHelp() end
+        return
+    end
     if command == "reminder" then
         self:ShowLastGroupReminder()
         return
     end
 
     Settings.OpenToCategory(optionsAddonName)
+end
+
+function KeystonePolaris:ShowHelp()
+    local header = L["COMMANDS_HEADER"] or "Commands"
+    local prefix = (self.GetChatPrefix and self:GetChatPrefix(true)) or "[Keystone Polaris]"
+    local lines = {
+        L["COMMANDS_HELP_OPEN"] or "/kpl or /polaris - Open options",
+        L["COMMANDS_HELP_REMINDER"] or "/kpl reminder - Show last group reminder",
+        L["COMMANDS_HELP_HELP"] or "/kpl help - Show this help",
+    }
+    if self.Print then
+        self:Print(prefix .. " " .. header)
+        for _, line in ipairs(lines) do
+            self:Print(" - " .. line)
+        end
+    else
+        print(prefix .. " " .. header)
+        for _, line in ipairs(lines) do
+            print(" - " .. line)
+        end
+    end
 end
 
 -- Refresh the addon display (called when options change)
