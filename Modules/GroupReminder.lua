@@ -525,6 +525,11 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, gr
             end
         end
 
+        -- Filter unknown teleport spell as early as possible
+        if teleportSpellID and IsSpellKnown and not IsSpellKnown(teleportSpellID) then
+            teleportSpellID = nil
+        end
+
         -- Store last reminder data (for chat link + command)
         local reminderData = {
             title = title,
