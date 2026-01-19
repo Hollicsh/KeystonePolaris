@@ -2,8 +2,9 @@
 
 [Full Changelog](https://github.com/ZelionGG/KeystonePolaris/compare/3.1.1...3.2) [Previous Releases](https://github.com/ZelionGG/KeystonePolaris/releases)
 
-> 🚀 Big one. Probably the biggest Keystone Polaris update shipped “under the hood” so far: tons of performance/loading work and internal cleanups, plus visible wins like Group Reminder and Season start/end warnings.
-> Please send feedback and bug reports, with a release this big, your reports really help.
+#### 🚀 Big one. Probably the biggest Keystone Polaris update shipped “under the hood” so far: tons of performance/loading work and internal cleanups, plus visible wins like Group Reminder and Season start/end warnings.
+Please send feedback and bug reports, with a release this big, your reports really help.
+Thanks again for being part of the Keystone Polaris journey, it really helps me stay motivated and keep improving the addon!
 
 ### Important
 - Added the **Commands** section to the **General options** and a new **Help** command.
