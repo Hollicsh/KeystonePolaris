@@ -34,6 +34,8 @@ L["EXPANSION_WOTLK"] = "Король-лич"
 
 -- UI Strings
 L["MODULES"] = "Модули"
+L["MODULES_SUMMARY_HEADER"] = "Modules overview" -- To Translate
+L["MODULES_SUMMARY_DESC"] = "Quick tour of available modules:\n\n• MythicDungeonTools Integration\n  > Mob Percentages\n\n• Group Reminder" -- To Translate
 L["FINISHED"] = "Процент подземелья выполнен"
 L["SECTION_DONE"] = "Часть подземелья завершена"
 L["DONE"] = "Процент части подземелья выполнен"

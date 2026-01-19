@@ -33,6 +33,8 @@ L["EXPANSION_WOTLK"] = "Wrath of the Lich King"
 
 -- UI Strings
 L["MODULES"] = "Modules"
+L["MODULES_SUMMARY_HEADER"] = "Modules overview"
+L["MODULES_SUMMARY_DESC"] = "Quick tour of available modules:\n\n• MythicDungeonTools Integration\n  > Mob Percentages\n\n• Group Reminder"
 L["FINISHED"] = "Dungeon percentage done"
 L["SECTION_DONE"] = "Section finished"
 L["DONE"] = "Section percentage done"

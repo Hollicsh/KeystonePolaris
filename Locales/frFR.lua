@@ -32,6 +32,8 @@ L["EXPANSION_WOTLK"] = "Wrath of the Lich King"
 
 -- UI Strings
 L["MODULES"] = "Modules"
+L["MODULES_SUMMARY_HEADER"] = "Aperçu des modules"
+L["MODULES_SUMMARY_DESC"] = "Tour rapide des modules disponibles :\n\n• Intégration MythicDungeonTools\n  > Pourcentages des monstres\n\n• Rappel de groupe"
 L["FINISHED"] = "Pourcentage du donjon atteint"
 L["SECTION_DONE"] = "Section de donjon terminée"
 L["DONE"] = "Pourcentage de la section atteint"

@@ -383,6 +383,17 @@ function KeystonePolaris:OnInitialize()
                 order = 2,
                 childGroups = "tree",
                 args = {
+                    modulesSummaryHeader = {
+                        order = 0,
+                        type = "header",
+                        name = L["MODULES_SUMMARY_HEADER"] or L["MODULES"],
+                    },
+                    modulesSummaryDescription = {
+                        order = 1,
+                        type = "description",
+                        name = L["MODULES_SUMMARY_DESC"],
+                        fontSize = "medium",
+                    },
                     mdtIntegration = {
                         name = L["MDT_INTEGRATION"],
                         type = "group",

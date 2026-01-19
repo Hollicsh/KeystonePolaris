@@ -33,6 +33,8 @@ L["EXPANSION_WOTLK"] = "Wrath of the Lich King" -- To Translate
 
 -- UI Strings
 L["MODULES"] = "Modules" -- To Translate
+L["MODULES_SUMMARY_HEADER"] = "Modules overview" -- To Translate
+L["MODULES_SUMMARY_DESC"] = "Quick tour of available modules:\n\n• MythicDungeonTools Integration\n  > Mob Percentages\n\n• Group Reminder" -- To Translate
 L["FINISHED"] = "地下城进度完成"
 L["SECTION_DONE"] = "区域完成"
 L["DONE"] = "区域进度完成"
