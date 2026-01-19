@@ -20,6 +20,9 @@
 - Initial preparation for the upcoming **Midnight Season 1**.
 - Added a **Modules** section to the right panel of the **Modules** menu.
 
+### Bugfixes
+- Fixed **Import All Dungeons** returning **Invalid import string**.
+
 ### Improvements
 - ❗ Massive code reorganization and cleanup for better performance and easier maintenance.
 - Added informative placeholders in the options menu for dungeons that are not yet implemented.

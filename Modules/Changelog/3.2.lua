@@ -58,8 +58,12 @@ KeystonePolaris.Changelog[3200] = {
     bugfix = {
         ["zhCN"] = {},
         ["zhTW"] = {},
-        ["enUS"] = {},
-        ["frFR"] = {},
+        ["enUS"] = {
+            "Fixed [Import All Dungeons] returning [Invalid import string]."
+        },
+        ["frFR"] = {
+            "Correction du bouton [Importer tous les donjons] qui retournait [Chaîne d'import non valide]."
+        },
         ["koKR"] = {},
         ["ruRU"] = {},
         ["deDE"] = {},
