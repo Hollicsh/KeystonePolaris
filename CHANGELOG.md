@@ -18,6 +18,7 @@
 - Season start dates (and end dates) are now displayed directly in the **Options** menu.
 - Automated the retrieval of boss names using Blizzard's API for better accuracy.
 - Initial preparation for the upcoming **Midnight Season 1**.
+- Added a **Modules** section to the right panel of the **Modules** menu.
 
 ### Improvements
 - ❗ Massive code reorganization and cleanup for better performance and easier maintenance.

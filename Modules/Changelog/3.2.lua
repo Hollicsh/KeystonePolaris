@@ -33,6 +33,7 @@ KeystonePolaris.Changelog[3200] = {
             "Season start dates (and end dates) are now displayed directly in the [Options] menu.",
             "Automated the retrieval of boss names using Blizzard's API for better accuracy.",
             "Initial preparation for the upcoming [Midnight Season 1].",
+            "Added a [Modules] section to the right panel of the [Modules] menu."
         },
         ["frFR"] = {
             "Le nom de l’addon est désormais coloré en dégradé dans le chat et les titres UI.",
@@ -44,6 +45,7 @@ KeystonePolaris.Changelog[3200] = {
             "Les dates de début (et de fin) de saison s'affichent désormais directement dans les options.",
             "Automatisation de la récupération des noms de boss via l'API Blizzard pour une meilleure fiabilité.",
             "Préparatifs initiaux pour la future [Saison 1 de Midnight].",
+            "Ajout d'une liste des [Modules] à la droite du menu [Modules]."
         },
         ["koKR"] = {},
         ["ruRU"] = {},
