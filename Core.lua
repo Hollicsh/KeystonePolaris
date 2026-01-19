@@ -88,10 +88,13 @@ function KeystonePolaris:GetGradientAddonNameFromSecondLetter()
     return self._gradientAddonNameFromSecond
 end
 
-function KeystonePolaris:GetChatPrefix(bracketed)
-    local name = self:GetGradientAddonName()
+function KeystonePolaris:GetChatPrefix(bracketed, plain)
+    local name = plain and "Keystone Polaris" or self:GetGradientAddonName()
     if bracketed then
-        return "|cffffd100|r" .. name .. "|cffffd100|r"
+        if plain then
+            return "[" .. name .. "]"
+        end
+        return "|cffffd100[|r" .. name .. "|cffffd100]|r"
     end
     return name
 end
@@ -462,7 +465,7 @@ end
 
 function KeystonePolaris:ShowHelp()
     local header = L["COMMANDS_HEADER"] or "Commands"
-    local prefix = (self.GetChatPrefix and self:GetChatPrefix(true)) or "[Keystone Polaris]"
+    local prefix = (self.GetChatPrefix and self:GetChatPrefix(false)) or "[Keystone Polaris]"
     local lines = {
         L["COMMANDS_HELP_OPEN"] or "/kpl or /polaris - Open options",
         L["COMMANDS_HELP_CHANGELOG"] or "/kpl changelog or /polaris changelog - Open changelog",
@@ -643,7 +646,7 @@ function KeystonePolaris:InformGroup(percentage)
     local percentageStr = string.format("%.2f%%", percentage)
     -- Don't send message if percentage is 0
     if percentageStr == "0.00%" then return end
-    local prefix = (self.GetChatPrefix and self:GetChatPrefix(true)) or "[Keystone Polaris]"
+    local prefix = (self.GetChatPrefix and self:GetChatPrefix(true, true)) or "[Keystone Polaris]"
     SendChatMessage(prefix .. ": " .. L["WE_STILL_NEED"] .. " " .. percentageStr, channel)
 end
 
