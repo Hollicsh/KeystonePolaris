@@ -1167,7 +1167,7 @@ function KeystonePolaris:GetAdvancedOptions()
                         end
                     end
                 end
-                addon:ExportDungeonSettings(allDungeonData, "all")
+                addon:ExportDungeonSettings(allDungeonData, "all_dungeons")
             end
         },
         importAllDungeons = {
