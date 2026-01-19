@@ -91,9 +91,37 @@ end
 function KeystonePolaris:GetChatPrefix(bracketed)
     local name = self:GetGradientAddonName()
     if bracketed then
-        return "|cffffd100[|r" .. name .. "|cffffd100]|r"
+        return "|cffffd100|r" .. name .. "|cffffd100|r"
     end
     return name
+end
+
+function KeystonePolaris:ColorizeCommands(text)
+    if type(text) ~= "string" then return text end
+    local knownSubCommands = {
+        help = true,
+        reminder = true,
+        changelog = true,
+    }
+    local out = {}
+    local index = 1
+    while true do
+        local startPos, endPos, cmd = text:find("(/%w+)", index)
+        if not startPos then
+            table.insert(out, text:sub(index))
+            break
+        end
+        table.insert(out, text:sub(index, startPos - 1))
+        local subStart, subEnd, subWord = text:find("%s+(%w+)", endPos + 1)
+        if subStart == endPos + 1 and subWord and knownSubCommands[subWord] then
+            table.insert(out, "|cffffd100" .. cmd .. text:sub(subStart, subEnd) .. "|r")
+            index = subEnd + 1
+        else
+            table.insert(out, "|cffffd100" .. cmd .. "|r")
+            index = endPos + 1
+        end
+    end
+    return table.concat(out)
 end
 
 local function EnsureMinimapSettings(self)
@@ -329,7 +357,9 @@ function KeystonePolaris:OnInitialize()
                     commandsDescription = {
                         order = 3.6,
                         type = "description",
-                        name = L["COMMANDS_HELP_DESC"],
+                        name = function()
+                            return self:ColorizeCommands(L["COMMANDS_HELP_DESC"] or "")
+                        end,
                         fontSize = "medium",
                     },
                     generalHeader = {
@@ -439,16 +469,16 @@ function KeystonePolaris:ShowHelp()
         L["COMMANDS_HELP_REMINDER"] or "/kpl reminder - Show last group reminder",
         L["COMMANDS_HELP_HELP"] or "/kpl help - Show this help",
     }
-    if self.Print then
-        self:Print(prefix .. " " .. header)
-        for _, line in ipairs(lines) do
-            self:Print(" - " .. line)
+    local function addMessage(message)
+        if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+            DEFAULT_CHAT_FRAME:AddMessage(message)
+        else
+            print(message)
         end
-    else
-        print(prefix .. " " .. header)
-        for _, line in ipairs(lines) do
-            print(" - " .. line)
-        end
+    end
+    addMessage(prefix .. " " .. header)
+    for _, line in ipairs(lines) do
+        addMessage(self:ColorizeCommands(line))
     end
 end
 
