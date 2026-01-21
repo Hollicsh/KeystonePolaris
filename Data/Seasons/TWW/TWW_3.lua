@@ -10,9 +10,9 @@ KeystonePolaris.TWW_3_DUNGEONS = {
         default = "2025-08-13"
     },
     end_date = {
-        US = "2026-01-20",
-        EU = "2026-01-21",
-        default = "2026-01-21"
+        US = "2026-01-20 05:00",
+        EU = "2026-01-21 05:00",
+        default = "2026-01-21 05:00"
     },
     -- War Within dungeons
     [503] = true, -- AKCE (Ara-Kara, City of Echoes)

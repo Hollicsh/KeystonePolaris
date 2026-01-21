@@ -54,6 +54,31 @@ local function ResolveSeasonDate(dateValue)
                dateValue.EU
 end
 
+local function ResolveSeasonTimestamp(dateStr, defaultHour, defaultMin, useNowIfToday)
+    if not dateStr or dateStr == "" then return nil end
+    local y, m, d, h, min = dateStr:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)%s+(%d%d):(%d%d)$")
+    local hasTime = y ~= nil
+    if not hasTime then
+        y, m, d = dateStr:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)$")
+    end
+    local year, month, day = tonumber(y), tonumber(m), tonumber(d)
+    if not year or not month or not day then return nil end
+
+    if not hasTime and useNowIfToday and dateStr == date("%Y-%m-%d") then
+        return time()
+    end
+
+    local hour = defaultHour or 12
+    local minute = defaultMin or 0
+    if hasTime then
+        hour = tonumber(h)
+        minute = tonumber(min)
+        if not hour or not minute then return nil end
+    end
+
+    return time({year = year, month = month, day = day, hour = hour, min = minute})
+end
+
 -- Returns current/next season ids and their resolved start/end dates.
 -- Current season: start_date <= today and (no end_date or today <= end_date).
 -- If end_date is missing, the season is considered active until the next
@@ -61,22 +86,26 @@ end
 function KeystonePolaris:GetSeasonByDate(dateStr)
     local currentId, currentStart, currentEnd
     local nextId, nextStart
+    local compareDate = dateStr or date("%Y-%m-%d")
+    local compareTs = ResolveSeasonTimestamp(compareDate, 12, 0, true)
 
     for key, tbl in pairs(self) do
         if type(tbl) == "table" and key:match("_DUNGEONS$") and tbl.start_date and
             not tbl.is_remix then
             local startDate = ResolveSeasonDate(tbl.start_date)
             local endDate = ResolveSeasonDate(tbl.end_date)
+            local startTs = ResolveSeasonTimestamp(startDate, 0, 0, false)
+            local endTs = ResolveSeasonTimestamp(endDate, 23, 59, false)
 
-            if startDate and startDate <= dateStr and
-                (not endDate or dateStr <= endDate) then
-                if not currentStart or startDate > currentStart then
+            if startTs and compareTs and startTs <= compareTs and
+                (not endTs or compareTs <= endTs) then
+                if not currentStart or startTs > ResolveSeasonTimestamp(currentStart, 0, 0, false) then
                     currentId = key:gsub("_DUNGEONS$", "")
                     currentStart = startDate
                     currentEnd = endDate
                 end
-            elseif startDate and startDate > dateStr then
-                if not nextStart or startDate < nextStart then
+            elseif startTs and compareTs and startTs > compareTs then
+                if not nextStart or startTs < ResolveSeasonTimestamp(nextStart, 0, 0, false) then
                     nextId = key:gsub("_DUNGEONS$", "")
                     nextStart = startDate
                 end

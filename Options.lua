@@ -779,20 +779,36 @@ function KeystonePolaris:GetAdvancedOptions()
         return text
     end
 
-    -- Helper: days until a YYYY-MM-DD date (nil if invalid)
+    -- Helper: days until a YYYY-MM-DD or YYYY-MM-DD HH:MM date (nil if invalid)
     local function GetDaysUntil(dateStr)
         if not dateStr or dateStr == "" then return nil end
-        local year, month, day = strsplit("-", dateStr)
-        year, month, day = tonumber(year), tonumber(month), tonumber(day)
+        local y, m, d, h, min = dateStr:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)%s+(%d%d):(%d%d)$")
+        local hasTime = y ~= nil
+        if not hasTime then
+            y, m, d = dateStr:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)$")
+        end
+        local year, month, day = tonumber(y), tonumber(m), tonumber(d)
         if not year or not month or not day then return nil end
 
-        local currentDate = date("%Y-%m-%d")
-        local cYear, cMonth, cDay = strsplit("-", currentDate)
-        cYear, cMonth, cDay = tonumber(cYear), tonumber(cMonth), tonumber(cDay)
-        if not cYear or not cMonth or not cDay then return nil end
+        local target
+        local current
+        if hasTime then
+            local hour, minute = tonumber(h), tonumber(min)
+            if not hour or not minute then return nil end
+            target = time({year = year, month = month, day = day, hour = hour, min = minute})
+            current = time()
+            if target < current then
+                return -1
+            end
+        else
+            local currentDate = date("%Y-%m-%d")
+            local cYear, cMonth, cDay = strsplit("-", currentDate)
+            cYear, cMonth, cDay = tonumber(cYear), tonumber(cMonth), tonumber(cDay)
+            if not cYear or not cMonth or not cDay then return nil end
+            target = time({year = year, month = month, day = day, hour = 12})
+            current = time({year = cYear, month = cMonth, day = cDay, hour = 12})
+        end
 
-        local target = time({year = year, month = month, day = day, hour = 12})
-        local current = time({year = cYear, month = cMonth, day = cDay, hour = 12})
         return math.floor((target - current) / 86400)
     end
 
@@ -804,7 +820,8 @@ function KeystonePolaris:GetAdvancedOptions()
         if daysUntil <= 7 then
             local weekdaySuffix = ""
             if targetDate then
-                local year, month, day = strsplit("-", targetDate)
+                local dateOnly = targetDate:match("^(%d%d%d%d%-%d%d%-%d%d)") or targetDate
+                local year, month, day = strsplit("-", dateOnly)
                 year, month, day = tonumber(year), tonumber(month), tonumber(day)
                 if year and month and day then
                     local target = time({year = year, month = month, day = day, hour = 12})
@@ -1294,6 +1311,14 @@ function KeystonePolaris:GetAdvancedOptions()
             end
         end
 
+        local daysUntilEnd
+        if eDate and eDate ~= "" then
+            daysUntilEnd = GetDaysUntil(eDate)
+            if daysUntilEnd and daysUntilEnd < 0 then
+                return
+            end
+        end
+
         -- Add dates to title if available
         if sDate and sDate ~= "" then
             sectionName = sectionName .. "|r - |cffbbbbbb" .. FormatSeasonDate(sDate)
@@ -1305,8 +1330,7 @@ function KeystonePolaris:GetAdvancedOptions()
         
         local fullTitle = "|cffeda55f" .. sectionName .. "|r"
         local remixAlertText
-        if eDate and eDate ~= "" then
-            local daysUntilEnd = GetDaysUntil(eDate)
+        if daysUntilEnd then
             remixAlertText = GetSeasonCountdownText(daysUntilEnd, "SEASON_ENDS_IN", true, eDate)
         end
         local sectionArgs = CreateGenericSectionArgs(sectionName, keys, filter, getDefaultsFn, fullTitle, remixAlertText)
