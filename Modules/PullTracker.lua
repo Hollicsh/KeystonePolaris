@@ -20,7 +20,6 @@ function KeystonePolaris:InitializePullTracker()
     self:RegisterEvent("PLAYER_REGEN_DISABLED")
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
     self:RegisterEvent("ENCOUNTER_END")
-    self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     
     -- Initialize state
     self.realPull.mobs = {}
@@ -216,21 +215,4 @@ end
 -- to avoid creating new closures on every event.
 local function IsNPCGuid(guid)
     return type(guid) == "string" and (guid:find("^Creature%-") or guid:find("^Vehicle%-"))
-end
-
--- Listen to combat log to track engaged NPCs even when nameplates are not visible
-function KeystonePolaris:COMBAT_LOG_EVENT_UNFILTERED()
-    if not C_ChallengeMode.IsChallengeModeActive() then return end
-    
-    -- Optimize: get return values directly instead of creating a table payload
-    local _, subEvent, _, _, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
-
-    if subEvent == "UNIT_DIED" or subEvent == "UNIT_DESTROYED" or subEvent == "UNIT_DISSIPATES" or subEvent == "SPELL_INSTAKILL" or subEvent == "PARTY_KILL" then
-        if IsNPCGuid(destGUID) then
-            self._deadGuids = self._deadGuids or {}
-            self._deadGuids[destGUID] = true
-            self:RemoveEngagedMobByGUID(destGUID)
-            self:_QueuePullUpdate()
-        end
-    end
 end
