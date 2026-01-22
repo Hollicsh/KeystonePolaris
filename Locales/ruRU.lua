@@ -5,7 +5,7 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "ruRU", false, false);
 if not L then return end
 
--- Last translated December 9th, 2025.
+-- Last translated January 22th, 2025.
 -- Translation by Hollicsh (https://github.com/Hollicsh)
 
 -- Dungeons Group
@@ -13,14 +13,14 @@ L["DUNGEONS"] = "Подземелья"
 L["CURRENT_SEASON"] = "Текущий сезон"
 L["NEXT_SEASON"] = "Следующий сезон"
 L["REMIX"] = "Ремикс"
-L["SEASON_ENDS_IN_ONE_MONTH"] = "Current season ends in less than one month." -- To Translate
-L["SEASON_ENDS_IN_WEEKS"] = "Current season ends in less than %d weeks." -- To Translate
-L["SEASON_ENDS_IN_DAYS"] = "Current season ends in %d days." -- To Translate
-L["SEASON_ENDS_IN_TOMORROW"] = "Current season ends tomorrow." -- To Translate
-L["SEASON_STARTS_IN_ONE_MONTH"] = "Next season starts in less than one month." -- To Translate
-L["SEASON_STARTS_IN_WEEKS"] = "Next season starts in less than %d weeks." -- To Translate
-L["SEASON_STARTS_IN_DAYS"] = "Next season starts in %d days." -- To Translate
-L["SEASON_STARTS_IN_TOMORROW"] = "Next season starts tomorrow." -- To Translate
+L["SEASON_ENDS_IN_ONE_MONTH"] = "До конца текущего сезона осталось меньше месяца."
+L["SEASON_ENDS_IN_WEEKS"] = "Текущий сезон заканчивается менее чем через %d недель."
+L["SEASON_ENDS_IN_DAYS"] = "Текущий сезон заканчивается через %d дней."
+L["SEASON_ENDS_IN_TOMORROW"] = "Текущий сезон заканчивается завтра."
+L["SEASON_STARTS_IN_ONE_MONTH"] = "Следующий сезон начнётся менее чем через месяц."
+L["SEASON_STARTS_IN_WEEKS"] = "Следующий сезон начнётся менее чем через %d недель."
+L["SEASON_STARTS_IN_DAYS"] = "Следующий сезон начнётся через %d дней."
+L["SEASON_STARTS_IN_TOMORROW"] = "Следующий сезон начинается завтра."
 
 L["EXPANSION_MIDNIGHT"] = "Полночь"
 L["EXPANSION_WW"] = "Война Внутри"
@@ -34,8 +34,8 @@ L["EXPANSION_WOTLK"] = "Король-лич"
 
 -- UI Strings
 L["MODULES"] = "Модули"
-L["MODULES_SUMMARY_HEADER"] = "Modules overview" -- To Translate
-L["MODULES_SUMMARY_DESC"] = "Quick tour of available modules:\n\n• MythicDungeonTools Integration\n  > Mob Percentages\n\n• Group Reminder" -- To Translate
+L["MODULES_SUMMARY_HEADER"] = "Обзор модулей"
+L["MODULES_SUMMARY_DESC"] = "Краткий обзор доступных модулей:\n\n• Интеграция с MythicDungeonTools\n > Процентное соотношение мобов\n\n• Напоминание о группе"
 L["FINISHED"] = "Процент подземелья выполнен"
 L["SECTION_DONE"] = "Часть подземелья завершена"
 L["DONE"] = "Процент части подземелья выполнен"
@@ -106,16 +106,16 @@ L["RESET_CHANGED_ONLY"] = "Сбросить только измененные"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "Обновлены маршруты следующих подземелий:"
 L["BOSS"] = "Босс"
 L["BOSS_ORDER"] = "Порядок босса"
-L["SHOW_COMPARTMENT_ICON"] = "Compartment icon" -- To Translate
-L["SHOW_MINIMAP_ICON"] = "Minimap icon" -- To Translate
+L["SHOW_COMPARTMENT_ICON"] = "Значок отделения"
+L["SHOW_MINIMAP_ICON"] = "Значок на миникарте"
 
--- Commands / Help (To Translate)
-L["COMMANDS_HEADER"] = "Commands"
-L["COMMANDS_HELP_DESC"] = "Available slash commands:\n• /kpl or /polaris - Open options\n• /kpl reminder or /polaris reminder - Show last group reminder\n• /kpl help or /polaris help - Show this help"
-L["COMMANDS_HELP_OPEN"] = "/kpl or /polaris - Open options"
-L["COMMANDS_HELP_CHANGELOG"] = "/kpl changelog or /polaris changelog - Open changelog"
-L["COMMANDS_HELP_REMINDER"] = "/kpl reminder or /polaris reminder - Show last group reminder"
-L["COMMANDS_HELP_HELP"] = "/kpl help or /polaris help - Show this help"
+-- Commands / Help
+L["COMMANDS_HEADER"] = "Команды"
+L["COMMANDS_HELP_DESC"] = "Доступные команды с косой чертой:\n• /kpl или /polaris - Открыть настройки\n• /kpl reminder или /polaris reminder - Показать последнее напоминание группы\n• /kpl help или /polaris help - Показать эту справку"
+L["COMMANDS_HELP_OPEN"] = "/kpl или /polaris - Открыть настройки"
+L["COMMANDS_HELP_CHANGELOG"] = "/kpl changelog или /polaris changelog - Открытый список изменений"
+L["COMMANDS_HELP_REMINDER"] = "/kpl reminder или /polaris reminder - Показать последнее напоминание группы"
+L["COMMANDS_HELP_HELP"] = "/kpl help или /polaris help - Показать эту справку"
 
 -- Changelog
 L["COPY_INSTRUCTIONS"] = "Выделите всё, затем нажмите Ctrl+C, чтобы скопировать. Дополнительно: DeepL - https://www.deepl.com/translator"
@@ -258,23 +258,23 @@ L["KPL_GR_GROUP"] = "Группа:"
 L["KPL_GR_DESCRIPTION"] = "Описание:"
 L["KPL_GR_ROLE"] = "Роль:"
 L["KPL_GR_TELEPORT"] = "Телепорт в подземелье"
-L["KPL_GR_TELEPORT_UNKNOWN"] = "Teleport spell not known" -- To Translate
-L["KPL_GR_OPEN_REMINDER"] = "Open reminder" -- To Translate
-L["KPL_GR_INVITED"] = "You have been invited to" -- To Translate
-L["KPL_GR_AS_ROLE"] = "as a %s" -- To Translate 
+L["KPL_GR_TELEPORT_UNKNOWN"] = "Заклинание телепортации неизвестно"
+L["KPL_GR_OPEN_REMINDER"] = "Открыть напоминание"
+L["KPL_GR_INVITED"] = "Вас пригласили"
+L["KPL_GR_AS_ROLE"] = "как %s"
 
 -- Group Reminder (Options)
-L["KPL_GR_DESC_LONG"] = "Displays a reminder popup and/or chat message when you are accepted into a Mythic+ group, with a button to teleport to the dungeon." -- To Translate
-L["KPL_GR_NOTIFICATIONS"] = "Notifications" -- To Translate
+L["KPL_GR_DESC_LONG"] = "Отображает всплывающее напоминание и/или сообщение в чате, когда Вас принимают в группу для прохождения ключа M+, с кнопкой телепортации в подземелье."
+L["KPL_GR_NOTIFICATIONS"] = "Оповещения"
 L["KPL_GR_SUPPRESS_TOAST"] = "Пресекать уведомление о быстром присоединении"
-L["KPL_GR_SUPPRESS_TOAST_DESC"] = "Hide the default Blizzard popup that appears at the bottom of the screen when invited." -- To Translate
+L["KPL_GR_SUPPRESS_TOAST_DESC"] = "Скрыть стандартное всплывающее окно Blizzard, которое появляется внизу экрана при получении приглашения."
 L["KPL_GR_SHOW_POPUP"] = "Показывать всплывающее окно"
-L["KPL_GR_SHOW_POPUP_DESC"] = "Display the reminder window in the center of the screen." -- To Translate
+L["KPL_GR_SHOW_POPUP_DESC"] = "Отобразите окно напоминания в центре экрана."
 L["KPL_GR_SHOW_CHAT"] = "Показывать сообщение в чате"
-L["KPL_GR_SHOW_CHAT_DESC"] = "Print the reminder details in the chat window." -- To Translate
-L["KPL_GR_TEST_CURRENT_SEASON"] = "Simulate current season acceptance" -- To Translate
-L["KPL_GR_TEST_CURRENT_SEASON_DESC"] = "Show the group reminder using a dungeon from the current season." -- To Translate
-L["KPL_GR_CONTENT"] = "Content" -- To Translate
+L["KPL_GR_SHOW_CHAT_DESC"] = "Вывести подробности напоминания в окне чата."
+L["KPL_GR_TEST_CURRENT_SEASON"] = "Имитировать принятие в текущем сезоне"
+L["KPL_GR_TEST_CURRENT_SEASON_DESC"] = "Отобразить групповое напоминание, используя подземелье из текущего сезона."
+L["KPL_GR_CONTENT"] = "Содержание"
 L["KPL_GR_SHOW_DUNGEON"] = "Показывать название подземелья"
 L["KPL_GR_SHOW_GROUP"] = "Показывать название группы"
 L["KPL_GR_SHOW_DESC"] = "Показывать описание группы"

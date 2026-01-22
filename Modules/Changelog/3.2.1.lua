@@ -39,7 +39,9 @@ KeystonePolaris.Changelog[3210] = {
             "Suppression de l'utilisation de COMBAT_LOG_EVENT_UNFILTERED pour éviter les erreurs Lua avec AceEvent avec la mise à jour de pré-lancement de Midnight."
         },
         ["koKR"] = {},
-        ["ruRU"] = {},
+        ["ruRU"] = {
+            "Удалена регистрация [COMBAT_LOG_EVENT_UNFILTERED] во избежание ошибок AceEvent Lua при использовании предварительного патча 'Полночь'."
+        },
         ["deDE"] = {},
         ["esES"] = {},
         ["esMX"] = {},
@@ -56,7 +58,9 @@ KeystonePolaris.Changelog[3210] = {
             "Amélioration de la gestion des dates de fin des saisons."
         },
         ["koKR"] = {},
-        ["ruRU"] = {},
+        ["ruRU"] = {
+            "Улучшена обработка дат окончания сезонов."
+        },
         ["deDE"] = {},
         ["esES"] = {},
         ["esMX"] = {},
