@@ -40,7 +40,7 @@ KeystonePolaris.Changelog[3210] = {
         },
         ["koKR"] = {},
         ["ruRU"] = {
-            "Удалена регистрация [COMBAT_LOG_EVENT_UNFILTERED] во избежание ошибок AceEvent Lua при использовании предварительного патча Midnight."
+            "Удалена регистрация [COMBAT_LOG_EVENT_UNFILTERED] во избежание ошибок AceEvent Lua при использовании предварительного патча 'Полночь'."
         },
         ["deDE"] = {},
         ["esES"] = {},
