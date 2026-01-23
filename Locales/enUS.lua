@@ -6,7 +6,7 @@ local L = AceLocale:NewLocale(AddonName, "enUS", true, false);
 
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
-L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight due to API restrictions:|r\n\n" ..
+L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
                                 "|cff8888ff• Mob percentages on nameplates (MDT Integration)|r\n" ..
                                 "|cff8888ff• Current pull tracking|r\n\n" ..
                                 "|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\n" ..
