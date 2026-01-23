@@ -6,9 +6,6 @@ local format = string.format
 local gsub = string.gsub
 local strsplit = strsplit
 
-local AceConfig = LibStub("AceConfig-3.0")
-local AceConfigDialog = LibStub("AceConfigDialog-3.0")
-
 -- Get localization table
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName, true)
 
@@ -466,7 +463,7 @@ function KeystonePolaris:GetMainDisplayOptions()
                     self:UpdatePercentageText()
                 end,
                 disabled = function()
-                    return not IsMDTAvailable()
+                    return not IsMDTAvailable() or self.isMidnight
                 end
             },
             pullLabel = {

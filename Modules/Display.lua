@@ -499,7 +499,7 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
     if cfg.showCurrentPercent and (currentPercent ~= nil) then
         local label = colorizePrefix(cfg.currentLabel or L["CURRENT_DEFAULT"], hexPrefix)
         local inCombat = self:IsCombatContext()
-        local showProj = (cfg.showProjected and inCombat) and true or false
+        local showProj = (cfg.showProjected and inCombat and not self.isMidnight) and true or false
         if (cfg.formatMode == "count") and fmtData then
             -- Current (count) base highlighting:
             -- If currentCount >= sectionRequiredCount, color the base value in finished green (works out of combat too).
@@ -559,7 +559,7 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
             table.insert(extras, baseStr)
         end
     end
-    if cfg.showCurrentPullPercent and (currentPullPercent ~= nil) and self:IsCombatContext() then
+    if cfg.showCurrentPullPercent and (currentPullPercent ~= nil) and self:IsCombatContext() and not self.isMidnight then
         -- Pull highlighting:
         -- If Pull >= section required (percent or count), color Pull in finished green. Not gated by combat.
         local label = colorizePrefix(cfg.pullLabel or L["PULL_DEFAULT"], hexPrefix)
@@ -621,7 +621,7 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
     -- The suffix is colored using the finished color.
     -- Note: projected values are hidden out of combat via the showProjected + UnitAffectingCombat gate.
     -- Optionally append projected value next to numeric Required base (do not replace base label)
-    if cfg.showProjected and self:IsCombatContext() then
+    if cfg.showProjected and self:IsCombatContext() and not self.isMidnight then
         if isNumericPercent and (type(remainingNeeded) == "number") then
             local pull = tonumber(currentPullPercent) or 0
             local projReq = (tonumber(remainingNeeded) or 0) - pull
