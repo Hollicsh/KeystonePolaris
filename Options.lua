@@ -609,6 +609,9 @@ function KeystonePolaris:GetMainDisplayOptions()
                     if self.UpdatePercentageText then self:UpdatePercentageText() end
                     if self.ApplyTextLayout then self:ApplyTextLayout() end
                     if self.AdjustDisplayFrameSize then self:AdjustDisplayFrameSize() end
+                end,
+                disabled = function()
+                    return not IsMDTAvailable() or self.isMidnight
                 end
             },
         }
