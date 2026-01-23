@@ -11,6 +11,8 @@ KeystonePolaris = AceAddon:NewAddon(KeystonePolaris, AddOnName, "AceConsole-3.0"
 -- Initialize changelog
 KeystonePolaris.Changelog = {}
 
+KeystonePolaris.isMidnight = select(4, GetBuildInfo()) >= 120000
+
 -- Define constants
 KeystonePolaris.constants = {
     mediaPath = "Interface\\AddOns\\" .. AddOnName .. "\\media\\"
