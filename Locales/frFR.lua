@@ -5,6 +5,16 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "frFR", false, false);
 if not L then return end
 
+-- Traduction: ZelionGG
+
+-- Temporary locales for Midnight Compatibility Warning
+L["COMPATIBILITY_WARNING"] = "Avertissement de compatibilité avec Midnight"
+L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Certains fonctionnalités sont désactivées sur Midnight en raison des restrictions de l'API:|r\n\n" ..
+                                "|cff8888ff• Pourcentages des monstres sur les plaques de nom (Intégration MythicDungeonTools)|r\n" ..
+                                "|cff8888ff• Suivi du pourcentage du pull actuel|r\n\n" ..
+                                "|cff8888ffCes fonctionnalités seront réactivées une fois que Blizzard aura sorti la nouvelle API Mythique+. Il n'y a actuellement pas de date de sortie connue.|r\n\n" ..
+                                "Toutes les autres fonctionnalités devraient rester disponibles, désolé pour le désagrément.\n"
+
 -- Dungeons Group
 L["DUNGEONS"] = "Donjons"
 L["CURRENT_SEASON"] = "Saison actuelle"
