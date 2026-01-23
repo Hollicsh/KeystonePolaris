@@ -16,10 +16,13 @@ function KeystonePolaris:InitializePullTracker()
     -- Register events related to pull tracking
     self:RegisterEvent("NAME_PLATE_UNIT_ADDED")
     self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-    self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
-    self:RegisterEvent("PLAYER_REGEN_DISABLED")
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
     self:RegisterEvent("ENCOUNTER_END")
+    
+    if(not self.isMidnight) then
+        self:RegisterEvent("PLAYER_REGEN_DISABLED")
+        self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
+    end
     
     -- Initialize state
     self.realPull.mobs = {}
