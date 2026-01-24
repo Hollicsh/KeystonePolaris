@@ -21,6 +21,9 @@ end
 
 -- Initialize the mob percentages module
 function KeystonePolaris:InitializeMobPercentages()
+    -- Only proceed if the feature is enabled
+    if self.isMidnight or not self.db.profile.mobPercentages.enabled then return end
+
     -- Create a frame for nameplate hooks
     self.mobPercentFrame = CreateFrame("Frame")
 
@@ -295,6 +298,10 @@ function KeystonePolaris:GetMobPercentagesOptions()
                 order = 2,
                 get = function() return self.db.profile.mobPercentages.enabled end,
                 set = function(_, value)
+                    if self.isMidnight then
+                        return
+                    end
+                    
                     self.db.profile.mobPercentages.enabled = value
                     if value then
                         self:InitializeMobPercentages()
@@ -311,7 +318,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                     end
                 end,
                 disabled = function()
-                    return not IsMDTAvailable()
+                    return not IsMDTAvailable() or self.isMidnight
                 end
             },
             displayOptions = {
