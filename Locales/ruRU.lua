@@ -5,17 +5,17 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "ruRU", false, false);
 if not L then return end
 
--- Last translated January 22th, 2025.
+-- Last translated January 24th, 2025.
 -- Translation by Hollicsh (https://github.com/Hollicsh)
 
 -- Temporary locales for Midnight Compatibility Warning
-L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
-L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
-                                "|cff8888ff• Mob percentages on nameplates (MDT Integration)|r\n" ..
-                                "|cff8888ff• Current pull tracking|r\n" ..
-                                "|cff8888ff• Projected values|r\n\n" ..
-                                "|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\n" ..
-                                "All other features should remain available, sorry for the inconvenience.\n"
+L["COMPATIBILITY_WARNING"] = "Предупреждение о совместимости с 'Полночью'"
+L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000В настоящее время некоторые функции в 'Полночи' отключены из-за ограничений API:|r\n\n" ..
+                                "|cff8888ff• Проценты мобов на индикаторах здоровья (интеграция MDT)|r\n" ..
+                                "|cff8888ff• Текущее отслеживание пуллов|r\n" ..
+                                "|cff8888ff• Прогнозируемые значения|r\n\n" ..
+                                "|cff8888ffЭти функции будут повторно включены после того, как Blizzard выпустит новый API для Mythic+. В настоящее время точная дата этого пока неизвестна.|r\n\n" ..
+                                "Все остальные функции должны оставаться доступными. Приносим извинения за неудобства.\n"
 
 -- Dungeons Group
 L["DUNGEONS"] = "Подземелья"
