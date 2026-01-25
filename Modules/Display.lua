@@ -10,16 +10,50 @@ KeystonePolaris.colorCache = {}
 -- Secure action button (macro) for manual sends in lockdown contexts
 function KeystonePolaris:EnsureInformSecureButton(macroText)
     if not self.informSecureButton then
-        local btn = CreateFrame("Button", "KeystonePolarisSecureInformButton", UIParent, "SecureActionButtonTemplate, UIPanelButtonTemplate")
+        local btn = CreateFrame("Button", "KeystonePolarisSecureInformButton", UIParent, "SecureActionButtonTemplate, UIPanelButtonTemplate, BackdropTemplate")
         btn:SetSize(160, 28)
         btn:SetFrameStrata("FULLSCREEN_DIALOG")
         btn:SetText(L["INFORM_GROUP"])
         btn:EnableMouse(true)
         btn:RegisterForClicks("AnyUp", "AnyDown")
 
+        -- Remove default UIPanelButton textures (avoid red/purple background)
+        if btn.Left then btn.Left:SetTexture(""); btn.Left:Hide() end
+        if btn.Right then btn.Right:SetTexture(""); btn.Right:Hide() end
+        if btn.Middle then btn.Middle:SetTexture(""); btn.Middle:Hide() end
+        if btn.DisabledLeft then btn.DisabledLeft:SetTexture(""); btn.DisabledLeft:Hide() end
+        if btn.DisabledRight then btn.DisabledRight:SetTexture(""); btn.DisabledRight:Hide() end
+        if btn.DisabledMiddle then btn.DisabledMiddle:SetTexture(""); btn.DisabledMiddle:Hide() end
+
+        -- Style similar to Test Mode overlay (black bg, gold border/text)
+        local backdrop = {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            tile = true, tileSize = 16, edgeSize = 1,
+        }
+        if btn.SetBackdrop then
+            btn:SetBackdrop(backdrop)
+            btn:SetBackdropColor(0, 0, 0, 0.7)
+            btn:SetBackdropBorderColor(1, 0.82, 0, 1)
+        elseif BackdropTemplateMixin and BackdropTemplateMixin.SetBackdrop then
+            BackdropTemplateMixin.SetBackdrop(btn, backdrop)
+            btn:SetBackdropColor(0, 0, 0, 0.7)
+            btn:SetBackdropBorderColor(1, 0.82, 0, 1)
+        end
+        if btn.GetFontString then
+            local fs = btn:GetFontString()
+            if fs then
+                fs:SetTextColor(1, 0.82, 0, 1)
+                fs:ClearAllPoints()
+                fs:SetPoint("CENTER", btn, "CENTER", 0, 0)
+            end
+        end
+
         -- Cooldown bar overlay
         local bar = CreateFrame("StatusBar", nil, btn, "BackdropTemplate")
-        bar:SetAllPoints()
+        bar:ClearAllPoints()
+        bar:SetPoint("TOPLEFT", btn, "TOPLEFT", 1, -1)
+        bar:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", -1, 1)
         bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
         bar:SetStatusBarColor(0.45, 0.45, 0.45, 0.75)
         bar:Hide()
@@ -85,6 +119,12 @@ function KeystonePolaris:HideInformButton()
 end
 
 function KeystonePolaris:PrepareInformMacro(message)
+    local currentDungeonID = C_ChallengeMode.GetActiveChallengeMapID()
+    if not currentDungeonID or not (self.DUNGEONS and self.DUNGEONS[currentDungeonID]) then
+        if self.HideInformButton then self:HideInformButton() end
+        return
+    end
+
     local resolvedMessage = message
     if not resolvedMessage then
         local fakePercent = "12.34%"
