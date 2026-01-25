@@ -7,9 +7,107 @@ local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 KeystonePolaris.colorCache = {}
 
+-- Secure action button (macro) for manual sends in lockdown contexts
+function KeystonePolaris:EnsureInformSecureButton(macroText)
+    if not self.informSecureButton then
+        local btn = CreateFrame("Button", "KeystonePolarisSecureInformButton", UIParent, "SecureActionButtonTemplate, UIPanelButtonTemplate")
+        btn:SetSize(160, 28)
+        btn:SetFrameStrata("FULLSCREEN_DIALOG")
+        btn:SetText(L["INFORM_GROUP"])
+        btn:EnableMouse(true)
+        btn:RegisterForClicks("AnyUp", "AnyDown")
+
+        -- Cooldown bar overlay
+        local bar = CreateFrame("StatusBar", nil, btn, "BackdropTemplate")
+        bar:SetAllPoints()
+        bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+        bar:SetStatusBarColor(0.45, 0.45, 0.45, 0.75)
+        bar:Hide()
+        btn.cooldownBar = bar
+
+        btn.cooldownDuration = 20
+        btn.cooldownEndTime = nil
+        btn.fadeDuration = 0.15
+
+        local function startCooldown(self)
+            self.cooldownEndTime = GetTime() + (self.cooldownDuration or 20)
+            self:EnableMouse(false)
+        end
+
+        btn:SetScript("OnUpdate", function(self)
+            if not self.cooldownEndTime then return end
+            local now = GetTime()
+            local remaining = self.cooldownEndTime - now
+            if remaining <= 0 then
+                self.cooldownEndTime = nil
+                self.cooldownBar:Hide()
+                self:SetText(L["INFORM_GROUP"])
+                self:EnableMouse(true)
+                return
+            end
+            local pct = math.max(0, math.min(1, remaining / (self.cooldownDuration or 20)))
+            self.cooldownBar:Show()
+            self.cooldownBar:SetMinMaxValues(0,1)
+            self.cooldownBar:SetValue(pct)
+            self:SetText(string.format("%ds", math.ceil(remaining)))
+            self:EnableMouse(false)
+        end)
+
+        btn:SetScript("PostClick", function(self)
+            startCooldown(self)
+        end)
+
+        btn:Hide()
+        self.informSecureButton = btn
+    end
+
+    local btn = self.informSecureButton
+    btn:ClearAllPoints()
+    if self.displayFrame then
+        btn:SetPoint("TOP", self.displayFrame, "BOTTOM", 0, -6)
+    else
+        btn:SetPoint("CENTER")
+    end
+
+    if macroText then
+        btn:SetAttribute("type", "macro")
+        btn:SetAttribute("macrotext", macroText)
+    end
+end
+
+function KeystonePolaris:HideInformButton()
+    if self.informSecureButton then
+        self.informSecureButton.cooldownEndTime = nil
+        self.informSecureButton.cooldownBar:Hide()
+        self.informSecureButton:SetText(L["INFORM_GROUP"])
+        self.informSecureButton:Hide()
+    end
+end
+
+function KeystonePolaris:PrepareInformMacro(message)
+    local resolvedMessage = message
+    if not resolvedMessage then
+        local fakePercent = "12.34%"
+        resolvedMessage = "[Keystone Polaris]: " .. L["WE_STILL_NEED"] .. " " .. fakePercent
+    end
+    local macroText = string.format("/p %s", resolvedMessage)
+    self:EnsureInformSecureButton(macroText)
+    local btn = self.informSecureButton
+    btn:SetAlpha(0)
+    btn:Show()
+    if UIFrameFadeIn then
+        UIFrameFadeIn(btn, btn.fadeDuration or 0.25, 0, 1)
+    else
+        btn:SetAlpha(1)
+    end
+    -- Reset cooldown until click
+    btn.cooldownEndTime = nil
+end
+
+
 function KeystonePolaris:UpdateColorCache()
     if not self.db or not self.db.profile then return end
-    
+
     local function toHex(color)
         return string.format("%02x%02x%02x",
             math.floor((color.r or 1) * 255),
@@ -376,6 +474,7 @@ function KeystonePolaris:UpdatePercentageText()
                 local allBosses = self:AreAllBossesKilled()
                 self.displayFrame.text:SetText(self:FormatMainDisplayText(L["DONE"], currentPercentage, currentPullPercent, remainingPercent, fmtData, isBossKilled, allBosses))
             end
+            if self.HideInformButton then self:HideInformButton() end
         elseif remainingPercent <= 0 and isBossKilled then -- Boss has been killed and percentage is done
             color = self.db.profile.color.finished
             if(currentPercentage >= 100) then
@@ -446,6 +545,21 @@ function KeystonePolaris:UpdatePercentageText()
                 self.displayFrame.text:SetText(self:FormatMainDisplayText(L["DUNGEON_DONE"], currentPercentage, currentPullPercent, nil, fmtData, isBossKilled, allBosses)) -- Dungeon has been completed
             end
         end
+        if remainingPercent <= 0 then
+            if self.InformButton then
+                self.InformButton:Hide()
+            end
+        else
+            if self.InformButton then
+                self.InformButton:Show()
+                self.InformButton:SetScript("OnClick", function()
+                    self:StartCooldown()
+                end)
+                self.InformButton:SetScript("PostClick", function()
+                    self:StartCooldown()
+                end)
+            end
+        end
 
         -- Apply text color based on status
         self.displayFrame.text:SetTextColor(color.r, color.g, color.b, color.a)
@@ -456,7 +570,7 @@ function KeystonePolaris:UpdatePercentageText()
     end
 end
 
--- Send a chat message to inform the group about missing percentage
+
 function KeystonePolaris:InformGroup(percentage)
     if not self.db.profile.general.informGroup then return end
 
@@ -464,7 +578,9 @@ function KeystonePolaris:InformGroup(percentage)
     local percentageStr = string.format("%.2f%%", percentage)
     -- Don't send message if percentage is 0
     if percentageStr == "0.00%" then return end
-    SendChatMessage("[Keystone Polaris]: " .. L["WE_STILL_NEED"] .. " " .. percentageStr, channel)
+    local message = "[Keystone Polaris]: " .. L["WE_STILL_NEED"] .. " " .. percentageStr
+    -- Prepare secure macro button for manual send
+    self:PrepareInformMacro(message)
 end
 
 -- Helper for coloring prefix text

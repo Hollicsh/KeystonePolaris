@@ -677,7 +677,8 @@ function KeystonePolaris:InformGroup(percentage)
     -- Don't send message if percentage is 0
     if percentageStr == "0.00%" then return end
     local prefix = (self.GetChatPrefix and self:GetChatPrefix(true, true)) or "[Keystone Polaris]"
-    SendChatMessage(prefix .. ": " .. L["WE_STILL_NEED"] .. " " .. percentageStr, channel)
+    self:PrepareInformMacro(prefix .. ": " .. L["WE_STILL_NEED"] .. " " .. percentageStr)
+    -- SendChatMessage(prefix .. ": " .. L["WE_STILL_NEED"] .. " " .. percentageStr, channel)
 end
 
 
