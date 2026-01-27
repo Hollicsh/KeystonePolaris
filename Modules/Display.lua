@@ -118,6 +118,21 @@ function KeystonePolaris:HideInformButton()
     end
 end
 
+-- Apply visibility and reset state for the secure Inform button
+function KeystonePolaris:ApplyInformVisibility(shouldShow)
+    local btn = self.informSecureButton
+    if not btn then return end
+
+    if shouldShow then
+        btn:Show()
+    else
+        btn.cooldownEndTime = nil
+        if btn.cooldownBar then btn.cooldownBar:Hide() end
+        if btn.SetText then btn:SetText(L["INFORM_GROUP"]) end
+        btn:Hide()
+    end
+end
+
 function KeystonePolaris:PrepareInformMacro(message)
     local currentDungeonID = C_ChallengeMode.GetActiveChallengeMapID()
     if not currentDungeonID or not (self.DUNGEONS and self.DUNGEONS[currentDungeonID]) then
@@ -133,13 +148,8 @@ function KeystonePolaris:PrepareInformMacro(message)
     local macroText = string.format("/p %s", resolvedMessage)
     self:EnsureInformSecureButton(macroText)
     local btn = self.informSecureButton
-    btn:SetAlpha(0)
-    btn:Show()
-    if UIFrameFadeIn then
-        UIFrameFadeIn(btn, btn.fadeDuration or 0.25, 0, 1)
-    else
-        btn:SetAlpha(1)
-    end
+    btn:SetAlpha(1)
+    btn:Hide() -- Will be shown only when conditions are met in UpdatePercentageText
     -- Reset cooldown until click
     btn.cooldownEndTime = nil
 end
@@ -341,12 +351,33 @@ end
 -- Resize the display frame to fit multi-line content when enabled
 function KeystonePolaris:AdjustDisplayFrameSize()
     if not self.displayFrame or not self.db or not self.db.profile then return end
+
+    -- Avoid protected calls during combat; defer resize until combat ends
+    if InCombatLockdown() then
+        self._pendingAdjustAfterCombat = true
+        if not self._combatWatcher then
+            local f = CreateFrame("Frame")
+            f:RegisterEvent("PLAYER_REGEN_ENABLED")
+            f:SetScript("OnEvent", function()
+                if self._pendingAdjustAfterCombat then
+                    self._pendingAdjustAfterCombat = false
+                    if self.AdjustDisplayFrameSize then
+                        self:AdjustDisplayFrameSize()
+                    end
+                end
+            end)
+            self._combatWatcher = f
+        end
+        return
+    end
+
     local cfg = self.db.profile.general.mainDisplay
     if not (cfg and cfg.multiLine) then
         -- Reset to default height for single-line usage
         self.displayFrame:SetHeight(30)
         return
     end
+
     local text = self.displayFrame.text:GetText() or ""
     local _, count = text:gsub("\n", "")
     local lines = (count or 0) + 1
@@ -585,19 +616,33 @@ function KeystonePolaris:UpdatePercentageText()
                 self.displayFrame.text:SetText(self:FormatMainDisplayText(L["DUNGEON_DONE"], currentPercentage, currentPullPercent, nil, fmtData, isBossKilled, allBosses)) -- Dungeon has been completed
             end
         end
-        if remainingPercent <= 0 then
-            if self.InformButton then
-                self.InformButton:Hide()
+        -- Show the Inform button only when the boss is already dead AND percentage is still missing
+        local shouldShowInform = (remainingPercent > 0) and isBossKilled and self.db.profile.general.informGroup
+        local informBtn = self.informSecureButton
+        if not informBtn and self.db.profile.general.informGroup then
+            if self.EnsureInformSecureButton then
+                self:EnsureInformSecureButton()
+                informBtn = self.informSecureButton
             end
-        else
-            if self.InformButton then
-                self.InformButton:Show()
-                self.InformButton:SetScript("OnClick", function()
-                    self:StartCooldown()
-                end)
-                self.InformButton:SetScript("PostClick", function()
-                    self:StartCooldown()
-                end)
+        end
+
+        if informBtn then
+            if InCombatLockdown() then
+                self._pendingInformVisibility = shouldShowInform
+                if not self._informWatcher then
+                    local f = CreateFrame("Frame")
+                    f:RegisterEvent("PLAYER_REGEN_ENABLED")
+                    f:SetScript("OnEvent", function()
+                        if self._pendingInformVisibility ~= nil then
+                            local desired = self._pendingInformVisibility
+                            self._pendingInformVisibility = nil
+                            self:ApplyInformVisibility(desired)
+                        end
+                    end)
+                    self._informWatcher = f
+                end
+            else
+                self:ApplyInformVisibility(shouldShowInform)
             end
         end
 

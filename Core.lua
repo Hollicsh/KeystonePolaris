@@ -726,17 +726,35 @@ function KeystonePolaris:CHALLENGE_MODE_START()
     self.currentDungeonID = nil
 
     self:InitiateDungeon()
+    if self.HideInformButton then self:HideInformButton() end
+    if self.PrepareInformMacro then
+        C_Timer.After(5, function()
+            if self.PrepareInformMacro then
+                self:PrepareInformMacro("") -- init macro without fake percent text
+            end
+        end)
+    end
     if self.UpdatePercentageText then self:UpdatePercentageText() end
 end
 
 function KeystonePolaris:CHALLENGE_MODE_COMPLETED()
     self.currentDungeonID = nil
+    if self.HideInformButton then self:HideInformButton() end
 end
 
 -- Event handler for entering the world or changing zones
 function KeystonePolaris:PLAYER_ENTERING_WORLD()
     if self._testMode and self.DisableTestMode then self:DisableTestMode("changed zone") end
     self:InitiateDungeon()
+    if self.HideInformButton then self:HideInformButton() end
+    if self.PrepareInformMacro then
+        -- Utilise le message par défaut (WE_STILL_NEED + % fictif)
+        C_Timer.After(10, function()
+            if self.PrepareInformMacro then
+                self:PrepareInformMacro(nil)
+            end
+        end)
+    end
     if self.UpdatePercentageText then self:UpdatePercentageText() end
 end
 
