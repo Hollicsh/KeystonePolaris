@@ -242,23 +242,6 @@ L["CUSTOM_FORMAT_DESC"] = "Enter a custom format. Use %s for percentage, %c for 
 L["RESET_TO_DEFAULT"] = "Reset"
 L["RESET_FORMAT_DESC"] = "Reset the text format to the default value (parentheses)"
 
--- Mob Indicators
-L["MOB_INDICATOR"] = "Mob Indicators"
-L["ENABLE_MOB_INDICATORS"] = "Enable Mob Indicators"
-L["ENABLE_MOB_INDICATORS_DESC"] = "Show an indicator for each mob included in the MDT route"
-L["MOB_INDICATOR_TEXTURE_HEADER"] = "Indicator icon"
-L["MOB_INDICATOR_TEXTURE"] = "Indicator icon (ID or Path)"
-L["MOB_INDICATOR_TEXTURE_SIZE"] = "Size"
-L["MOB_INDICATOR_TEXTURE_SIZE_DESC"] = "Set the texture size for the indicator icon"
-L["MOB_INDICATOR_COLORING_HEADER"] = "Coloring"
-L["MOB_INDICATOR_BEHAVIOR"] = "Behavior"
-L["MOB_INDICATOR_AUTO_ADVANCE"] = "Auto-advance pull"
-L["MOB_INDICATOR_AUTO_ADVANCE_DESC"] = "Auto-advance pull when no current-pull mobs are visible."
-L["MOB_INDICATOR_TINT"] = "Tint the indicator"
-L["MOB_INDICATOR_TINT_DESC"] = "Tint the indicator icon"
-L["MOB_INDICATOR_TINT_COLOR"] = "Color"
-L["MOB_INDICATOR_POSITION_HEADER"] = "Positioning"
-
 -- Group Reminder (Popup labels)
 L["KPL_GR_HEADER"] = "Group Reminder"
 L["KPL_GR_DUNGEON"] = "Dungeon:"

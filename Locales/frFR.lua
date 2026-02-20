@@ -241,23 +241,6 @@ L["CUSTOM_FORMAT_DESC"] = "Saisissez un format personnalisé. Utilisez %s pour l
 L["RESET_TO_DEFAULT"] = "Réinitialiser"
 L["RESET_FORMAT_DESC"] = "Réinitialiser le format du texte à la valeur par défaut (parenthèses)"
 
--- Mob Indicators
-L["MOB_INDICATOR"] = "Indicateurs des monstres"
-L["ENABLE_MOB_INDICATORS"] = "Activer les indicateurs des monstres"
-L["ENABLE_MOB_INDICATORS_DESC"] = "Afficher un indicateur pour chaque monstre inclus dans la route MDT"
-L["MOB_INDICATOR_TEXTURE_HEADER"] = "Icône de l'indicateur"
-L["MOB_INDICATOR_TEXTURE"] = "Icône de l'indicateur (ID ou Chemin)"
-L["MOB_INDICATOR_TEXTURE_SIZE"] = "Taille"
-L["MOB_INDICATOR_TEXTURE_SIZE_DESC"] = "Taille de l'icône de l'indicateur"
-L["MOB_INDICATOR_COLORING_HEADER"] = "Coloration"
-L["MOB_INDICATOR_BEHAVIOR"] = "Comportement"
-L["MOB_INDICATOR_AUTO_ADVANCE"] = "Avancer automatiquement"
-L["MOB_INDICATOR_AUTO_ADVANCE_DESC"] = "Avancer automatiquement lorsqu'aucun monstre de la route actuelle n'est visible."
-L["MOB_INDICATOR_TINT"] = "Tinter l'indicateur"
-L["MOB_INDICATOR_TINT_DESC"] = "Tinter l'icône de l'indicateur"
-L["MOB_INDICATOR_TINT_COLOR"] = "Couleur"
-L["MOB_INDICATOR_POSITION_HEADER"] = "Positionnement"
-
 -- Group Reminder (Popup labels)
 L["KPL_GR_HEADER"] = "Rappel de Groupe"
 L["KPL_GR_DUNGEON"] = "Donjon :"

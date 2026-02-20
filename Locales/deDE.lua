@@ -242,23 +242,6 @@ L["CUSTOM_FORMAT_DESC"] = "Gib ein benutzerdefiniertes Format ein. Verwende %s f
 L["RESET_TO_DEFAULT"] = "Zurücksetzen"
 L["RESET_FORMAT_DESC"] = "Setzt das Textformat auf den Standardwert (Klammern) zurück"
 
--- -- Mob Indicators
-L["MOB_INDICATOR"] = "Gegner-Indikatoren"
-L["ENABLE_MOB_INDICATORS"] = "Gegner-Indikatoren aktivieren"
-L["ENABLE_MOB_INDICATORS_DESC"] = "Zeigt einen Indikator für jeden Gegner, der in der MDT-Route enthalten ist"
-L["MOB_INDICATOR_TEXTURE_HEADER"] = "Indikator-Symbol"
-L["MOB_INDICATOR_TEXTURE"] = "Indikator-Symbol (ID oder Pfad)"
-L["MOB_INDICATOR_TEXTURE_SIZE"] = "Größe"
-L["MOB_INDICATOR_TEXTURE_SIZE_DESC"] = "Legt die Größe des Indikator-Symbols fest"
-L["MOB_INDICATOR_COLORING_HEADER"] = "Farbgebung"
-L["MOB_INDICATOR_BEHAVIOR"] = "Verhalten"
-L["MOB_INDICATOR_AUTO_ADVANCE"] = "Automatisch zum nächsten Pull"
-L["MOB_INDICATOR_AUTO_ADVANCE_DESC"] = "Wechselt automatisch zum nächsten Pull, wenn keine Gegner des aktuellen Pulls sichtbar sind."
-L["MOB_INDICATOR_TINT"] = "Indikator einfärben"
-L["MOB_INDICATOR_TINT_DESC"] = "Färbt das Indikator-Symbol ein"
-L["MOB_INDICATOR_TINT_COLOR"] = "Farbe"
-L["MOB_INDICATOR_POSITION_HEADER"] = "Positionierung"
-
 -- Group Reminder (Popup labels)
 L["KPL_GR_HEADER"] = "Group Reminder"
 L["KPL_GR_DUNGEON"] = "Dungeon:"
