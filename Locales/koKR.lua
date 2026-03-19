@@ -287,4 +287,3 @@ L["KPL_GR_SHOW_DUNGEON"] = "던전명 표시"
 L["KPL_GR_SHOW_GROUP"] = "파티명 표시"
 L["KPL_GR_SHOW_DESC"] = "파티 요약 표시"
 L["KPL_GR_SHOW_ROLE"] = "수락한 포지션 표시"
-

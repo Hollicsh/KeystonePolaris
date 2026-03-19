@@ -46,6 +46,5 @@ Modules/Changelog/Changelog.lua
 Options.lua
 Modules/ImportExport.lua
 Modules/MdtIntegration/MobPercentages.lua
-Modules/MdtIntegration/MobIndicator.lua
 
 Modules/Changelog/Load_Changelog.xml
