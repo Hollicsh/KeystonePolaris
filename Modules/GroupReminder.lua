@@ -562,6 +562,9 @@ function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment,
         self.db.profile.groupReminder.lastReminder = reminderData
     end
 
+    self.groupReminderPendingFullPopup = db.showPopupWhenGroupIsFull and true or nil
+    self.groupReminderFullPopupShown = nil
+
     -- Popup
     if db.showPopup then
         self:ShowStyledGroupReminderPopup(title, zone, title, comment, roleText, teleportSpellID, teleportSpellUnknown)
@@ -589,14 +592,16 @@ function KeystonePolaris:InitializeGroupReminder()
 
     self.groupReminderFrame = CreateFrame("Frame")
     self.groupReminderFrame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+    self.groupReminderFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     self.groupReminderFrame:RegisterEvent("GROUP_LEFT")
 
     self.groupReminderFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "GROUP_LEFT" then
-            self.lastGroupReminder = nil
-            if self.db and self.db.profile and self.db.profile.groupReminder then
-                self.db.profile.groupReminder.lastReminder = nil
-            end
+            self:ResetGroupReminderTracking(true)
+            return
+        end
+        if event == "GROUP_ROSTER_UPDATE" then
+            self:HandleGroupRosterUpdate()
             return
         end
         if event ~= "LFG_LIST_APPLICATION_STATUS_UPDATED" then return end
@@ -633,6 +638,7 @@ function KeystonePolaris:InitializeGroupReminder()
         -- Delay slightly to allow group roster to update so UnitGroupRolesAssigned returns the accepted role
         C_Timer.After(0.2, function()
             self:ShowGroupReminder(searchResultID, title, zone, comment, mapID)
+            self:HandleGroupRosterUpdate()
         end)
 
         -- Cleanup stored role for this application
@@ -655,9 +661,40 @@ function KeystonePolaris:UpdateGroupReminderRegistration()
             return
         end
         self.groupReminderFrame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+        self.groupReminderFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+        self.groupReminderFrame:RegisterEvent("GROUP_LEFT")
     else
         self:DisableGroupReminder()
     end
+end
+
+local function IsCurrentGroupFull()
+    if not IsInGroup or not IsInGroup() then return false end
+    if IsInRaid and IsInRaid() then return false end
+    return (GetNumGroupMembers and GetNumGroupMembers() or 0) >= 5
+end
+
+function KeystonePolaris:ResetGroupReminderTracking(clearLastReminder)
+    self.groupReminderPendingFullPopup = nil
+    self.groupReminderFullPopupShown = nil
+
+    if clearLastReminder then
+        self.lastGroupReminder = nil
+        if self.db and self.db.profile and self.db.profile.groupReminder then
+            self.db.profile.groupReminder.lastReminder = nil
+        end
+    end
+end
+
+function KeystonePolaris:HandleGroupRosterUpdate()
+    local db = self.db and self.db.profile and self.db.profile.groupReminder
+    if not db or not db.enabled or not db.showPopupWhenGroupIsFull then return end
+    if not self.groupReminderPendingFullPopup or self.groupReminderFullPopupShown then return end
+    if not self.lastGroupReminder then return end
+    if not IsCurrentGroupFull() then return end
+
+    self.groupReminderFullPopupShown = true
+    self:ShowLastGroupReminder()
 end
 
 -- Ensure Blizzard UI related to group invites/toasts is visible again
@@ -808,6 +845,24 @@ function KeystonePolaris:GetGroupReminderOptions()
                 order = 4,
                 get = function() return self.db.profile.groupReminder.showChat end,
                 set = function(_, v) self.db.profile.groupReminder.showChat = v end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            showPopupWhenGroupIsFull = {
+                name = L["KPL_GR_SHOW_POPUP_WHEN_FULL"] or "Show popup again when the group is full",
+                desc = L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] or "Reopen the reminder window when your Mythic+ group reaches 5 players.",
+                type = "toggle",
+                width = "full",
+                order = 4.5,
+                get = function() return self.db.profile.groupReminder.showPopupWhenGroupIsFull end,
+                set = function(_, v)
+                    self.db.profile.groupReminder.showPopupWhenGroupIsFull = v
+                    if not v then
+                        self.groupReminderPendingFullPopup = nil
+                        self.groupReminderFullPopupShown = nil
+                    else
+                        self:HandleGroupRosterUpdate()
+                    end
+                end,
                 disabled = function() return not self.db.profile.groupReminder.enabled end,
             },
             suppressQuickJoinToast = {

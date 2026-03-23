@@ -119,6 +119,7 @@ KeystonePolaris.defaults.profile.groupReminder = {
     enabled = true,
     showPopup = true,
     showChat = true,
+    showPopupWhenGroupIsFull = false,
     suppressQuickJoinToast = false,
     showDungeonName = true,
     showGroupName = true,

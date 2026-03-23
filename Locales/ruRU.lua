@@ -254,6 +254,8 @@ L["KPL_GR_TELEPORT_UNKNOWN"] = "Заклинание телепортации н
 L["KPL_GR_OPEN_REMINDER"] = "Открыть напоминание"
 L["KPL_GR_INVITED"] = "Вас пригласили"
 L["KPL_GR_AS_ROLE"] = "как %s"
+L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Show popup again when the group is full" -- TODO: To Translate
+L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Reopen the reminder window when your Mythic+ group reaches 5 players." -- TODO: To Translate
 
 -- Group Reminder (Options)
 L["KPL_GR_DESC_LONG"] = "Отображает всплывающее напоминание и/или сообщение в чате, когда Вас принимают в группу для прохождения ключа M+, с кнопкой телепортации в подземелье."

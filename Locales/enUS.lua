@@ -253,6 +253,8 @@ L["KPL_GR_TELEPORT_UNKNOWN"] = "Teleport spell not known"
 L["KPL_GR_OPEN_REMINDER"] = "Open reminder"
 L["KPL_GR_INVITED"] = "You have been invited to"
 L["KPL_GR_AS_ROLE"] = "as a %s"
+L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Show popup again when the group is full"
+L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Reopen the reminder window when your Mythic+ group reaches 5 players."
 
 -- Group Reminder (Options)
 L["KPL_GR_DESC_LONG"] = "Displays a reminder popup and/or chat message when you are accepted into a Mythic+ group, with a button to teleport to the dungeon."
