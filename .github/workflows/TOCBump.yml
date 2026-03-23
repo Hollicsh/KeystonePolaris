@@ -20,7 +20,7 @@ jobs:
         with:
           flavor: retail
           beta: false
-          ptr: true
+          ptr: false
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v8
