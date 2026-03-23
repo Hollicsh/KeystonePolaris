@@ -1,6 +1,6 @@
-local AddOnName, KeystonePolaris = ...
+local _, KeystonePolaris = ...
 local _G = _G
-local pairs, select, strsplit, format = pairs, select, strsplit, string.format
+local pairs, strsplit, format = pairs, strsplit, string.format
 
 -- Get localization table
 local L = KeystonePolaris.L
@@ -215,7 +215,7 @@ function KeystonePolaris:UpdateNameplate(unit)
         fmt = fmt:gsub(PCT, function() return "%" end)
 
         -- Cleanup formatting and ensure non-empty fallback
-        fmt = self:CleanupMobPercentFormat(fmt)
+        fmt = self.CleanupMobPercentFormat(fmt)
         if fmt == "" then
             if percentOnly ~= "" then
                 fmt = "(" .. percentOnly .. ")"
@@ -234,7 +234,7 @@ function KeystonePolaris:UpdateNameplate(unit)
 end
 
 -- Helper: cleanup orphan separators/spaces in formatted mob percentage text
-function KeystonePolaris:CleanupMobPercentFormat(s)
+function KeystonePolaris.CleanupMobPercentFormat(s)
     if not s or s == "" then return "" end
 
     -- Remove combos like " - /", " | /" or "/ |"
@@ -311,7 +311,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                             self.mobPercentFrame:UnregisterAllEvents()
                         end
                         -- Hide all existing nameplate texts
-                        for unit, frame in pairs(self.nameplateTextFrames) do
+                        for _, frame in pairs(self.nameplateTextFrames) do
                             frame:Hide()
                         end
                         wipe(self.nameplateTextFrames)
@@ -448,7 +448,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                         set = function(_, value)
                             self.db.profile.mobPercentages.fontSize = value
                             -- Update all existing nameplate texts
-                            for unit, frame in pairs(self.nameplateTextFrames) do
+                            for _, frame in pairs(self.nameplateTextFrames) do
                                 frame.text:SetFont(self.LSM:Fetch('font', self.db.profile.text.font), value, "OUTLINE")
                             end
                         end,
@@ -466,7 +466,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                         set = function(_, r, g, b, a)
                             self.db.profile.mobPercentages.textColor = {r = r, g = g, b = b, a = a}
                             -- Update all existing nameplate texts
-                            for unit, frame in pairs(self.nameplateTextFrames) do
+                            for _, frame in pairs(self.nameplateTextFrames) do
                                 frame.text:SetTextColor(r, g, b, a)
                             end
                         end,
@@ -489,7 +489,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                         set = function(_, value)
                             self.db.profile.mobPercentages.position = value
                             -- Update all existing nameplate texts
-                            for unit, frame in pairs(self.nameplateTextFrames) do
+                            for unit, _ in pairs(self.nameplateTextFrames) do
                                 self:UpdateNameplatePosition(unit)
                             end
                         end,
@@ -509,7 +509,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                         set = function(_, value)
                             self.db.profile.mobPercentages.xOffset = value
                             -- Update all existing nameplate texts
-                            for unit, frame in pairs(self.nameplateTextFrames) do
+                            for unit, _ in pairs(self.nameplateTextFrames) do
                                 self:UpdateNameplatePosition(unit)
                             end
                         end,
@@ -529,7 +529,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                         set = function(_, value)
                             self.db.profile.mobPercentages.yOffset = value
                             -- Update all existing nameplate texts
-                            for unit, frame in pairs(self.nameplateTextFrames) do
+                            for unit, _ in pairs(self.nameplateTextFrames) do
                                 self:UpdateNameplatePosition(unit)
                             end
                         end,
@@ -607,7 +607,7 @@ function KeystonePolaris:CheckForMDT()
 end
 
 -- Check if the current affix is Teeming
-function KeystonePolaris:IsTeeming()
+function KeystonePolaris.IsTeeming(_)
     local _, affixes = C_ChallengeMode.GetActiveKeystoneInfo()
     if not affixes then return false end
 

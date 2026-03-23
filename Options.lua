@@ -1,10 +1,13 @@
 local AddOnName, KeystonePolaris = ...;
 
 local _G = _G;
-local pairs, unpack, select = pairs, unpack, select
+local pairs, select = pairs, select
 local format = string.format
 local gsub = string.gsub
 local strsplit = strsplit
+local HideUIPanel = _G.HideUIPanel
+local AceGUIWidgetLSMlists = _G.AceGUIWidgetLSMlists
+local CALENDAR_WEEKDAY_NAMES = _G.CALENDAR_WEEKDAY_NAMES
 
 -- Get localization table
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName, true)
@@ -131,7 +134,6 @@ KeystonePolaris.defaults.profile.groupReminder = {
 local expansions = KeystonePolaris.Expansions
 
 function KeystonePolaris:GetPositioningOptions()
-    local self = KeystonePolaris
     return {
         name = L["POSITIONING"],
         type = "group",
@@ -203,7 +205,6 @@ function KeystonePolaris:GetPositioningOptions()
 end
 
 function KeystonePolaris:GetFontOptions()
-    local self = KeystonePolaris
     return {
         name = L["FONT"],
         type = "group",
@@ -244,7 +245,6 @@ function KeystonePolaris:GetFontOptions()
 end
 
 function KeystonePolaris:GetColorOptions()
-    local self = KeystonePolaris
     return {
         name = L["COLORS"],
         type = "group",
@@ -302,7 +302,6 @@ end
 
 -- Main display options: control which values to show and layout
 function KeystonePolaris:GetMainDisplayOptions()
-    local self = KeystonePolaris
     -- Local helper for MDT availability
     local function IsMDTAvailable()
         if C_AddOns and C_AddOns.IsAddOnLoaded then
@@ -693,14 +692,14 @@ function KeystonePolaris:GetOtherOptions()
 end
 
 function KeystonePolaris:GetAdvancedOptions()
-    local self = KeystonePolaris
     -- Helper function to get dungeon name with icon
     local function GetDungeonNameWithIcon(dungeonKey)
         local mapId = self:GetDungeonIdByKey(dungeonKey)
 
-        local name, _, _, texture
+        local name, texture
         if mapId then
-            name, _, _, texture = C_ChallengeMode.GetMapUIInfo(mapId)
+            name = select(1, C_ChallengeMode.GetMapUIInfo(mapId))
+            texture = select(4, C_ChallengeMode.GetMapUIInfo(mapId))
         end
 
         -- Retrieve manual display name
@@ -721,7 +720,7 @@ function KeystonePolaris:GetAdvancedOptions()
     end
 
     -- Helper function to format dungeon text
-    local function FormatDungeonText(addon, dungeonKey, defaults)
+    local function FormatDungeonText(dungeonKey, defaults)
         local text = ""
         if defaults then
             text = text .. "|cffffd700" .. GetDungeonNameWithIcon(dungeonKey) ..
@@ -738,7 +737,7 @@ function KeystonePolaris:GetAdvancedOptions()
                                "  %s: |cff40E0D0%.2f%%|r - " ..
                                    L["INFORM_GROUP"] .. ": %s\n",
                                bossName,
-                               defaults[bossKey],
+                               defaults[bossKey] or 0,
                                defaults[informKey] and '|cff00ff00' .. L["YES"] ..
                                    '|r' or '|cffff0000' .. L["NO"] .. '|r')
                 bossNum = bossNum + 1
@@ -861,7 +860,7 @@ function KeystonePolaris:GetAdvancedOptions()
     for _, expansion in ipairs(expansions) do
         local dungeonIds = self[expansion.id .. "_DUNGEON_IDS"]
         if dungeonIds then
-            for dungeonKey, dungeonId in pairs(dungeonIds) do
+            for dungeonKey, _ in pairs(dungeonIds) do
                 sharedDungeonOptions[dungeonKey] =
                     self:CreateDungeonOptions(dungeonKey, 0)
             end
@@ -881,7 +880,7 @@ function KeystonePolaris:GetAdvancedOptions()
                 order = 0.1,
                 type = "description",
                 fontSize = "medium",
-                name = extraDisclaimerText,
+                name = extraDisclaimerText or "",
             } or nil,
             separatorTitle = {
                 order = 0.2,
@@ -944,7 +943,7 @@ function KeystonePolaris:GetAdvancedOptions()
                     local text = ""
                     for _, dungeonKey in ipairs(dungeonKeys) do
                         local defaults = getDefaultsFn and getDefaultsFn(dungeonKey) or nil
-                        text = text .. FormatDungeonText(self, dungeonKey, defaults)
+                        text = text .. FormatDungeonText(dungeonKey, defaults)
                     end
                     return text
                 end
@@ -959,8 +958,8 @@ function KeystonePolaris:GetAdvancedOptions()
 
     -- Create current season options
     local currentSeasonDungeons = {}
-    local currentSeasonTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r"
-    local currentSeasonListTitle = "|cff40E0D0" .. L["CURRENT_SEASON"] .. "|r"
+    local currentSeasonTitle
+    local currentSeasonListTitle
     local currentSeasonAlertText
 
     -- Get the current date
@@ -1045,11 +1044,8 @@ function KeystonePolaris:GetAdvancedOptions()
 
     -- Create next season dungeon args
     local nextSeasonDungeons = {}
-    local nextSeasonTitle = "|cffff5733" .. L["NEXT_SEASON"] .. "|r"
-    local nextSeasonListTitle = nextSeasonTitle
-
-    -- Get the current date
-    local currentDate = date("%Y-%m-%d")
+    local nextSeasonTitle
+    local nextSeasonListTitle
 
     -- Find the next season (first season that starts after current date)
     local _, _, _, nextSeasonId, nextSeasonDate = self:GetSeasonByDate(currentDate)
@@ -1236,10 +1232,7 @@ function KeystonePolaris:GetAdvancedOptions()
     end
 
     -- Helper to create a remix section
-    local function HandleRemixSection(key, data, args)
-        local expansionName = data.expansion:match("%d+_(.+)") or data.expansion
-        local expansionLocName = L["EXPANSION_" .. expansionName:upper()] or expansionName
-        
+    local function HandleRemixSection(_, data, _)
         -- Collect dungeon keys
         local remixDungeons = {}
         for id, enabled in pairs(data) do
@@ -1268,45 +1261,21 @@ function KeystonePolaris:GetAdvancedOptions()
         end)
 
         local keys = {}
-        local filter = {}
         for _, d in ipairs(remixDungeons) do
                 table.insert(keys, d.key)
-                filter[d.key] = true
         end
-        
-        local function getDefaultsFn(dungeonKey)
-            for _, expansion in ipairs(expansions) do
-                local ids = self[expansion.id .. "_DUNGEON_IDS"]
-                if ids and ids[dungeonKey] then
-                    local defaults = self[expansion.id .. "_DEFAULTS"]
-                    return defaults and defaults[dungeonKey] or nil
-                end
-            end
-            return nil
-        end
-        
-        local sectionName = expansionLocName .. " " .. (L["REMIX"] or "Remix")
 
         -- Handle dates with region offset
-        local sDate = data.start_date
         local eDate = data.end_date
         
         -- Add +1 day for non-US regions if dates are present
         local portal = C_CVar.GetCVar("portal")
-        local sDateFromTable = false
         local eDateFromTable = false
-        if type(sDate) == "table" then
-            sDate = sDate[portal] or sDate.default or sDate.US or sDate.EU
-            sDateFromTable = true
-        end
         if type(eDate) == "table" then
             eDate = eDate[portal] or eDate.default or eDate.US or eDate.EU
             eDateFromTable = true
         end
         if portal ~= "US" then
-            if sDate and sDate ~= "" and not sDateFromTable then
-                sDate = AddDays(sDate, 1)
-            end
             if eDate and eDate ~= "" and not eDateFromTable then
                 eDate = AddDays(eDate, 1)
             end
@@ -1321,34 +1290,6 @@ function KeystonePolaris:GetAdvancedOptions()
         end
 
         -- Add dates to title if available
-        if sDate and sDate ~= "" then
-            sectionName = sectionName .. "|r - |cffbbbbbb" .. FormatSeasonDate(sDate)
-            if eDate and eDate ~= "" then
-                sectionName = sectionName .. " -> " .. FormatSeasonDate(eDate)
-            end
-            sectionName = sectionName .. "|r"
-        end
-        
-        local fullTitle = "|cffeda55f" .. sectionName .. "|r"
-        local remixAlertText
-        if daysUntilEnd then
-            remixAlertText = GetSeasonCountdownText(daysUntilEnd, "SEASON_ENDS_IN", true, eDate)
-        end
-        local sectionArgs = CreateGenericSectionArgs(sectionName, keys, filter, getDefaultsFn, fullTitle, remixAlertText)
-
-        local listTitle = fullTitle
-        if remixAlertText then
-            listTitle = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t " ..
-                fullTitle
-        end
-
-        args["remix_" .. key] = {
-            name = listTitle,
-            type = "group",
-            childGroups = "tree",
-            order = 5.5,
-            args = sectionArgs
-        }
     end
 
     -- Create remix season sections
@@ -1395,7 +1336,6 @@ function KeystonePolaris:GetAdvancedOptions()
 end
 
 function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
-    local self = KeystonePolaris
     local numBosses = #self.DUNGEONS[self:GetDungeonIdByKey(dungeonKey)]
 
     -- Ensure the advanced settings table exists for this dungeon
@@ -1427,7 +1367,8 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
 
             local name, texture
             if mapId then
-                name, _, _, texture, _ = C_ChallengeMode.GetMapUIInfo(mapId)
+                name = select(1, C_ChallengeMode.GetMapUIInfo(mapId))
+                texture = select(4, C_ChallengeMode.GetMapUIInfo(mapId))
             end
 
             -- Fallback if name/texture is missing
@@ -1458,8 +1399,8 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
 
                     local name, texture
                     if mapId then
-                        name, _, _, texture, _ =
-                            C_ChallengeMode.GetMapUIInfo(mapId)
+                        name = select(1, C_ChallengeMode.GetMapUIInfo(mapId))
+                        texture = select(4, C_ChallengeMode.GetMapUIInfo(mapId))
                     end
 
                     -- Fallback if name/texture is missing

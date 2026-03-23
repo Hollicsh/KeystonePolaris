@@ -2,7 +2,7 @@ local AddOnName, KeystonePolaris = ...;
 
 local _G = _G;
 -- Cache frequently used global functions for better performance
-local pairs, unpack, select = pairs, unpack, select
+local pairs, select = pairs, select
 
 -- Initialize Ace3 libraries
 local AceAddon = LibStub("AceAddon-3.0")
@@ -145,36 +145,38 @@ local function EnsureMinimapSettings(self)
 end
 
 local function EnsureAddonCompartmentLoaded()
-    if AddonCompartmentFrame then return end
+    if _G.AddonCompartmentFrame then return end
     if C_AddOns and C_AddOns.LoadAddOn then
         C_AddOns.LoadAddOn("Blizzard_AddonCompartment")
     end
 end
 
 local function CleanupCompartmentEntries(self)
-    if not AddonCompartmentFrame or not AddonCompartmentFrame.registeredAddons then return end
+    local compartmentFrame = _G.AddonCompartmentFrame
+    if not compartmentFrame or not compartmentFrame.registeredAddons then return end
     local label = (self.GetGradientAddonName and self:GetGradientAddonName()) or "Keystone Polaris"
-    for i = #AddonCompartmentFrame.registeredAddons, 1, -1 do
-        local entry = AddonCompartmentFrame.registeredAddons[i]
+    for i = #compartmentFrame.registeredAddons, 1, -1 do
+        local entry = compartmentFrame.registeredAddons[i]
         if entry and (entry.text == AddOnName or entry.text == label) then
-            table.remove(AddonCompartmentFrame.registeredAddons, i)
+            table.remove(compartmentFrame.registeredAddons, i)
         end
     end
-    if AddonCompartmentFrame.UpdateDisplay then
-        AddonCompartmentFrame:UpdateDisplay()
+    if compartmentFrame.UpdateDisplay then
+        compartmentFrame:UpdateDisplay()
     end
 end
 
 local function UpdateCompartmentEntryLabel(self)
-    if not AddonCompartmentFrame or not AddonCompartmentFrame.registeredAddons then return end
+    local compartmentFrame = _G.AddonCompartmentFrame
+    if not compartmentFrame or not compartmentFrame.registeredAddons then return end
     local label = (self.GetGradientAddonName and self:GetGradientAddonName()) or "Keystone Polaris"
-    for i = 1, #AddonCompartmentFrame.registeredAddons do
-        local entry = AddonCompartmentFrame.registeredAddons[i]
+    for i = 1, #compartmentFrame.registeredAddons do
+        local entry = compartmentFrame.registeredAddons[i]
         if entry and entry.text == AddOnName then
             entry.text = label
             entry.icon = entry.icon or "Interface\\AddOns\\KeystonePolaris\\icon.png"
-            if AddonCompartmentFrame.UpdateDisplay then
-                AddonCompartmentFrame:UpdateDisplay()
+            if compartmentFrame.UpdateDisplay then
+                compartmentFrame:UpdateDisplay()
             end
             return
         end
@@ -227,7 +229,7 @@ function KeystonePolaris:UpdateCompartmentIconVisibility()
     local show = self.db.profile.general.showCompartmentIcon ~= false
     if not LDBIcon then return end
     EnsureAddonCompartmentLoaded()
-    if not AddonCompartmentFrame then
+    if not _G.AddonCompartmentFrame then
         if not self._pendingCompartmentUpdate and C_Timer and C_Timer.After then
             self._pendingCompartmentUpdate = true
             C_Timer.After(1, function()
@@ -360,7 +362,7 @@ function KeystonePolaris:OnInitialize()
                             self._testMode = not not value
                             if self._testMode then
                                 -- Close settings so the user can see the preview behind
-                                if HideUIPanel and _G.SettingsPanel then HideUIPanel(_G.SettingsPanel) end
+                                if _G.HideUIPanel and _G.SettingsPanel then _G.HideUIPanel(_G.SettingsPanel) end
                                 if self.ShowTestOverlay then self:ShowTestOverlay() end
                                 if self.StartTestModeTicker then self:StartTestModeTicker() end
                             else
@@ -473,8 +475,11 @@ end
 
 -- Open configuration panel when command is used
 function KeystonePolaris:ToggleConfig(input)
-     local optionsAddonName = (self.GetGradientAddonNameFromSecondLetter and self:GetGradientAddonNameFromSecondLetter()) or "Keystone Polaris"
-    local command = strtrim((input or "")):lower()
+    local optionsAddonName = (self.GetGradientAddonNameFromSecondLetter and self:GetGradientAddonNameFromSecondLetter()) or "Keystone Polaris"
+    local trim = _G.strtrim or function(value)
+        return (value:gsub("^%s+", ""):gsub("%s+$", ""))
+    end
+    local command = trim(input or ""):lower()
     if command == "help" or command == "?" then
         if self.ShowHelp then self:ShowHelp() end
         return
@@ -586,9 +591,9 @@ function KeystonePolaris:InitiateDungeon()
 end
 
 -- Get the current enemy forces percentage from the scenario UI
-function KeystonePolaris:GetCurrentPercentage()
+function KeystonePolaris.GetCurrentPercentage(_)
     -- Mirror WarpDeplete logic: scan criteria and use weighted progress with the
-    local stepCount = select(3, C_Scenario.GetStepInfo())
+    local stepCount = select(3, C_ScenarioInfo.GetStepInfo())
     if not stepCount or stepCount <= 0 then return 0 end
 
     local bestTotal = 0
@@ -596,12 +601,9 @@ function KeystonePolaris:GetCurrentPercentage()
     for i = 1, stepCount do
         local info = C_ScenarioInfo.GetCriteriaInfo(i)
         if info and info.isWeightedProgress and info.totalQuantity and info.totalQuantity > 0 then
-            local currentCount = 0
-            if type(info.quantityString) == "string" then
-                currentCount = tonumber(info.quantityString:match("%d+")) or 0
-            else
-                currentCount = tonumber(info.quantity) or 0
-            end
+            local currentCount = type(info.quantityString) == "string"
+                and (tonumber(info.quantityString:match("%d+")) or 0)
+                or (tonumber(info.quantity) or 0)
             if info.totalQuantity > bestTotal then
                 bestTotal = info.totalQuantity
                 bestCurrent = currentCount
@@ -616,8 +618,8 @@ function KeystonePolaris:GetCurrentPercentage()
 end
 
 -- Retrieve raw Enemy Forces counts: current and total. Returns 0,0 if unavailable.
-function KeystonePolaris:GetCurrentForcesInfo()
-    local stepCount = select(3, C_Scenario.GetStepInfo())
+function KeystonePolaris.GetCurrentForcesInfo(_)
+    local stepCount = select(3, C_ScenarioInfo.GetStepInfo())
     if not stepCount or stepCount <= 0 then return 0, 0 end
 
     local bestTotal = 0
@@ -625,12 +627,9 @@ function KeystonePolaris:GetCurrentForcesInfo()
     for i = 1, stepCount do
         local info = C_ScenarioInfo.GetCriteriaInfo(i)
         if info and info.isWeightedProgress and info.totalQuantity and info.totalQuantity > 0 then
-            local currentCount = 0
-            if type(info.quantityString) == "string" then
-                currentCount = tonumber(info.quantityString:match("%d+")) or 0
-            else
-                currentCount = tonumber(info.quantity) or 0
-            end
+            local currentCount = type(info.quantityString) == "string"
+                and (tonumber(info.quantityString:match("%d+")) or 0)
+                or (tonumber(info.quantity) or 0)
             if info.totalQuantity > bestTotal then
                 bestTotal = info.totalQuantity
                 bestCurrent = currentCount
@@ -672,7 +671,6 @@ end
 function KeystonePolaris:InformGroup(percentage)
     if not self.db.profile.general.informGroup then return end
 
-    local channel = self.db.profile.general.informChannel
     local percentageStr = string.format("%.2f%%", percentage)
     -- Don't send message if percentage is 0
     if percentageStr == "0.00%" then return end

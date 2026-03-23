@@ -90,8 +90,8 @@ function KeystonePolaris:ShowCopyPopup(text)
         edit:SetText("")
         scroll:SetScrollChild(edit)
 
-        scroll:HookScript("OnSizeChanged", function(self, w)
-            edit:SetWidth(w)
+        scroll:HookScript("OnSizeChanged", function(_, width)
+            edit:SetWidth(width)
         end)
 
         local selectBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
@@ -148,8 +148,7 @@ function KeystonePolaris:ShowCopyPopup(text)
 end
 
 -- Global export function for dungeon settings
-function KeystonePolaris:ExportDungeonSettings(dungeonData, exportType,
-                                                        sectionName)
+function KeystonePolaris.ExportDungeonSettings(dungeonData, exportType, sectionName)
     -- Create export string
     local exportData = {
         type = exportType,

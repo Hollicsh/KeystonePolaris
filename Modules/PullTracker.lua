@@ -1,5 +1,4 @@
-local AddOnName, KeystonePolaris = ...
-local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
+local _, KeystonePolaris = ...
 
 -- ---------------------------------------------------------------------------
 -- Pull Tracker Module
@@ -81,7 +80,7 @@ function KeystonePolaris:GetCurrentPullPercent()
 end
 
 -- React to nameplate additions/removals to refresh dynamic pull percent
-function KeystonePolaris:NAME_PLATE_UNIT_ADDED(event, unit)
+function KeystonePolaris:NAME_PLATE_UNIT_ADDED(_, unit)
     -- Maintain a map of nameplate unit -> GUID so we can cleanly remove on REMOVED
     self._nameplateUnits = self._nameplateUnits or {}
     if unit then
@@ -94,14 +93,12 @@ function KeystonePolaris:NAME_PLATE_UNIT_ADDED(event, unit)
     if self.UpdatePercentageText then self:UpdatePercentageText() end
 end
 
-function KeystonePolaris:NAME_PLATE_UNIT_REMOVED(event, unit)
+function KeystonePolaris:NAME_PLATE_UNIT_REMOVED(_, unit)
     -- Use stored GUID (UnitGUID may be nil after removal)
     -- Do not remove engaged mobs here: nameplates can disappear when rotating camera;
     -- rely on COMBAT_LOG (UNIT_DIED/UNIT_DESTROYED) and end-of-combat reset instead.
     if unit then
-        local guid
         if self._nameplateUnits then
-            guid = self._nameplateUnits[unit]
             self._nameplateUnits[unit] = nil
         end
         -- Intentionally not calling RemoveEngagedMobByGUID(guid) to avoid Pull% oscillation.
@@ -110,7 +107,7 @@ function KeystonePolaris:NAME_PLATE_UNIT_REMOVED(event, unit)
 end
 
 -- Update when threat list changes (engagement state)
-function KeystonePolaris:UNIT_THREAT_LIST_UPDATE(event, unit)
+function KeystonePolaris:UNIT_THREAT_LIST_UPDATE(_, unit)
     -- Add mobs to current pull based on threat updates (WarpDeplete-like)
     if not C_ChallengeMode.IsChallengeModeActive() then return end
     if not (UnitAffectingCombat and UnitAffectingCombat("player")) then return end
@@ -152,7 +149,7 @@ function KeystonePolaris:PLAYER_REGEN_DISABLED()
         -- Build a quick lookup of currently visible nameplate GUIDs
         local plateGuids = {}
         if self._nameplateUnits then
-            for unit, g in pairs(self._nameplateUnits) do
+            for _, g in pairs(self._nameplateUnits) do
                 if g then plateGuids[g] = true end
             end
         end
@@ -211,11 +208,4 @@ function KeystonePolaris:_QueuePullUpdate()
         self._pullUpdateQueued = nil
         if self.UpdatePercentageText then self:UpdatePercentageText() end
     end)
-end
-
-
--- Optimization: Define helper functions outside of the event handler
--- to avoid creating new closures on every event.
-local function IsNPCGuid(guid)
-    return type(guid) == "string" and (guid:find("^Creature%-") or guid:find("^Vehicle%-"))
 end

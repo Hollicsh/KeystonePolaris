@@ -9,14 +9,14 @@ local strsplit = strsplit
 -- ---------------------------------------------------------------------------
 
 function KeystonePolaris:CreateColorString(text, db)
-    local hex = db.r and db.g and db.b and self:RGBToHex(db.r, db.g, db.b) or
+    local hex = db.r and db.g and db.b and self.RGBToHex(db.r, db.g, db.b) or
                     "|cffffffff"
 
     local string = hex .. text .. "|r"
     return string
 end
 
-function KeystonePolaris:RGBToHex(r, g, b, header, ending)
+function KeystonePolaris.RGBToHex(r, g, b, header, ending)
     r = r <= 1 and r >= 0 and r or 1
     g = g <= 1 and g >= 0 and g or 1
     b = b <= 1 and b >= 0 and b or 1

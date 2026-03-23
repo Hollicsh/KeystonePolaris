@@ -7,6 +7,11 @@ local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 KeystonePolaris.colorCache = {}
 
+local function formatProjectedValue(base, value, hexColor, suffix)
+    local displayed = suffix or tostring(value)
+    return string.format("%s (|cff%s%s|r)", base, hexColor, displayed)
+end
+
 -- Secure action button (macro) for manual sends in lockdown contexts
 function KeystonePolaris:EnsureInformSecureButton(macroText)
     if not self.informSecureButton then
@@ -63,32 +68,32 @@ function KeystonePolaris:EnsureInformSecureButton(macroText)
         btn.cooldownEndTime = nil
         btn.fadeDuration = 0.15
 
-        local function startCooldown(self)
-            self.cooldownEndTime = GetTime() + (self.cooldownDuration or 20)
-            self:EnableMouse(false)
+        local function startCooldown(button)
+            button.cooldownEndTime = GetTime() + (button.cooldownDuration or 20)
+            button:EnableMouse(false)
         end
 
-        btn:SetScript("OnUpdate", function(self)
-            if not self.cooldownEndTime then return end
+        btn:SetScript("OnUpdate", function(button)
+            if not button.cooldownEndTime then return end
             local now = GetTime()
-            local remaining = self.cooldownEndTime - now
+            local remaining = button.cooldownEndTime - now
             if remaining <= 0 then
-                self.cooldownEndTime = nil
-                self.cooldownBar:Hide()
-                self:SetText(L["INFORM_GROUP"])
-                self:EnableMouse(true)
+                button.cooldownEndTime = nil
+                button.cooldownBar:Hide()
+                button:SetText(L["INFORM_GROUP"])
+                button:EnableMouse(true)
                 return
             end
-            local pct = math.max(0, math.min(1, remaining / (self.cooldownDuration or 20)))
-            self.cooldownBar:Show()
-            self.cooldownBar:SetMinMaxValues(0,1)
-            self.cooldownBar:SetValue(pct)
-            self:SetText(string.format("%ds", math.ceil(remaining)))
-            self:EnableMouse(false)
+            local pct = math.max(0, math.min(1, remaining / (button.cooldownDuration or 20)))
+            button.cooldownBar:Show()
+            button.cooldownBar:SetMinMaxValues(0,1)
+            button.cooldownBar:SetValue(pct)
+            button:SetText(string.format("%ds", math.ceil(remaining)))
+            button:EnableMouse(false)
         end)
 
-        btn:SetScript("PostClick", function(self)
-            startCooldown(self)
+        btn:SetScript("PostClick", function(button)
+            startCooldown(button)
         end)
 
         btn:Hide()
@@ -310,7 +315,7 @@ function KeystonePolaris:InitializeDisplay()
     self.anchorFrame:SetScript("OnDragStop", function()
         self.anchorFrame:StopMovingOrSizing()
         -- Update position based on anchor frame position
-        local point, _, relativePoint, xOffset, yOffset = self.anchorFrame:GetPoint()
+        local point, _, _, xOffset, yOffset = self.anchorFrame:GetPoint()
         self.db.profile.general.position = point
         self.db.profile.general.xOffset = xOffset
         self.db.profile.general.yOffset = yOffset
@@ -659,7 +664,6 @@ end
 function KeystonePolaris:InformGroup(percentage)
     if not self.db.profile.general.informGroup then return end
 
-    local channel = self.db.profile.general.informChannel
     local percentageStr = string.format("%.2f%%", percentage)
     -- Don't send message if percentage is 0
     if percentageStr == "0.00%" then return end
@@ -674,7 +678,7 @@ local function colorizePrefix(text, hexColor)
 end
 
 -- FormatMainDisplayText: builds the final display string with optional Current/Pull/Required parts and projected values.
-function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, currentPullPercent, remainingNeeded, fmtData, isBossKilled, allBossesKilled)
+function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, currentPullPercent, remainingNeeded, fmtData)
     local cfg = self.db and self.db.profile and self.db.profile.general and self.db.profile.general.mainDisplay or nil
     if not cfg then return baseText end
 
@@ -792,11 +796,11 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
     end
 
     -- Optionally show the base required text prefix if it's numeric
-    local base = baseText
     local isNumericPercent = type(baseText) == "string" and baseText:find("%%$") and tonumber((baseText:gsub("%%",""))) ~= nil
     local isNumericCount = type(baseText) == "string" and baseText:find("^%d+$") ~= nil
+    local base
     if isNumericPercent then
-        if cfg.showRequiredText == false then 
+        if cfg.showRequiredText == false then
             base = baseText
         else
             local rlabel = colorizePrefix(cfg.requiredLabel or L["REQUIRED_DEFAULT"], hexPrefix)

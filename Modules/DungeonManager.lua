@@ -116,7 +116,8 @@ function KeystonePolaris:GetSeasonByDate(dateStr)
     return currentId, currentStart, currentEnd, nextId, nextStart
 end
 
-function KeystonePolaris:GetBossNumberString(num)
+function KeystonePolaris.GetBossNumberString(selfOrNum, maybeNum)
+    local num = maybeNum ~= nil and maybeNum or selfOrNum
     local numbers = {
         [1] = "One",
         [2] = "Two",
@@ -371,7 +372,6 @@ function KeystonePolaris:IsNextSeasonDungeon(dungeonId)
 end
 
 function KeystonePolaris:ResetAllDungeons()
-    local self = KeystonePolaris
     -- Reset all dungeons to their defaults
     -- Use global lookup for iteration if possible, or iterate expansions to keep order/structure logic
     for _, expansion in ipairs(expansions) do
@@ -409,8 +409,6 @@ function KeystonePolaris:ResetAllDungeons()
 end
 
 function KeystonePolaris:ResetCurrentSeasonDungeons(specificDungeons)
-    local self = KeystonePolaris
-
     -- Get the current date
     local currentDate = date("%Y-%m-%d")
 
@@ -426,9 +424,7 @@ function KeystonePolaris:ResetCurrentSeasonDungeons(specificDungeons)
                 local dungeonKey = self:GetDungeonKeyById(dungeonId)
                 if dungeonKey then
                     -- If specificDungeons is provided, only reset those dungeons
-                    if specificDungeons and not specificDungeons[dungeonKey] then
-                        -- Skip this dungeon as it's not in the list of dungeons to reset
-                    else
+                    if not specificDungeons or specificDungeons[dungeonKey] then
                         -- Find the appropriate defaults for this dungeon
                         -- Using global lookup logic could simplify, but sticking to existing struct for safety
                         local defaults
@@ -471,7 +467,6 @@ function KeystonePolaris:ResetCurrentSeasonDungeons(specificDungeons)
 end
 
 function KeystonePolaris:CheckForNewSeason()
-    local self = KeystonePolaris
     local currentDate = date("%Y-%m-%d")
 
     -- If this is first load (lastSeasonCheck is empty), just set the date and don't show popup
@@ -512,7 +507,6 @@ function KeystonePolaris:CheckForNewSeason()
 end
 
 function KeystonePolaris:GetChangedDungeonsText()
-    local self = KeystonePolaris
     local changedDungeonsText = ""
 
     -- Vérifier si la table CHANGED_ROUTES_DUNGEONS existe et n'est pas vide
@@ -593,7 +587,7 @@ function KeystonePolaris:GetCurrentPullPercent()
 end
 
 -- Determine if all non-weighted (boss) criteria are completed
-function KeystonePolaris:AreAllBossesKilled()
+function KeystonePolaris.AreAllBossesKilled()
     local stepInfo = C_ScenarioInfo and C_ScenarioInfo.GetStepInfo and C_ScenarioInfo.GetStepInfo()
     local numCriteria = stepInfo and stepInfo.numCriteria or 0
     if numCriteria == 0 then return false end

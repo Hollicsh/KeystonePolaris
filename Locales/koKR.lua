@@ -14,20 +14,20 @@ L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Mi
                                 "|cff8888ff• Current pull tracking|r\n" ..
                                 "|cff8888ff• Projected values|r\n\n" ..
                                 "|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\n" ..
-                                "All other features should remain available, sorry for the inconvenience.\n"
+                                "All other features should remain available, sorry for the inconvenience."
 
 -- Dungeons Group
 L["DUNGEONS"] = "현재 시즌"
 L["CURRENT_SEASON"] = "현재 시즌"
 L["NEXT_SEASON"] = "다음 시즌"
-L["REMIX"] = "리믹스" 
+L["REMIX"] = "리믹스"
 L["SEASON_ENDS_IN_ONE_MONTH"] = "이번 시즌이 한 달도 채 남지 않았습니다."
 L["SEASON_ENDS_IN_WEEKS"] = "현재 시즌은 %d주 이내에 종료됩니다."
 L["SEASON_ENDS_IN_DAYS"] = "현재 시즌은 %d일 후에 종료됩니다."
 L["SEASON_ENDS_IN_TOMORROW"] = "이번 시즌은 내일 종료됩니다."
 L["SEASON_STARTS_IN_ONE_MONTH"] = "다음 시즌이 한 달도 채 남지 않았습니다."
 L["SEASON_STARTS_IN_WEEKS"] = "다음 시즌은 %d주도 채 남지 않았습니다."
-L["SEASON_STARTS_IN_DAYS"] = "다음 시즌은 %d일 후에 시작됩니다." 
+L["SEASON_STARTS_IN_DAYS"] = "다음 시즌은 %d일 후에 시작됩니다."
 L["SEASON_STARTS_IN_TOMORROW"] = "다음 시즌이 내일 시작됩니다."
 
 L["EXPANSION_MIDNIGHT"] = "한밤"

@@ -12,7 +12,7 @@ KeystonePolaris.groupReminderRoleByResult = {}
 
 -- Hook ApplyToGroup to capture the role flags used for each application
 if C_LFGList and C_LFGList.ApplyToGroup then
-    hooksecurefunc(C_LFGList, "ApplyToGroup", function(searchResultID, tank, heal, dps, comment)
+    hooksecurefunc(C_LFGList, "ApplyToGroup", function(searchResultID, tank, heal, dps)
         if tank then
             KeystonePolaris.groupReminderRoleByResult[searchResultID] = "Tank"
         elseif heal then
@@ -57,38 +57,6 @@ local function GetAppliedRoleText(searchResultID)
     if heal then return HEALER end
     if dps then return DAMAGER end
     return "-"
-end
-
-local function GetCurrentSeasonDungeonInfo(self)
-    if type(self.GetSeasonByDate) ~= "function" then return nil end
-    local currentSeasonId = self:GetSeasonByDate(date("%Y-%m-%d"))
-    if not currentSeasonId then return nil end
-
-    local seasonDungeons = self[currentSeasonId .. "_DUNGEONS"]
-    if type(seasonDungeons) ~= "table" then return nil end
-
-    local dungeonId
-    for id, enabled in pairs(seasonDungeons) do
-        if type(id) == "number" and enabled then
-            dungeonId = id
-            break
-        end
-    end
-
-    if not dungeonId then return nil end
-
-    local shortName = self.GlobalDungeonIDLookup and self.GlobalDungeonIDLookup[dungeonId]
-    local dungeonData = shortName and self.GlobalDungeonLookup and self.GlobalDungeonLookup[shortName]
-    local mapID = dungeonData and dungeonData.mapID
-
-    local zoneName
-    if mapID and C_Map and C_Map.GetMapInfo then
-        local info = C_Map.GetMapInfo(mapID)
-        zoneName = info and info.name or nil
-    end
-
-    zoneName = zoneName or (dungeonData and (dungeonData.displayName or dungeonData.name)) or (shortName or tostring(dungeonId))
-    return dungeonId, mapID, zoneName
 end
 
 local function GetTeleportCandidatesForMapIDLocal(self, mapID)
@@ -167,7 +135,7 @@ local function GetGroupReminderHeaderLabel()
     return addonName .. "|r - |cffffd700" .. headerText .. "|r"
 end
 
-local function BuildMessages(db, titleText, zoneText, groupName, groupComment, roleText)
+local function BuildMessages(db, zoneText, groupName, roleText)
     local details = {}
     local valueColor = "|cffff6a00"
 
@@ -212,7 +180,7 @@ end
 -- Clickable chat link handler: opens the reminder popup again
 if not KeystonePolaris._KPL_ReminderChatLinkHooked then
     KeystonePolaris._KPL_ReminderChatLinkHooked = true
-    hooksecurefunc("SetItemRef", function(link, text, button, chatFrame)
+    hooksecurefunc("SetItemRef", function(link)
         if type(link) ~= "string" then return end
         local linkType = strsplit(":", link, 2)
         if linkType ~= "kphreminder" then return end
@@ -293,14 +261,14 @@ local function EnsureGroupReminderStyledFrame(self)
     f.TeleportLink:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
     
     -- Tooltip handling
-    f.TeleportLink:SetScript("OnEnter", function(self)
-        if self.spellID then
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetSpellByID(self.spellID)
+    f.TeleportLink:SetScript("OnEnter", function(button)
+        if button.spellID then
+            GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+            GameTooltip:SetSpellByID(button.spellID)
             GameTooltip:Show()
         end
     end)
-    f.TeleportLink:SetScript("OnLeave", function(self)
+    f.TeleportLink:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
 
@@ -366,7 +334,7 @@ local function EnsureGroupReminderStyledFrame(self)
     return f
 end
 
-function KeystonePolaris:ShowStyledGroupReminderPopup(title, zone, groupName, groupComment, roleText, teleportSpellID, teleportSpellUnknown)
+function KeystonePolaris:ShowStyledGroupReminderPopup(_, zone, groupName, groupComment, roleText, teleportSpellID, teleportSpellUnknown)
     local db = self.db.profile.groupReminder
     local f = EnsureGroupReminderStyledFrame(self)
     f.Title:SetText(GetGroupReminderHeaderLabel())
@@ -512,7 +480,6 @@ function KeystonePolaris:ShowLastGroupReminder()
     end
 
     self:ShowStyledGroupReminderPopup(
-        data.title,
         data.zone,
         data.groupName,
         data.comment,
@@ -527,7 +494,7 @@ function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment,
     if not db or not db.enabled then return end
 
     local roleText = GetAppliedRoleText(searchResultID)
-    local popupMsg, body = BuildMessages(db, title, zone, title, comment, roleText)
+    local _, body = BuildMessages(db, zone, title, roleText)
 
     -- Resolve teleport spell for this dungeon
     local teleportSpellID = self.GetTeleportSpellForMapID and self:GetTeleportSpellForMapID(activityMapID) or nil
@@ -549,7 +516,6 @@ function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment,
 
     -- Store last reminder data (for chat link + command)
     local reminderData = {
-        title = title,
         zone = zone,
         groupName = title,
         comment = comment,
@@ -567,7 +533,14 @@ function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment,
 
     -- Popup
     if db.showPopup then
-        self:ShowStyledGroupReminderPopup(title, zone, title, comment, roleText, teleportSpellID, teleportSpellUnknown)
+        self:ShowStyledGroupReminderPopup(
+            zone,
+            title,
+            comment,
+            roleText,
+            teleportSpellID,
+            teleportSpellUnknown
+        )
     end
 
     -- Chat
@@ -698,7 +671,7 @@ function KeystonePolaris:HandleGroupRosterUpdate()
 end
 
 -- Ensure Blizzard UI related to group invites/toasts is visible again
-function KeystonePolaris:RestoreBlizzardJoinUI()
+function KeystonePolaris.RestoreBlizzardJoinUI()
     if type(LFGListInviteDialog) == "table" and LFGListInviteDialog.Show then
         LFGListInviteDialog:Show()
     end
@@ -730,7 +703,8 @@ function KeystonePolaris:TestGroupReminder()
     local title = titles[math.random(#titles)]
     local comment = lorem[math.random(#lorem)]
 
-    local dungeonId, mapID, zone
+    local dungeonId, mapID
+    local zone = nil
     if type(self.GetSeasonByDate) == "function" then
         local currentSeasonId = self:GetSeasonByDate(date("%Y-%m-%d"))
         local seasonDungeons = currentSeasonId and self[currentSeasonId .. "_DUNGEONS"]
@@ -794,15 +768,14 @@ function KeystonePolaris:TestGroupReminder()
 end
 
 function KeystonePolaris:GetGroupReminderOptions()
-    local self = KeystonePolaris
     return {
         name = L["KPL_GR_HEADER"] or "Group Reminder",
         type = "group",
         order = 7, -- Place it after Colors
         args = {
-            header = { 
-                order = 0, 
-                type = "header", 
+            header = {
+                order = 0,
+                type = "header",
                 name = "|cffffd100" .. (L["KPL_GR_HEADER"] or "Group Reminder") .. "|r"
             },
             description = {
