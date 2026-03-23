@@ -247,7 +247,11 @@ function KeystonePolaris:InitializeDisplay()
         self.anchorFrame:Hide()
         self.overlayFrame:Hide()
         -- Show the settings panel and navigate to our addon
-        Settings.OpenToCategory("Keystone Polaris")
+        if self.ToggleConfig then
+            self:ToggleConfig()
+        elseif Settings and Settings.OpenToCategory then
+            Settings.OpenToCategory(self.optionsCategoryId or "Keystone Polaris")
+        end
     end
 
     -- Create validate button to confirm position
@@ -259,7 +263,11 @@ function KeystonePolaris:InitializeDisplay()
         self.anchorFrame:Hide()
         self.overlayFrame:Hide()
         -- Show the settings panel and navigate to our addon
-        Settings.OpenToCategory("Keystone Polaris")
+        if self.ToggleConfig then
+            self:ToggleConfig()
+        elseif Settings and Settings.OpenToCategory then
+            Settings.OpenToCategory(self.optionsCategoryId or "Keystone Polaris")
+        end
     end)
 
     -- Create cancel button to abort positioning
@@ -1059,8 +1067,10 @@ function KeystonePolaris:ShowTestOverlay()
                 if self.StopTestModeTicker then self:StopTestModeTicker() end
                 if self.UpdatePercentageText then self:UpdatePercentageText() end
                 if self.Refresh then self:Refresh() end
-                if Settings and Settings.OpenToCategory then
-                    Settings.OpenToCategory("Keystone Polaris")
+                if self.ToggleConfig then
+                    self:ToggleConfig()
+                elseif Settings and Settings.OpenToCategory then
+                    Settings.OpenToCategory(self.optionsCategoryId or "Keystone Polaris")
                 end
             end
         end)
