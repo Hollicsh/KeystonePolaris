@@ -5,7 +5,7 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "ruRU", false, false);
 if not L then return end
 
--- Last translated January 24th, 2025.
+-- Last translated March 24th, 2026.
 -- Translation by Hollicsh (https://github.com/Hollicsh)
 
 -- Temporary locales for Midnight Compatibility Warning
@@ -151,7 +151,7 @@ L["REQUIRED_LABEL_DESC"] = "Метка, отображаемая перед тр
 L["SHOW_CURRENT_PERCENT"] = "Показать текущий %"
 L["SHOW_CURRENT_PERCENT_DESC"] = "Отображение текущего процента общей численности противника (из отслеживания сценариев)."
 L["CURRENT_LABEL_DESC"] = "Метка отображается перед текущим процентным значением.\n\nОчистите поле, чтобы сбросить значение по умолчанию."
-L["SHOW_CURRENT_PULL_PERCENT"] = "Показать текущий процент пулла (MDT)"
+L["SHOW_CURRENT_PULL_PERCENT"] = "Текущий процент пулла (MDT)"
 L["SHOW_CURRENT_PULL_PERCENT_DESC"] = "Отображение реального текущего процента пулла на основе вовлечённых мобов с использованием данных MDT."
 L["PULL_LABEL_DESC"] = "Метка, отображаемая перед текущим значением процента извлечения.\n\nОчистите поле, чтобы сбросить значение по умолчанию."
 L["USE_MULTI_LINE_LAYOUT"] = "Использовать многострочное расположение"
@@ -231,17 +231,17 @@ L["MDT_SECTION_WARNING"] = "Для этого раздела требуется 
 L["DISPLAY_OPTIONS"] = "Параметры отображения"
 L["APPEARANCE_OPTIONS"] = "Параметры внешнего вида"
 L["SHOW_PERCENTAGE"] = "Процент"
-L["SHOW_PERCENTAGE_DESC"] = "Показать процентное значение для каждого моба"
+L["SHOW_PERCENTAGE_DESC"] = "Показывать процентное значение для каждого моба"
 L["SHOW_COUNT"] = "Количество"
 L["SHOW_COUNT_DESC"] = "Показывать значение количества для каждого моба"
 L["SHOW_TOTAL"] = "Итоговый результат"
-L["SHOW_TOTAL_DESC"] = "Показать общее количество, необходимое для 100%"
+L["SHOW_TOTAL_DESC"] = "Показывать общее количество, необходимое для 100%"
 L["TEXT_COLOR"] = "Цвет шрифта"
 L["TEXT_COLOR_DESC"] = "Установить цвет текста на индикаторах здоровья"
 L["CUSTOM_FORMAT"] = "Формат текста"
 L["CUSTOM_FORMAT_DESC"] = "Введите пользовательский формат. Используйте %s для процентов, %c для количества и %t для итогового результата. Примеры: (%s), %s | %c/%t, %c и т.д..."
 L["RESET_TO_DEFAULT"] = "Сброс"
-L["RESET_FORMAT_DESC"] = "Сбросить формат текста до значения по умолчанию (скобки)"
+L["RESET_FORMAT_DESC"] = "Сбрасывает формат текста до значений по умолчанию (скобки)"
 
 -- Group Reminder (Popup labels)
 L["KPL_GR_HEADER"] = "Напоминание"
@@ -254,20 +254,20 @@ L["KPL_GR_TELEPORT_UNKNOWN"] = "Заклинание телепортации н
 L["KPL_GR_OPEN_REMINDER"] = "Открыть напоминание"
 L["KPL_GR_INVITED"] = "Вас пригласили"
 L["KPL_GR_AS_ROLE"] = "как %s"
-L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Show popup again when the group is full" -- TODO: To Translate
-L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Reopen the reminder window when your Mythic+ group reaches 5 players." -- TODO: To Translate
+L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Повторно показывать всплывающее окно, когда группа будет заполнена"
+L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Повторно показывает окно напоминания, когда в Вашей группе M+ наберётся 5 игроков."
 
 -- Group Reminder (Options)
 L["KPL_GR_DESC_LONG"] = "Отображает всплывающее напоминание и/или сообщение в чате, когда Вас принимают в группу для прохождения ключа M+, с кнопкой телепортации в подземелье."
 L["KPL_GR_NOTIFICATIONS"] = "Оповещения"
 L["KPL_GR_SUPPRESS_TOAST"] = "Пресекать уведомление о быстром присоединении"
-L["KPL_GR_SUPPRESS_TOAST_DESC"] = "Скрыть стандартное всплывающее окно Blizzard, которое появляется внизу экрана при получении приглашения."
+L["KPL_GR_SUPPRESS_TOAST_DESC"] = "Скрывает стандартное всплывающее окно Blizzard, которое появляется внизу экрана при получении приглашения."
 L["KPL_GR_SHOW_POPUP"] = "Показывать всплывающее окно"
-L["KPL_GR_SHOW_POPUP_DESC"] = "Отобразите окно напоминания в центре экрана."
+L["KPL_GR_SHOW_POPUP_DESC"] = "Отображает окно напоминания в центре экрана."
 L["KPL_GR_SHOW_CHAT"] = "Показывать сообщение в чате"
-L["KPL_GR_SHOW_CHAT_DESC"] = "Вывести подробности напоминания в окне чата."
+L["KPL_GR_SHOW_CHAT_DESC"] = "Выводит подробности напоминания в окне чата."
 L["KPL_GR_TEST_CURRENT_SEASON"] = "Имитировать принятие в текущем сезоне"
-L["KPL_GR_TEST_CURRENT_SEASON_DESC"] = "Отобразить групповое напоминание, используя подземелье из текущего сезона."
+L["KPL_GR_TEST_CURRENT_SEASON_DESC"] = "Отображает групповое напоминание, используя подземелье из текущего сезона."
 L["KPL_GR_CONTENT"] = "Содержание"
 L["KPL_GR_SHOW_DUNGEON"] = "Показывать название подземелья"
 L["KPL_GR_SHOW_GROUP"] = "Показывать название группы"
