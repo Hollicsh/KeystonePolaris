@@ -728,7 +728,7 @@ function KeystonePolaris:CHALLENGE_MODE_START()
     if self.PrepareInformMacro then
         C_Timer.After(5, function()
             if self.PrepareInformMacro then
-                self:PrepareInformMacro("") -- init macro without fake percent text
+                self:PrepareInformMacro(nil) -- init macro without fake percent text
             end
         end)
     end

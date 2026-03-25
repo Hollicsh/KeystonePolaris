@@ -124,6 +124,7 @@ function KeystonePolaris:HideInformButton()
         self.informSecureButton.cooldownEndTime = nil
         self.informSecureButton.cooldownBar:Hide()
         self.informSecureButton:SetText(L["INFORM_GROUP"])
+        self.informSecureButton:EnableMouse(true)
         self.informSecureButton:Hide()
     end
 end
@@ -134,12 +135,29 @@ function KeystonePolaris:ApplyInformVisibility(shouldShow)
     if not btn then return end
 
     if shouldShow then
+        btn:SetAlpha(1)
+        if btn.SetText then btn:SetText(L["INFORM_GROUP"]) end
         btn:Show()
     else
         btn.cooldownEndTime = nil
         if btn.cooldownBar then btn.cooldownBar:Hide() end
+        btn:SetAlpha(1)
         if btn.SetText then btn:SetText(L["INFORM_GROUP"]) end
+        btn:EnableMouse(true)
         btn:Hide()
+    end
+end
+
+function KeystonePolaris:ApplyInformCombatVisualState(shouldShow)
+    local btn = self.informSecureButton
+    if not btn then return end
+
+    if shouldShow then
+        btn:SetAlpha(1)
+        if btn.SetText then btn:SetText(L["INFORM_GROUP"]) end
+    else
+        btn:SetAlpha(0.1)
+        if btn.SetText then btn:SetText(L["INFORM_GROUP"]) end
     end
 end
 
@@ -151,7 +169,7 @@ function KeystonePolaris:PrepareInformMacro(message)
     end
 
     local resolvedMessage = message
-    if not resolvedMessage then
+    if not resolvedMessage or resolvedMessage == "" then
         local fakePercent = "12.34%"
         resolvedMessage = "[Keystone Polaris]: " .. L["WE_STILL_NEED"] .. " " .. fakePercent
     end
@@ -659,15 +677,38 @@ function KeystonePolaris:UpdatePercentageText()
         -- Show the Inform button only when the boss is already dead AND percentage is still missing
         local shouldShowInform = (remainingPercent > 0) and isBossKilled and self.db.profile.general.informGroup
         local informBtn = self.informSecureButton
-        if not informBtn and self.db.profile.general.informGroup then
-            if self.EnsureInformSecureButton then
-                self:EnsureInformSecureButton()
-                informBtn = self.informSecureButton
+        if shouldShowInform and not InCombatLockdown() and self.EnsureInformSecureButton then
+            local prefix = (self.GetChatPrefix and self:GetChatPrefix(true, true)) or "[Keystone Polaris]"
+            local message = prefix .. ": " .. L["WE_STILL_NEED"] .. " " .. string.format("%.2f%%", remainingPercent)
+            local selected = self.db
+                and self.db.profile
+                and self.db.profile.general
+                and self.db.profile.general.informChannel
+                or "PARTY"
+            local slash
+            if selected == "PARTY" then
+                slash = "p"
+            elseif selected == "SAY" then
+                slash = "s"
+            elseif selected == "YELL" then
+                slash = "y"
+            else
+                slash = "s"
             end
+            local safeMessage = tostring(message or ""):gsub("%%", "%%%%")
+            local macroText = string.format("/%s %s", slash, safeMessage)
+            self:EnsureInformSecureButton(macroText)
+            informBtn = self.informSecureButton
+        elseif not informBtn and self.db.profile.general.informGroup and self.EnsureInformSecureButton then
+            self:EnsureInformSecureButton()
+            informBtn = self.informSecureButton
         end
 
         if informBtn then
             if InCombatLockdown() then
+                if self.ApplyInformCombatVisualState then
+                    self:ApplyInformCombatVisualState(shouldShowInform)
+                end
                 self._pendingInformVisibility = shouldShowInform
                 if not self._informWatcher then
                     local f = CreateFrame("Frame")
