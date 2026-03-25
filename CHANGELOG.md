@@ -1,19 +1,11 @@
-## [3.2.2](https://github.com/ZelionGG/KeystonePolaris/releases/tag/3.2.2) (2026-01-22)
+# Keystone Polaris
 
-[Full Changelog](https://github.com/ZelionGG/KeystonePolaris/compare/3.2.1...3.2.2) [Previous Releases](https://github.com/ZelionGG/KeystonePolaris/releases)
+## [3.3](https://github.com/ZelionGG/KeystonePolaris/releases/tag/3.3) (2026-03-25)
 
-### Important
+[Full Changelog](https://github.com/ZelionGG/KeystonePolaris/compare/3.2.2...3.3) [Previous Releases](https://github.com/ZelionGG/KeystonePolaris/releases)
 
-> ### ⚠️ Midnight – temporary limitations
->
-> Blizzard has restricted lots of APIs on Midnight. These features will return with the upcoming Mythic+ API (no ETA yet). All other functionality remains available.
->
-> | Feature | Status |
-> |---------|--------|
-> | 📊 Mob percentages on nameplates (MDT) | ❌ Disabled |
-> | 🎯 Current pull tracking | ❌ Disabled |
-> | 🔮 Projected values | ❌ Disabled |
-
-### Bugfix
-- Fixed LUA errors that were triggering in Mythic+ runs.
-
+- 🔥 _**IMPORTANT** -_ Due to Midnight API restrictions, **Inform Group** now requires a manual action to send the message. A dedicated button is now shown when needed.
+- 🔥 _**IMPORTANT** -_ The **Mob Indicator** feature has been removed.
+- 🆕 _**NEW** -_ Added an option to automatically re-show the **Group Reminder** popup when a Mythic+ group is full.
+- 🛠️ _**IMPROVEMENT** -_ Russian translation updated, thank you **Hollicsh**.
+- 🛠️ _**IMPROVEMENT** -_ Korean translation updated, thank you **BlueSea-jun**
