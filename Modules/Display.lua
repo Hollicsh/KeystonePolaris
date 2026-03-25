@@ -20,7 +20,12 @@ function KeystonePolaris:EnsureInformSecureButton(macroText)
         btn:SetFrameStrata("FULLSCREEN_DIALOG")
         btn:SetText(L["INFORM_GROUP"])
         btn:EnableMouse(true)
-        btn:RegisterForClicks("AnyUp", "AnyDown")
+        local useKeyDown = GetCVarBool and GetCVarBool("ActionButtonUseKeyDown")
+        if useKeyDown then
+            btn:RegisterForClicks("LeftButtonDown")
+        else
+            btn:RegisterForClicks("LeftButtonUp")
+        end
 
         -- Remove default UIPanelButton textures (avoid red/purple background)
         if btn.Left then btn.Left:SetTexture(""); btn.Left:Hide() end
@@ -160,7 +165,7 @@ function KeystonePolaris:PrepareInformMacro(message)
     if selected == "PARTY" then
         -- Fallback intelligent selon le contexte de groupe
         if IsInGroup and LE_PARTY_CATEGORY_INSTANCE and IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
-            slash = "i"       -- instance chat
+            slash = "p"       -- instance chat
         elseif IsInRaid and IsInRaid() then
             slash = "raid"    -- raid chat
         elseif IsInGroup and IsInGroup() then
@@ -176,7 +181,8 @@ function KeystonePolaris:PrepareInformMacro(message)
         slash = "s"
     end
 
-    local macroText = string.format("/%s %s", slash, tostring(resolvedMessage or ""))
+    local safeMessage = tostring(resolvedMessage or ""):gsub("%%", "%%%%")
+    local macroText = string.format("/%s %s", slash, safeMessage)
     self:EnsureInformSecureButton(macroText)
     local btn = self.informSecureButton
     btn:SetAlpha(1)

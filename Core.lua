@@ -593,7 +593,7 @@ end
 -- Get the current enemy forces percentage from the scenario UI
 function KeystonePolaris.GetCurrentPercentage(_)
     -- Mirror WarpDeplete logic: scan criteria and use weighted progress with the
-    local stepCount = select(3, C_ScenarioInfo.GetStepInfo())
+    local stepCount = select(3, C_Scenario.GetStepInfo())
     if not stepCount or stepCount <= 0 then return 0 end
 
     local bestTotal = 0
