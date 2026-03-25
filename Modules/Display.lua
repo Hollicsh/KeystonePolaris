@@ -163,16 +163,7 @@ function KeystonePolaris:PrepareInformMacro(message)
 
     local slash
     if selected == "PARTY" then
-        -- Fallback intelligent selon le contexte de groupe
-        if IsInGroup and LE_PARTY_CATEGORY_INSTANCE and IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
-            slash = "p"       -- instance chat
-        elseif IsInRaid and IsInRaid() then
-            slash = "raid"    -- raid chat
-        elseif IsInGroup and IsInGroup() then
-            slash = "p"       -- party chat
-        else
-            slash = "s"       -- fallback hors groupe
-        end
+        slash = "p"
     elseif selected == "SAY" then
         slash = "s"
     elseif selected == "YELL" then
