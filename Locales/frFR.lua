@@ -254,6 +254,7 @@ L["KPL_GR_INVITED"] = "Vous avez été invité à"
 L["KPL_GR_AS_ROLE"] = "en tant que %s"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Réafficher la fenêtre quand le groupe est complet"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Rouvre la fenêtre de rappel de groupe lorsque votre groupe Mythique+ atteint 5 joueurs."
+L["KPL_GR_CHAT_COMMAND_INFO"] = "Astuce: La commande |cffffd100/kpl reminder|r permet d'afficher à nouveau la fenêtre de rappel de groupe."
 
 -- Group Reminder (Options)
 L["KPL_GR_DESC_LONG"] = "Affiche une fenêtre de rappel et/ou un message dans le chat quand vous êtes accepté dans un groupe Mythic+, avec un bouton pour se téléporter au donjon."

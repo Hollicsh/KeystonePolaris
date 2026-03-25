@@ -255,6 +255,7 @@ L["KPL_GR_INVITED"] = "파티에 초대 받았습니다."
 L["KPL_GR_AS_ROLE"] = "포지션은 %s 입니다."
 L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Show popup again when the group is full" -- TODO: To Translate
 L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Reopen the reminder window when your Mythic+ group reaches 5 players." -- TODO: To Translate
+L["KPL_GR_CHAT_COMMAND_INFO"] = "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again." -- TODO: To Translate
 
 -- Group Reminder (Options)
 L["KPL_GR_DESC_LONG"] = "쇄기 던전 파티에 참여가 승인되면 알림 팝업 이나 채팅 메시지를 표시하고, 던전으로 순간이동할 수 있는 버튼을 제공합니다."

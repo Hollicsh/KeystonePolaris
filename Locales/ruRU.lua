@@ -256,6 +256,7 @@ L["KPL_GR_INVITED"] = "Вас пригласили"
 L["KPL_GR_AS_ROLE"] = "как %s"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Повторно показывать всплывающее окно, когда группа будет заполнена"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Повторно показывает окно напоминания, когда в Вашей группе M+ наберётся 5 игроков."
+L["KPL_GR_CHAT_COMMAND_INFO"] = "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again." -- TODO: To Translate
 
 -- Group Reminder (Options)
 L["KPL_GR_DESC_LONG"] = "Отображает всплывающее напоминание и/или сообщение в чате, когда Вас принимают в группу для прохождения ключа M+, с кнопкой телепортации в подземелье."

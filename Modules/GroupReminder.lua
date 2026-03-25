@@ -820,6 +820,12 @@ function KeystonePolaris:GetGroupReminderOptions()
                 set = function(_, v) self.db.profile.groupReminder.showChat = v end,
                 disabled = function() return not self.db.profile.groupReminder.enabled end,
             },
+            reminderChatCommandInfo = {
+                type = "description",
+                name = L["KPL_GR_CHAT_COMMAND_INFO"] or "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again.",
+                order = 4.1,
+                fontSize = "medium",
+            },
             showPopupWhenGroupIsFull = {
                 name = L["KPL_GR_SHOW_POPUP_WHEN_FULL"] or "Show popup again when the group is full",
                 desc = L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] or "Reopen the reminder window when your Mythic+ group reaches 5 players.",
