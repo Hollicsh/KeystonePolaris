@@ -619,7 +619,7 @@ end
 
 -- Retrieve raw Enemy Forces counts: current and total. Returns 0,0 if unavailable.
 function KeystonePolaris.GetCurrentForcesInfo(_)
-    local stepCount = select(3, C_ScenarioInfo.GetStepInfo())
+    local stepCount = select(3, C_Scenario.GetStepInfo())
     if not stepCount or stepCount <= 0 then return 0, 0 end
 
     local bestTotal = 0
