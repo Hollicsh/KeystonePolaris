@@ -150,10 +150,40 @@ function KeystonePolaris:PrepareInformMacro(message)
         local fakePercent = "12.34%"
         resolvedMessage = "[Keystone Polaris]: " .. L["WE_STILL_NEED"] .. " " .. fakePercent
     end
-    local macroText = string.format("/p %s", resolvedMessage)
+    local selected = self.db
+        and self.db.profile
+        and self.db.profile.general
+        and self.db.profile.general.informChannel
+        or "PARTY"
+
+    local slash
+    if selected == "PARTY" then
+        -- Fallback intelligent selon le contexte de groupe
+        if IsInGroup and LE_PARTY_CATEGORY_INSTANCE and IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+            slash = "i"       -- instance chat
+        elseif IsInRaid and IsInRaid() then
+            slash = "raid"    -- raid chat
+        elseif IsInGroup and IsInGroup() then
+            slash = "p"       -- party chat
+        else
+            slash = "s"       -- fallback hors groupe
+        end
+    elseif selected == "SAY" then
+        slash = "s"
+    elseif selected == "YELL" then
+        slash = "y"
+    else
+        slash = "s"
+    end
+
+    local macroText = string.format("/%s %s", slash, tostring(resolvedMessage or ""))
     self:EnsureInformSecureButton(macroText)
     local btn = self.informSecureButton
     btn:SetAlpha(1)
+    btn.cooldownEndTime = nil
+    if btn.cooldownBar then btn.cooldownBar:Hide() end
+    btn:SetText(L["INFORM_GROUP"])
+    btn:EnableMouse(true) -- IMPORTANT
     btn:Hide() -- Will be shown only when conditions are met in UpdatePercentageText
     -- Reset cooldown until click
     btn.cooldownEndTime = nil
