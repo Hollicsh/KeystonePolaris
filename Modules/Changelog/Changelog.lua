@@ -43,6 +43,11 @@ function KeystonePolaris:GenerateChangelog()
         return string
     end
 
+    local function lightblue(string)
+        if type(string) ~= "string" then string = tostring(string) end
+        string = self:CreateColorString(string, {r = 0.4, g = 0.6, b = 1.0})
+        return string
+    end
     local function renderChangelogLine(line)
         line = gsub(line, "%[[^%[]+%]", orange)
         return line
@@ -134,6 +139,37 @@ function KeystonePolaris:GenerateChangelog()
             }
 
             local page = self.changelogOptions.args[tostring(version)].args
+
+            local header
+            if data.header then
+                local headerLocalized = data.header[GetLocale()]
+                if headerLocalized ~= nil and (headerLocalized.title ~= nil or headerLocalized.text ~= nil) then
+                    header = headerLocalized
+                else
+                    header = data.header["enUS"]
+                end
+            end
+
+            if header and (header.title ~= nil or header.text ~= nil) then
+                if header.title ~= nil and header.title ~= "" then
+                    page.headerHeader = {
+                        order = 2.5,
+                        type = "header",
+                        name = lightblue(header.title)
+                    }
+                end
+
+                if header.text ~= nil and header.text ~= "" then
+                    page.headerText = {
+                        order = 2.6,
+                        type = "description",
+                        name = function()
+                            return renderChangelogLine(header.text, lightblue) .. "\n"
+                        end,
+                        fontSize = "medium"
+                    }
+                end
+            end
 
             -- Checking localized "Important" category
             local important_localized = {}
