@@ -9,10 +9,10 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "Magisters' Terrace",
         teleportID = 445417,
         bosses = {
-            {1, 37.75, false, 1, 2659, "Arcanotron Custos"},
-            {2, 73.50, false, 2, 2661, "Seranel Sunlash"},
-            {3, 100, false, 3, 2660, "Gemellus"},
-            {4, 100, true, 4, 2662, "Degentrius"}
+            {1, 27.81, false, 1, 2659, "Arcanotron Custos"}, -- Arcanotron Custos
+            {2, 48.91, false, 2, 2661, "Seranel Sunlash"}, -- Seranel Sunlash
+            {3, 78.06, false, 3, 2660, "Gemellus"}, -- Gemellus
+            {4, 100,   true,  4, 2662, "Degentrius"} -- Degentrius
         }
     },
     MAIS = { -- Maisara Caverns
@@ -21,9 +21,9 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "Maisara Caverns",
         teleportID = 445417,
         bosses = {
-            {1, 37.75, false, 1, 2810, "Muro'jin and Nekraxx"},
-            {2, 73.50, false, 2, 2811, "Vordaza"},
-            {3, 100, true, 3, 2812, "Rak'tul, Vessel of Souls"},
+            {1, 48.6,  false, 1, 2810, "Muro'jin and Nekraxx"}, -- Muro'jin and Nekraxx
+            {2, 89.95, false, 2, 2811, "Vordaza"}, -- Vordaza
+            {3, 100,   true,  3, 2812, "Rak'tul, Vessel of Souls"}, -- Rak'tul, Vessel of Souls
         }
     },
     NPX = { -- Nexus-Point Xenas
@@ -32,9 +32,9 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "Nexus-Point Xenas",
         teleportID = 445417,
         bosses = {
-            {1, 37.75, false, 1, 2813, "Chief Corewright Kasreth"},
-            {2, 73.50, false, 2, 2814, "Corewarden Nysarra"},
-            {3, 100, true, 3, 2815, "Lothraxion"},
+            {1, 29.36, false, 1, 2813, "Chief Corewright Kasreth"}, -- Chief Corewright Kasreth
+            {2, 73.66, false, 2, 2814, "Corewarden Nysarra"}, -- Corewarden Nysarra
+            {3, 100,   true,  3, 2815, "Lothraxion"}, -- Lothraxion
         }
     },
     WIS = { -- Windrunner Spire
@@ -43,10 +43,10 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "Windrunner Spire",
         teleportID = 445417,
         bosses = {
-            {1, 37.75, false, 1, 2655, "Emberdawn"},
-            {2, 73.50, false, 2, 2656, "Derelict Duo"},
-            {3, 100, true, 3, 2657, "Commander Kroluk"},
-            {4, 100, true, 4, 2658, "The Restless Heart"},
+            {1, 45.35, false, 1, 2655, "Emberdawn"}, -- Emberdawn
+            {2, 57.36, false, 2, 2656, "Derelict Duo"}, -- Derelict Duo
+            {3, 100,   true,  3, 2657, "Commander Kroluk"}, -- Commander Kroluk
+            {4, 100,   true,  4, 2658, "The Restless Heart"}, -- The Restless Heart
         }
     },
 }

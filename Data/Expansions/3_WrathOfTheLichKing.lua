@@ -9,9 +9,9 @@ KeystonePolaris.WOTLK_DUNGEON_DATA = {
         displayName = "Pit of Saron",
         teleportID = 445424,
         bosses = {
-            {1, 39.68, false, 1, 608, "Forgemaster Garfrost"},
-            {2, 45.83, false, 2, 609, "Ick and Krick"},
-            {3, 100, true, 3, 610, "Scourgelord Tyrannus"}
+            {1, 58.63, false, 1, 608, "Forgemaster Garfrost"}, -- Forgemaster Garfrost
+            {2, 79.94, false, 2, 609, "Ick and Krick"}, -- Ick and Krick
+            {3, 100,   true,  3, 610, "Scourgelord Tyrannus"} -- Scourgelord Tyrannus
         }
     }
 }

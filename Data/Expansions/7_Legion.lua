@@ -118,10 +118,10 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
         mapID = 1753,
         teleportID = 0,
         bosses = {
-            {1, 39.68, false, 1, 1979},
-            {2, 45.83, false, 2, 1980},
-            {3, 81.26, false, 3, 1981},
-            {4, 100, true, 4, 1982}
+            {1, 14.61, false, 1, 1979}, -- Zuraal the Ascended
+            {2, 56.87, false, 2, 1980}, -- Saprish
+            {3, 100,   false, 3, 1981}, -- Viceroy Nezhar
+            {4, 100,   true,  4, 1982} -- L'ura
         }
     },
     ARCW = { -- The Arcway

@@ -8,10 +8,10 @@ KeystonePolaris.WOD_DUNGEON_DATA = {
         mapID = 1209,
         teleportID = 445424,
         bosses = {
-            {1, 39.68, false, 1, 965},
-            {2, 45.83, false, 2, 966},
-            {3, 81.26, true, 3, 967},
-            {4, 100, true, 4, 968}
+            {1, 28.07, false, 1, 965},
+            {2, 52.2,  false, 2, 966},
+            {3, 60.09, false, 3, 967},
+            {4, 100,   true,  4, 968}
         }
     }
 }
