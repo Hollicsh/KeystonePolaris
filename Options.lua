@@ -1480,38 +1480,11 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                     local dungeonId = addon:GetDungeonIdByKey(dungeonKey)
                     if dungeonId and addon.DUNGEONS[dungeonId] and
                         addon.db.profile.advanced[dungeonKey] then
-                        -- Create export string for single dungeon
-                        local exportData = {
-                            dungeon = dungeonKey,
-                            data = addon.db.profile.advanced[dungeonKey]
-                        }
-                        local serialized =
-                            LibStub("AceSerializer-3.0"):Serialize(exportData)
-                        local compressed =
-                            LibStub("LibDeflate"):CompressDeflate(serialized)
-                        local encoded = LibStub("LibDeflate"):EncodeForPrint(
-                                            compressed)
-
-                        -- Show export dialog
-                        StaticPopupDialogs["KPL_EXPORT_DIALOG"] = {
-                            text = L["EXPORT_DIALOG_TEXT"],
-                            button1 = OKAY,
-                            hasEditBox = true,
-                            editBoxWidth = 350,
-                            maxLetters = 999999,
-                            OnShow = function(dialog)
-                                dialog.EditBox:SetText(encoded)
-                                dialog.EditBox:HighlightText()
-                                dialog.EditBox:SetFocus()
-                            end,
-                            EditBoxOnEscapePressed = function(editBox)
-                                editBox:GetParent():Hide()
-                            end,
-                            timeout = 0,
-                            whileDead = true,
-                            hideOnEscape = true
-                        }
-                        StaticPopup_Show("KPL_EXPORT_DIALOG")
+                        addon:ExportDungeonSettings(
+                            addon.db.profile.advanced[dungeonKey],
+                            "dungeon",
+                            dungeonKey
+                        )
                     end
                 end
             },

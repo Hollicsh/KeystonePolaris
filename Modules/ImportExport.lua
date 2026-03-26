@@ -1,5 +1,6 @@
 local AddOnName, KeystonePolaris = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
+local EXPORT_PREFIX = "!KeystonePolaris:"
 
 -- ---------------------------------------------------------------------------
 -- Import / Export Logic
@@ -148,16 +149,26 @@ function KeystonePolaris:ShowCopyPopup(text)
 end
 
 -- Global export function for dungeon settings
-function KeystonePolaris.ExportDungeonSettings(dungeonData, exportType, sectionName)
+function KeystonePolaris:ExportDungeonSettings(dungeonData, exportType, sectionName)
     -- Create export string
-    local exportData = {
-        type = exportType,
-        section = sectionName,
-        data = dungeonData
-    }
+    local exportData
+    if exportType == "dungeon" then
+        exportData = {
+            type = exportType,
+            dungeon = sectionName,
+            data = dungeonData
+        }
+    else
+        exportData = {
+            type = exportType,
+            section = sectionName,
+            data = dungeonData
+        }
+    end
     local serialized = LibStub("AceSerializer-3.0"):Serialize(exportData)
     local compressed = LibStub("LibDeflate"):CompressDeflate(serialized)
     local encoded = LibStub("LibDeflate"):EncodeForPrint(compressed)
+    local exportString = EXPORT_PREFIX .. encoded
 
     -- Determine dialog text based on export type
     local dialogText
@@ -177,7 +188,7 @@ function KeystonePolaris.ExportDungeonSettings(dungeonData, exportType, sectionN
         editBoxWidth = 350,
         maxLetters = 999999,
         OnShow = function(dialog)
-            dialog.EditBox:SetText(encoded)
+            dialog.EditBox:SetText(exportString)
             dialog.EditBox:HighlightText()
             dialog.EditBox:SetFocus()
         end,
@@ -197,7 +208,15 @@ function KeystonePolaris:ImportDungeonSettings(importString,
                                                         dungeonFilter)
     local addon = self
     local prefix = (addon.GetChatPrefix and addon:GetChatPrefix()) or "Keystone Polaris"
-    local decoded = LibStub("LibDeflate"):DecodeForPrint(importString)
+    local importPayload = importString
+    if type(importPayload) == "string" then
+        importPayload = importPayload:match("^%s*(.-)%s*$")
+        if importPayload:sub(1, #EXPORT_PREFIX) == EXPORT_PREFIX then
+            importPayload = importPayload:sub(#EXPORT_PREFIX + 1)
+        end
+    end
+
+    local decoded = LibStub("LibDeflate"):DecodeForPrint(importPayload)
     if not decoded then
         print(prefix .. ": " .. L["IMPORT_ERROR"])
         return false
@@ -310,8 +329,20 @@ function KeystonePolaris:ImportDungeonSettings(importString,
             print(prefix .. ": " ..
                       (L["IMPORT_ALL_SUCCESS"]))
         elseif importData.type == "section" then
-            print(prefix .. ": " ..
-                      (L["IMPORT_SUCCESS"]):format(sectionName))
+            local successTarget = sectionName or importData.section
+            if not successTarget and dungeonFilter then
+                for dungeonKey, _ in pairs(dungeonFilter) do
+                    successTarget = addon:GetDungeonDisplayName(dungeonKey)
+                    break
+                end
+            end
+
+            if successTarget then
+                print(prefix .. ": " ..
+                          (L["IMPORT_SUCCESS"]):format(successTarget))
+            else
+                print(prefix .. ": " .. (L["IMPORT_ALL_SUCCESS"]))
+            end
         end
         return true
     else
