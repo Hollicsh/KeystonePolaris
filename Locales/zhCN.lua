@@ -116,6 +116,7 @@ L["BOSS"] = "Boss" -- To Translate
 L["BOSS_ORDER"] = "Boss Order" -- To Translate
 L["SHOW_COMPARTMENT_ICON"] = "Compartment icon" -- To Translate
 L["SHOW_MINIMAP_ICON"] = "Minimap icon" -- To Translate
+L["NEW_ROUTES_ALL_SEASON_PROMPT"] = "All dungeon routes for the current season have been updated. Do you want to reset all values to the new defaults?" -- TODO: To Translate
 
 -- Commands / Help (To Translate)
 L["COMMANDS_HEADER"] = "Commands"

@@ -117,6 +117,7 @@ L["BOSS"] = "Boss"
 L["BOSS_ORDER"] = "Ordre des boss"
 L["SHOW_COMPARTMENT_ICON"] = "Icône de compartiment"
 L["SHOW_MINIMAP_ICON"] = "Icône de la mini-carte"
+L["NEW_ROUTES_ALL_SEASON_PROMPT"] = "Toutes les routes des donjons de la saison en cours ont été mises à jour. Voulez-vous réinitialiser toutes les valeurs aux nouvelles valeurs par défaut ?"
 
 -- Commands / Help
 L["COMMANDS_HEADER"] = "Commandes"

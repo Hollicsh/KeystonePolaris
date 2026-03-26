@@ -600,6 +600,30 @@ function KeystonePolaris.AreAllBossesKilled()
     return true
 end
 
+function KeystonePolaris:HaveAllSeasonDungeonsChanged()
+    -- Get the current date
+    local currentDate = date("%Y-%m-%d")
+    local currentSeasonId = self:GetSeasonByDate(currentDate)
+    
+    if not currentSeasonId then return false end
+    
+    local seasonDungeonsTabName = currentSeasonId .. "_DUNGEONS"
+    local seasonDungeons = self[seasonDungeonsTabName]
+    
+    if not seasonDungeons then return false end
+    if not self.CHANGED_ROUTES_DUNGEONS or not next(self.CHANGED_ROUTES_DUNGEONS) then return false end
+    
+    -- Check if every season dungeon is in CHANGED_ROUTES_DUNGEONS
+    for dungeonId, _ in pairs(seasonDungeons) do
+        local dungeonKey = self:GetDungeonKeyById(dungeonId)
+        if dungeonKey and not self.CHANGED_ROUTES_DUNGEONS[dungeonKey] then
+            return false
+        end
+    end
+    
+    return true
+end
+
 function KeystonePolaris:CheckForNewRoutes()
     local currentVersion = C_AddOns.GetAddOnMetadata("KeystonePolaris",
                                                      "Version")
@@ -614,36 +638,60 @@ function KeystonePolaris:CheckForNewRoutes()
     -- (indicated by lastSeasonCheck being populated), and we need to prompt for route reset
     if lastVersionCheck == "" and self.db.profile.general.advancedOptionsEnabled and
         currentDate > lastSeasonCheck and not InCombatLockdown() then
-        local changedDungeonsText = self:GetChangedDungeonsText()
-
-        StaticPopupDialogs["KPL_NEW_ROUTES"] = {
-            text = "|cffffd100Keystone Polaris|r\n\n" ..
-                L["NEW_ROUTES_RESET_PROMPT"] .. "\n\n" .. changedDungeonsText,
-            button1 = L["RESET_ALL"],
-            button2 = L["NO"],
-            button3 = (self.CHANGED_ROUTES_DUNGEONS and
-                next(self.CHANGED_ROUTES_DUNGEONS)) and L["RESET_CHANGED_ONLY"] or
-                nil,
-            OnAccept = function()
-                -- Reset all current season dungeon values
-                self:ResetCurrentSeasonDungeons()
-                self.db.profile.general.lastVersionCheck = currentVersion
-            end,
-            OnAlt = function()
-                -- Reset only dungeons with changed routes
-                self:ResetCurrentSeasonDungeons(self.CHANGED_ROUTES_DUNGEONS)
-                self.db.profile.general.lastVersionCheck = currentVersion
-            end,
-            OnCancel = function()
-                self.db.profile.general.lastVersionCheck = currentVersion
-            end,
-            timeout = 0,
-            whileDead = true,
-            hideOnEscape = true,
-            preferredIndex = 3,
-            showAlert = true,
-            title = "Keystone Polaris"
-        }
+        local allChanged = self:HaveAllSeasonDungeonsChanged()
+        
+        if allChanged then
+            -- Simplified popup: all season dungeons have changed routes
+            StaticPopupDialogs["KPL_NEW_ROUTES"] = {
+                text = "|cffffd100Keystone Polaris|r\n\n" ..
+                    L["NEW_ROUTES_ALL_SEASON_PROMPT"],
+                button1 = L["YES"],
+                button2 = L["NO"],
+                OnAccept = function()
+                    self:ResetCurrentSeasonDungeons()
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                OnCancel = function()
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                timeout = 0,
+                whileDead = true,
+                hideOnEscape = true,
+                preferredIndex = 3,
+                showAlert = true,
+                title = "Keystone Polaris"
+            }
+        else
+            local changedDungeonsText = self:GetChangedDungeonsText()
+            StaticPopupDialogs["KPL_NEW_ROUTES"] = {
+                text = "|cffffd100Keystone Polaris|r\n\n" ..
+                    L["NEW_ROUTES_RESET_PROMPT"] .. "\n\n" .. changedDungeonsText,
+                button1 = L["RESET_ALL"],
+                button2 = L["NO"],
+                button3 = (self.CHANGED_ROUTES_DUNGEONS and
+                    next(self.CHANGED_ROUTES_DUNGEONS)) and L["RESET_CHANGED_ONLY"] or
+                    nil,
+                OnAccept = function()
+                    -- Reset all current season dungeon values
+                    self:ResetCurrentSeasonDungeons()
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                OnAlt = function()
+                    -- Reset only dungeons with changed routes
+                    self:ResetCurrentSeasonDungeons(self.CHANGED_ROUTES_DUNGEONS)
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                OnCancel = function()
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                timeout = 0,
+                whileDead = true,
+                hideOnEscape = true,
+                preferredIndex = 3,
+                showAlert = true,
+                title = "Keystone Polaris"
+            }
+        end
         StaticPopup_Show("KPL_NEW_ROUTES")
         return
         -- If it's the first initialization of the addon (both checks are empty), just store the current version
@@ -660,36 +708,61 @@ function KeystonePolaris:CheckForNewRoutes()
         currentDate > lastSeasonCheck and
         (((lastRoutesUpdate > lastVersionCheck or lastVersionCheck == "") and currentVersion >= lastRoutesUpdate) or prevWasBeta) then
 
-        local changedDungeonsText = self:GetChangedDungeonsText()
+        local allChanged = self:HaveAllSeasonDungeonsChanged()
+        
+        if allChanged then
+            -- Simplified popup: all season dungeons have changed routes
+            StaticPopupDialogs["KPL_NEW_ROUTES"] = {
+                text = "|cffffd100Keystone Polaris|r\n\n" ..
+                    L["NEW_ROUTES_ALL_SEASON_PROMPT"],
+                button1 = L["YES"],
+                button2 = L["NO"],
+                OnAccept = function()
+                    self:ResetCurrentSeasonDungeons()
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                OnCancel = function()
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                timeout = 0,
+                whileDead = true,
+                hideOnEscape = true,
+                preferredIndex = 3,
+                showAlert = true,
+                title = "Keystone Polaris"
+            }
+        else
+            local changedDungeonsText = self:GetChangedDungeonsText()
 
-        StaticPopupDialogs["KPL_NEW_ROUTES"] = {
-            text = "|cffffd100Keystone Polaris|r\n\n" ..
-                L["NEW_ROUTES_RESET_PROMPT"] .. "\n\n" .. changedDungeonsText,
-            button1 = L["RESET_ALL"],
-            button2 = L["NO"],
-            button3 = (self.CHANGED_ROUTES_DUNGEONS and
-                next(self.CHANGED_ROUTES_DUNGEONS)) and L["RESET_CHANGED_ONLY"] or
-                nil,
-            OnAccept = function()
-                -- Reset all current season dungeon values
-                self:ResetCurrentSeasonDungeons()
-                self.db.profile.general.lastVersionCheck = currentVersion
-            end,
-            OnAlt = function()
-                -- Reset only dungeons with changed routes
-                self:ResetCurrentSeasonDungeons(self.CHANGED_ROUTES_DUNGEONS)
-                self.db.profile.general.lastVersionCheck = currentVersion
-            end,
-            OnCancel = function()
-                self.db.profile.general.lastVersionCheck = currentVersion
-            end,
-            timeout = 0,
-            whileDead = true,
-            hideOnEscape = true,
-            preferredIndex = 3,
-            showAlert = true,
-            title = "Keystone Polaris"
-        }
+            StaticPopupDialogs["KPL_NEW_ROUTES"] = {
+                text = "|cffffd100Keystone Polaris|r\n\n" ..
+                    L["NEW_ROUTES_RESET_PROMPT"] .. "\n\n" .. changedDungeonsText,
+                button1 = L["RESET_ALL"],
+                button2 = L["NO"],
+                button3 = (self.CHANGED_ROUTES_DUNGEONS and
+                    next(self.CHANGED_ROUTES_DUNGEONS)) and L["RESET_CHANGED_ONLY"] or
+                    nil,
+                OnAccept = function()
+                    -- Reset all current season dungeon values
+                    self:ResetCurrentSeasonDungeons()
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                OnAlt = function()
+                    -- Reset only dungeons with changed routes
+                    self:ResetCurrentSeasonDungeons(self.CHANGED_ROUTES_DUNGEONS)
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                OnCancel = function()
+                    self.db.profile.general.lastVersionCheck = currentVersion
+                end,
+                timeout = 0,
+                whileDead = true,
+                hideOnEscape = true,
+                preferredIndex = 3,
+                showAlert = true,
+                title = "Keystone Polaris"
+            }
+        end
         StaticPopup_Show("KPL_NEW_ROUTES")
     else
         -- Update the version check without prompting
