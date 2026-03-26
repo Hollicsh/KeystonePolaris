@@ -117,7 +117,7 @@ L["BOSS"] = "Босс"
 L["BOSS_ORDER"] = "Порядок босса"
 L["SHOW_COMPARTMENT_ICON"] = "Значок отделения"
 L["SHOW_MINIMAP_ICON"] = "Значок на миникарте"
-L["NEW_ROUTES_ALL_SEASON_PROMPT"] = "All dungeon routes for the current season have been updated. Do you want to reset all values to the new defaults?" -- TODO: To Translate
+L["NEW_ROUTES_ALL_SEASON_PROMPT"] = "Все маршруты подземелий текущего сезона обновлены. Хотите сбросить всё до новых значений по умолчанию?"
 
 -- Commands / Help
 L["COMMANDS_HEADER"] = "Команды"
