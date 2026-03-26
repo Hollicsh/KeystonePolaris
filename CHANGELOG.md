@@ -1,11 +1,8 @@
 # Keystone Polaris
 
-## [3.3](https://github.com/ZelionGG/KeystonePolaris/releases/tag/3.3) (2026-03-25)
+## [3.4](https://github.com/ZelionGG/KeystonePolaris/releases/tag/3.4) (2026-03-26)
 
-[Full Changelog](https://github.com/ZelionGG/KeystonePolaris/compare/3.2.2...3.3) [Previous Releases](https://github.com/ZelionGG/KeystonePolaris/releases)
+[Full Changelog](https://github.com/ZelionGG/KeystonePolaris/compare/3.3...3.4) [Previous Releases](https://github.com/ZelionGG/KeystonePolaris/releases)
 
-- 🔥 _**IMPORTANT** -_ Due to Midnight API restrictions, **Inform Group** now requires a manual action to send the message. A dedicated button is now shown when needed.
-- 🔥 _**IMPORTANT** -_ The **Mob Indicator** feature has been removed.
-- 🆕 _**NEW** -_ Added an option to automatically re-show the **Group Reminder** popup when a Mythic+ group is full.
-- 🛠️ _**IMPROVEMENT** -_ Russian translation updated, thank you **Hollicsh**.
-- 🛠️ _**IMPROVEMENT** -_ Korean translation updated, thank you **BlueSea-jun**
+- 🔥 _**IMPORTANT** -_ The routes for the Midnight Season 1 seasonal dungeons are now updated. As always, the default routes are based on the PUG-friendly (no skip) **Weekly Route** from Raider.IO.
+- 🆕 _**NEW** -_ Added a simplified route update prompt when all season dungeons routes have changed.
