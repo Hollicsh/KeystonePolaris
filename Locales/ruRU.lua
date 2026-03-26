@@ -5,7 +5,7 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "ruRU", false, false);
 if not L then return end
 
--- Last translated March 24th, 2026.
+-- Last translated March 27th, 2026.
 -- Translation by Hollicsh (https://github.com/Hollicsh)
 
 -- Temporary locales for Midnight Compatibility Warning
