@@ -135,7 +135,7 @@ local function GetGroupReminderHeaderLabel()
     return addonName .. "|r - |cffffd700" .. headerText .. "|r"
 end
 
-local function BuildMessages(db, zoneText, groupName, roleText)
+local function BuildMessages(db, zoneText, groupName, roleText, playstyle)
     local details = {}
     local valueColor = "|cffff6a00"
 
@@ -144,6 +144,9 @@ local function BuildMessages(db, zoneText, groupName, roleText)
     end
     if db.showGroupName then
         table.insert(details, valueColor .. (groupName or "-") .. "|r")
+    end
+    if db.showPlaystyle then
+        table.insert(details, valueColor .. (playstyle or "-") .. "|r")
     end
 
     local body = ""
@@ -176,6 +179,13 @@ local function BuildMessages(db, zoneText, groupName, roleText)
 
     return popupMsg, body
 end
+
+local GENERAL_PLAYSTYLE_TEXT_BY_VALUE = {
+    [Enum.LFGEntryGeneralPlaystyle.Learning] = GROUP_FINDER_GENERAL_PLAYSTYLE1,
+    [Enum.LFGEntryGeneralPlaystyle.FunRelaxed] = GROUP_FINDER_GENERAL_PLAYSTYLE2,
+    [Enum.LFGEntryGeneralPlaystyle.FunSerious] = GROUP_FINDER_GENERAL_PLAYSTYLE3,
+    [Enum.LFGEntryGeneralPlaystyle.Expert] = GROUP_FINDER_GENERAL_PLAYSTYLE4,
+}
 
 -- Clickable chat link handler: opens the reminder popup again
 if not KeystonePolaris._KPL_ReminderChatLinkHooked then
@@ -253,13 +263,13 @@ local function EnsureGroupReminderStyledFrame(self)
     f.TeleportLink:SetPoint("BOTTOM", 0, 20)
     f.TeleportLink:SetSize(40, 40)
     f.TeleportLink:RegisterForClicks("AnyUp", "AnyDown")
-    
+
     f.TeleportLink.Icon = f.TeleportLink:CreateTexture(nil, "ARTWORK")
     f.TeleportLink.Icon:SetAllPoints()
     f.TeleportLink.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92) -- Zoom slightly to remove ugly borders
-    
+
     f.TeleportLink:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
-    
+
     -- Tooltip handling
     f.TeleportLink:SetScript("OnEnter", function(button)
         if button.spellID then
@@ -334,7 +344,7 @@ local function EnsureGroupReminderStyledFrame(self)
     return f
 end
 
-function KeystonePolaris:ShowStyledGroupReminderPopup(_, zone, groupName, groupComment, roleText, teleportSpellID, teleportSpellUnknown)
+function KeystonePolaris:ShowStyledGroupReminderPopup(zone, groupName, groupComment, roleText, teleportSpellID, teleportSpellUnknown, playstyleText)
     local db = self.db.profile.groupReminder
     local f = EnsureGroupReminderStyledFrame(self)
     f.Title:SetText(GetGroupReminderHeaderLabel())
@@ -412,7 +422,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(_, zone, groupName, groupC
         elseif GetSpellInfo then
             spellName, _, icon = GetSpellInfo(teleportSpellID)
         end
-        
+
         if spellName then
             f.TeleportLink.spellID = teleportSpellID -- Store for tooltip
             f.TeleportLink:SetAttribute("type", "macro")
@@ -485,16 +495,17 @@ function KeystonePolaris:ShowLastGroupReminder()
         data.comment,
         data.roleText,
         data.teleportSpellID,
-        data.teleportSpellUnknown
+        data.teleportSpellUnknown,
+        data.playstyleText
     )
 end
 
-function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment, activityMapID)
+function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment, activityMapID, playstyleText)
     local db = self.db and self.db.profile and self.db.profile.groupReminder
     if not db or not db.enabled then return end
 
     local roleText = GetAppliedRoleText(searchResultID)
-    local _, body = BuildMessages(db, zone, title, roleText)
+    local _, body = BuildMessages(db, zone, title, roleText, playstyleText)
 
     -- Resolve teleport spell for this dungeon
     local teleportSpellID = self.GetTeleportSpellForMapID and self:GetTeleportSpellForMapID(activityMapID) or nil
@@ -519,6 +530,7 @@ function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment,
         zone = zone,
         groupName = title,
         comment = comment,
+        playstyleText = playstyleText,
         roleText = roleText,
         teleportSpellID = teleportSpellID,
         teleportSpellUnknown = teleportSpellUnknown,
@@ -539,7 +551,8 @@ function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment,
             comment,
             roleText,
             teleportSpellID,
-            teleportSpellUnknown
+            teleportSpellUnknown,
+            playstyleText
         )
     end
 
@@ -585,7 +598,7 @@ function KeystonePolaris:InitializeGroupReminder()
         -- Show reminder when the invite is accepted (joined)
         if newStatus ~= "inviteaccepted" then return end
 
-        local srd = C_LFGList.GetSearchResultInfo and C_LFGList.GetSearchResultInfo(searchResultID)
+        local srd = C_LFGList.GetSearchResultInfo(searchResultID)
         if not srd then return end
 
         -- Some APIs return multiple activityIDs; prefer the first when present
@@ -594,7 +607,7 @@ function KeystonePolaris:InitializeGroupReminder()
 
         if not IsMythicPlusActivity(activityID) then return end
 
-        local activity = C_LFGList.GetActivityInfoTable and C_LFGList.GetActivityInfoTable(activityID)
+        local activity = C_LFGList.GetActivityInfoTable(activityID)
         if not activity then return end
 
         -- Hide Blizzard's LFG invite dialog if it's still visible (post-accept)
@@ -608,9 +621,16 @@ function KeystonePolaris:InitializeGroupReminder()
         local zone = activity.fullName or ""
         local comment = srd.comment or ""
         local mapID = activity.mapID
+        local generalPlaystyle = srd.generalPlaystyle or srd.playstyle or activity.playstyle
+        local noneValue = Enum and Enum.LFGEntryGeneralPlaystyle and Enum.LFGEntryGeneralPlaystyle.None
+        local playstyleText = srd.playstyleString
+        if not playstyleText and generalPlaystyle and generalPlaystyle ~= noneValue then
+            playstyleText = GENERAL_PLAYSTYLE_TEXT_BY_VALUE[generalPlaystyle]
+        end
+        playstyleText = playstyleText or ""
         -- Delay slightly to allow group roster to update so UnitGroupRolesAssigned returns the accepted role
         C_Timer.After(0.2, function()
-            self:ShowGroupReminder(searchResultID, title, zone, comment, mapID)
+            self:ShowGroupReminder(searchResultID, title, zone, comment, mapID, playstyleText)
             self:HandleGroupRosterUpdate()
         end)
 
@@ -904,6 +924,14 @@ function KeystonePolaris:GetGroupReminderOptions()
                 order = 14,
                 get = function() return self.db.profile.groupReminder.showAppliedRole end,
                 set = function(_, v) self.db.profile.groupReminder.showAppliedRole = v end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            showPlaystyle = {
+                name = L["KPL_GR_SHOW_PLAYSTYLE"] or "Show playstyle",
+                type = "toggle",
+                order = 15,
+                get = function() return self.db.profile.groupReminder.showPlaystyle end,
+                set = function(_, v) self.db.profile.groupReminder.showPlaystyle = v end,
                 disabled = function() return not self.db.profile.groupReminder.enabled end,
             },
         },
