@@ -768,12 +768,30 @@ function KeystonePolaris:UpdateDungeonData()
     if self.db.profile.general.advancedOptionsEnabled then
         for dungeonId, dungeonData in pairs(self.DUNGEONS) do
             local dungeonKey = self:GetDungeonKeyById(dungeonId)
-            if dungeonKey and self.db.profile.advanced[dungeonKey] then
+            if dungeonKey then
                 local advancedData = self.db.profile.advanced[dungeonKey]
+                local defaultBosses = self.GlobalDungeonLookup
+                    and self.GlobalDungeonLookup[dungeonKey]
+                    and self.GlobalDungeonLookup[dungeonKey].bosses
                 for i, bossData in ipairs(dungeonData) do
                     local bossNumStr = self:GetBossNumberString(i)
-                    bossData[2] = advancedData["Boss"..bossNumStr]
-                    bossData[3] = advancedData["Boss" .. bossNumStr .. "Inform"]
+
+                    local pct = advancedData and advancedData["Boss" .. bossNumStr] or nil
+                    local inform = advancedData and advancedData["Boss" .. bossNumStr .. "Inform"] or nil
+
+                    if pct == nil and defaultBosses and defaultBosses[i] then
+                        pct = defaultBosses[i][2]
+                    end
+                    if inform == nil and defaultBosses and defaultBosses[i] then
+                        inform = defaultBosses[i][3]
+                    end
+
+                    if pct ~= nil then
+                        bossData[2] = pct
+                    end
+                    if inform ~= nil then
+                        bossData[3] = inform
+                    end
                     bossData[4] = false -- Reset informed status
                 end
             end

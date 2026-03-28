@@ -75,7 +75,11 @@ function KeystonePolaris:EnsureInformSecureButton(macroText)
 
         local function startCooldown(button)
             button.cooldownEndTime = GetTime() + (button.cooldownDuration or 20)
-            button:EnableMouse(false)
+            if KeystonePolaris.SetInformButtonMouseEnabled then
+                KeystonePolaris:SetInformButtonMouseEnabled(false)
+            else
+                button:EnableMouse(false)
+            end
         end
 
         btn:SetScript("OnUpdate", function(button)
@@ -86,7 +90,11 @@ function KeystonePolaris:EnsureInformSecureButton(macroText)
                 button.cooldownEndTime = nil
                 button.cooldownBar:Hide()
                 button:SetText(L["INFORM_GROUP"])
-                button:EnableMouse(true)
+                if KeystonePolaris.SetInformButtonMouseEnabled then
+                    KeystonePolaris:SetInformButtonMouseEnabled(true)
+                else
+                    button:EnableMouse(true)
+                end
                 return
             end
             local pct = math.max(0, math.min(1, remaining / (button.cooldownDuration or 20)))
@@ -94,7 +102,11 @@ function KeystonePolaris:EnsureInformSecureButton(macroText)
             button.cooldownBar:SetMinMaxValues(0,1)
             button.cooldownBar:SetValue(pct)
             button:SetText(string.format("%ds", math.ceil(remaining)))
-            button:EnableMouse(false)
+            if KeystonePolaris.SetInformButtonMouseEnabled then
+                KeystonePolaris:SetInformButtonMouseEnabled(false)
+            else
+                button:EnableMouse(false)
+            end
         end)
 
         btn:SetScript("PostClick", function(button)
@@ -120,13 +132,68 @@ function KeystonePolaris:EnsureInformSecureButton(macroText)
 end
 
 function KeystonePolaris:HideInformButton()
-    if self.informSecureButton then
-        self.informSecureButton.cooldownEndTime = nil
-        self.informSecureButton.cooldownBar:Hide()
-        self.informSecureButton:SetText(L["INFORM_GROUP"])
-        self.informSecureButton:EnableMouse(true)
-        self.informSecureButton:Hide()
+    local btn = self.informSecureButton
+    if not btn then return end
+
+    btn.cooldownEndTime = nil
+    if btn.cooldownBar then btn.cooldownBar:Hide() end
+    if btn.SetText then btn:SetText(L["INFORM_GROUP"]) end
+
+    if InCombatLockdown() then
+        self._pendingInformVisibility = false
+        self._pendingInformMouseEnabled = true
+        if self.ApplyInformCombatVisualState then
+            self:ApplyInformCombatVisualState(false)
+        end
+        if self.EnsureInformWatcher then
+            self:EnsureInformWatcher()
+        end
+        return
     end
+
+    if self.SetInformButtonMouseEnabled then
+        self:SetInformButtonMouseEnabled(true)
+    else
+        btn:EnableMouse(true)
+    end
+    btn:Hide()
+end
+
+function KeystonePolaris:EnsureInformWatcher()
+    if self._informWatcher then return end
+
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_REGEN_ENABLED")
+    f:SetScript("OnEvent", function()
+        if self._pendingInformVisibility ~= nil then
+            local desired = self._pendingInformVisibility
+            self._pendingInformVisibility = nil
+            self:ApplyInformVisibility(desired)
+        end
+
+        if self._pendingInformMouseEnabled ~= nil and self.informSecureButton and not InCombatLockdown() then
+            self.informSecureButton:EnableMouse(self._pendingInformMouseEnabled)
+            self._pendingInformMouseEnabled = nil
+        end
+    end)
+
+    self._informWatcher = f
+end
+
+function KeystonePolaris:SetInformButtonMouseEnabled(enabled)
+    local btn = self.informSecureButton
+    if not btn then return end
+
+    local target = enabled and true or false
+    if InCombatLockdown() then
+        self._pendingInformMouseEnabled = target
+        if self.EnsureInformWatcher then
+            self:EnsureInformWatcher()
+        end
+        return
+    end
+
+    btn:EnableMouse(target)
 end
 
 -- Apply visibility and reset state for the secure Inform button
@@ -134,16 +201,37 @@ function KeystonePolaris:ApplyInformVisibility(shouldShow)
     local btn = self.informSecureButton
     if not btn then return end
 
-    if shouldShow then
+    local desired = shouldShow and true or false
+    if InCombatLockdown() then
+        self._pendingInformVisibility = desired
+        if self.ApplyInformCombatVisualState then
+            self:ApplyInformCombatVisualState(desired)
+        end
+        if self.EnsureInformWatcher then
+            self:EnsureInformWatcher()
+        end
+        return
+    end
+
+    if desired then
         btn:SetAlpha(1)
         if btn.SetText then btn:SetText(L["INFORM_GROUP"]) end
+        if self.SetInformButtonMouseEnabled then
+            self:SetInformButtonMouseEnabled(true)
+        else
+            btn:EnableMouse(true)
+        end
         btn:Show()
     else
         btn.cooldownEndTime = nil
         if btn.cooldownBar then btn.cooldownBar:Hide() end
         btn:SetAlpha(1)
         if btn.SetText then btn:SetText(L["INFORM_GROUP"]) end
-        btn:EnableMouse(true)
+        if self.SetInformButtonMouseEnabled then
+            self:SetInformButtonMouseEnabled(true)
+        else
+            btn:EnableMouse(true)
+        end
         btn:Hide()
     end
 end
@@ -198,7 +286,11 @@ function KeystonePolaris:PrepareInformMacro(message)
     btn.cooldownEndTime = nil
     if btn.cooldownBar then btn.cooldownBar:Hide() end
     btn:SetText(L["INFORM_GROUP"])
-    btn:EnableMouse(true) -- IMPORTANT
+    if self.SetInformButtonMouseEnabled then
+        self:SetInformButtonMouseEnabled(true)
+    else
+        btn:EnableMouse(true) -- IMPORTANT
+    end
     btn:Hide() -- Will be shown only when conditions are met in UpdatePercentageText
     -- Reset cooldown until click
     btn.cooldownEndTime = nil
@@ -458,7 +550,9 @@ function KeystonePolaris:ApplyTextLayout()
 
     if multi then
         -- Multi-line: fixed default width (600px); each metric on its own line
-        self.displayFrame:SetWidth(600)
+        if not InCombatLockdown() then
+            self.displayFrame:SetWidth(600)
+        end
         self.displayFrame.text:SetPoint("TOPLEFT", self.displayFrame, "TOPLEFT", 0, 0)
         self.displayFrame.text:SetPoint("TOPRIGHT", self.displayFrame, "TOPRIGHT", 0, 0)
         self.displayFrame.text:SetWidth(self.displayFrame:GetWidth())
@@ -675,7 +769,8 @@ function KeystonePolaris:UpdatePercentageText()
             end
         end
         -- Show the Inform button only when the boss is already dead AND percentage is still missing
-        local shouldShowInform = (remainingPercent > 0) and isBossKilled and self.db.profile.general.informGroup
+        local bossInformEnabled = (shouldInfom ~= false)
+        local shouldShowInform = (remainingPercent > 0) and isBossKilled and bossInformEnabled and self.db.profile.general.informGroup
         local informBtn = self.informSecureButton
         if shouldShowInform and not InCombatLockdown() and self.EnsureInformSecureButton then
             local prefix = (self.GetChatPrefix and self:GetChatPrefix(true, true)) or "[Keystone Polaris]"
@@ -710,17 +805,8 @@ function KeystonePolaris:UpdatePercentageText()
                     self:ApplyInformCombatVisualState(shouldShowInform)
                 end
                 self._pendingInformVisibility = shouldShowInform
-                if not self._informWatcher then
-                    local f = CreateFrame("Frame")
-                    f:RegisterEvent("PLAYER_REGEN_ENABLED")
-                    f:SetScript("OnEvent", function()
-                        if self._pendingInformVisibility ~= nil then
-                            local desired = self._pendingInformVisibility
-                            self._pendingInformVisibility = nil
-                            self:ApplyInformVisibility(desired)
-                        end
-                    end)
-                    self._informWatcher = f
+                if self.EnsureInformWatcher then
+                    self:EnsureInformWatcher()
                 end
             else
                 self:ApplyInformVisibility(shouldShowInform)
