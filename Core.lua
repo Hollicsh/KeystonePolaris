@@ -3,6 +3,8 @@ local AddOnName, KeystonePolaris = ...;
 local _G = _G;
 -- Cache frequently used global functions for better performance
 local pairs, select = pairs, select
+local C_Scenario = _G.C_Scenario
+local C_ScenarioInfo = _G.C_ScenarioInfo
 
 -- Initialize Ace3 libraries
 local AceAddon = LibStub("AceAddon-3.0")
@@ -108,7 +110,7 @@ function KeystonePolaris:GetChatPrefix(bracketed, plain)
     return name
 end
 
-function KeystonePolaris:ColorizeCommands(text)
+function KeystonePolaris.ColorizeCommands(_, text)
     if type(text) ~= "string" then return text end
     local knownSubCommands = {
         help = true,

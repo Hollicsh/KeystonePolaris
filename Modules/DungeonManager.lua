@@ -28,7 +28,7 @@ local expansions = KeystonePolaris.Expansions
 local function CloneTable(tbl)
     if type(CopyTable) == "function" then return CopyTable(tbl) end
     if type(tbl) ~= "table" then return tbl end
-    
+
     local t = {}
     for k, v in pairs(tbl) do
         if type(v) == "table" then
@@ -244,7 +244,7 @@ function KeystonePolaris:LoadExpansionDungeons()
             end
         end
     end
-    
+
     -- Load defaults for AceConfig profile from generated expansion defaults
     -- This ensures that even if we reset profile, we have the right defaults
     for _, expansion in ipairs(expansions) do
@@ -604,15 +604,15 @@ function KeystonePolaris:HaveAllSeasonDungeonsChanged()
     -- Get the current date
     local currentDate = date("%Y-%m-%d")
     local currentSeasonId = self:GetSeasonByDate(currentDate)
-    
+
     if not currentSeasonId then return false end
-    
+
     local seasonDungeonsTabName = currentSeasonId .. "_DUNGEONS"
     local seasonDungeons = self[seasonDungeonsTabName]
-    
+
     if not seasonDungeons then return false end
     if not self.CHANGED_ROUTES_DUNGEONS or not next(self.CHANGED_ROUTES_DUNGEONS) then return false end
-    
+
     -- Check if every season dungeon is in CHANGED_ROUTES_DUNGEONS
     for dungeonId, _ in pairs(seasonDungeons) do
         local dungeonKey = self:GetDungeonKeyById(dungeonId)
@@ -620,7 +620,7 @@ function KeystonePolaris:HaveAllSeasonDungeonsChanged()
             return false
         end
     end
-    
+
     return true
 end
 
@@ -639,7 +639,7 @@ function KeystonePolaris:CheckForNewRoutes()
     if lastVersionCheck == "" and self.db.profile.general.advancedOptionsEnabled and
         currentDate > lastSeasonCheck and not InCombatLockdown() then
         local allChanged = self:HaveAllSeasonDungeonsChanged()
-        
+
         if allChanged then
             -- Simplified popup: all season dungeons have changed routes
             StaticPopupDialogs["KPL_NEW_ROUTES"] = {
@@ -709,7 +709,7 @@ function KeystonePolaris:CheckForNewRoutes()
         (((lastRoutesUpdate > lastVersionCheck or lastVersionCheck == "") and currentVersion >= lastRoutesUpdate) or prevWasBeta) then
 
         local allChanged = self:HaveAllSeasonDungeonsChanged()
-        
+
         if allChanged then
             -- Simplified popup: all season dungeons have changed routes
             StaticPopupDialogs["KPL_NEW_ROUTES"] = {

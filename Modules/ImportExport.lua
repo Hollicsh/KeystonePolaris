@@ -149,7 +149,7 @@ function KeystonePolaris:ShowCopyPopup(text)
 end
 
 -- Global export function for dungeon settings
-function KeystonePolaris:ExportDungeonSettings(dungeonData, exportType, sectionName)
+function KeystonePolaris.ExportDungeonSettings(_, dungeonData, exportType, sectionName)
     -- Create export string
     local exportData
     if exportType == "dungeon" then
@@ -331,9 +331,9 @@ function KeystonePolaris:ImportDungeonSettings(importString,
         elseif importData.type == "section" then
             local successTarget = sectionName or importData.section
             if not successTarget and dungeonFilter then
-                for dungeonKey, _ in pairs(dungeonFilter) do
+                local dungeonKey = next(dungeonFilter)
+                if dungeonKey then
                     successTarget = addon:GetDungeonDisplayName(dungeonKey)
-                    break
                 end
             end
 

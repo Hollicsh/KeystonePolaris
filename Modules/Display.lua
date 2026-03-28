@@ -1,5 +1,7 @@
 local AddOnName, KeystonePolaris = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
+local _G = _G
+local GetCVarBool = _G.GetCVarBool
 
 -- ---------------------------------------------------------------------------
 -- Display Initialization
@@ -850,14 +852,14 @@ function KeystonePolaris:FormatMainDisplayText(baseText, currentPercent, current
     end
 
     local extras = {}
-    
+
     -- Ensure cache is populated (lazy load if needed)
     if not self.colorCache.prefix then self:UpdateColorCache() end
 
     -- Use cached hex colors
     local hexPrefix = self.colorCache.prefix or "cccccc"
     local hexFinished = self.colorCache.finished or "00ff00"
-    
+
     -- Display logic notes:
     -- - Projected values (the parenthesized part) are shown only while in combat (showProj below).
     -- - Base Current can be highlighted even out of combat if it already meets the section requirement.
