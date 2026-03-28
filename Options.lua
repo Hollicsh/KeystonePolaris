@@ -646,8 +646,8 @@ function KeystonePolaris:GetOtherOptions()
                 end
             },
             informGroup = {
-                name = L["INFORM_GROUP"],
-                desc = L["INFORM_GROUP_DESC"],
+                name = L["SHOW_INFORM_GROUP_BUTTON"],
+                desc = L["SHOW_INFORM_GROUP_BUTTON_DESC"],
                 type = "toggle",
                 order = 10,
                 get = function()
@@ -735,7 +735,7 @@ function KeystonePolaris:GetAdvancedOptions()
                 text = text ..
                            string.format(
                                "  %s: |cff40E0D0%.2f%%|r - " ..
-                                   L["INFORM_GROUP"] .. ": %s\n",
+                                   L["SHOW_INFORM_GROUP_BUTTON"] .. ": %s\n",
                                bossName,
                                defaults[bossKey] or 0,
                                defaults[informKey] and '|cff00ff00' .. L["YES"] ..
@@ -1604,7 +1604,8 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                     end
                 },
                 inform = {
-                    name = L["INFORM_GROUP"],
+                    name = L["SHOW_INFORM_GROUP_BUTTON"],
+                    desc = L["SHOW_INFORM_GROUP_BUTTON_DESC"],
                     type = "toggle",
                     order = 2,
                     width = 1,
