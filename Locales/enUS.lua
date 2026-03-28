@@ -245,11 +245,6 @@ L["RESET_FORMAT_DESC"] = "Reset the text format to the default value (parenthese
 
 -- Group Reminder (Popup labels)
 L["KPL_GR_HEADER"] = "Group Reminder"
-L["KPL_GR_DUNGEON"] = "Dungeon:"
-L["KPL_GR_GROUP"] = "Group:"
-L["KPL_GR_DESCRIPTION"] = "Description:"
-L["KPL_GR_ROLE"] = "Role:"
-L["KPL_GR_TELEPORT"] = "Teleport to dungeon:"
 L["KPL_GR_TELEPORT_UNKNOWN"] = "Teleport spell not known"
 L["KPL_GR_OPEN_REMINDER"] = "Open reminder"
 L["KPL_GR_INVITED"] = "You have been invited to"

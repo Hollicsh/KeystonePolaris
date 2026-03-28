@@ -352,10 +352,11 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(zone, groupName, groupComm
     local lines = {}
     local labelColor = "|cffffd100"
     local valueColor = "|cffffffff"
-    if db.showDungeonName then table.insert(lines, labelColor .. (L["KPL_GR_DUNGEON"] or "Dungeon:") .. "|r " .. valueColor .. (zone or "-") .. "|r") end
-    if db.showGroupName then table.insert(lines, labelColor .. (L["KPL_GR_GROUP"] or "Group:") .. "|r " .. valueColor .. (groupName or "-") .. "|r") end
-    if db.showGroupDescription then table.insert(lines, labelColor .. (L["KPL_GR_DESCRIPTION"] or "Description:") .. "|r " .. valueColor .. (groupComment or "-") .. "|r") end
-    if db.showAppliedRole then table.insert(lines, labelColor .. (L["KPL_GR_ROLE"] or "Role:") .. "|r " .. valueColor .. (roleText or "-") .. "|r") end
+    if db.showDungeonName then table.insert(lines, labelColor .. ENCOUNTER_JOURNAL_INSTANCE .. ":|r " .. valueColor .. (zone or "-") .. "|r") end
+    if db.showGroupName then table.insert(lines, labelColor .. GROUP .. ":|r " .. valueColor .. (groupName or "-") .. "|r") end
+    if db.showGroupDescription then table.insert(lines, labelColor .. DESCRIPTION .. ":|r " .. valueColor .. (groupComment or "-") .. "|r") end
+    if db.showPlaystyle then table.insert(lines, labelColor .. GROUP_FINDER_FILTER_PLAYSTYLE .. ":|r " .. valueColor .. (playstyleText or "-") .. "|r") end
+    if db.showAppliedRole then table.insert(lines, labelColor .. ROLE .. ":|r " .. valueColor .. (roleText or "-") .. "|r") end
 
     -- Join all lines with newlines
     local fullText = table.concat(lines, "\n")
@@ -407,7 +408,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(zone, groupName, groupComm
     if teleportSpellUnknown then
         f.TeleportLabel:SetText(L["KPL_GR_TELEPORT_UNKNOWN"] or "Teleport spell not known")
     else
-        f.TeleportLabel:SetText(L["KPL_GR_TELEPORT"] or "Teleport to dungeon")
+        f.TeleportLabel:SetText(TELEPORT_TO_DUNGEON .. ":")
     end
 
     -- Configure teleport link (secure button) only if spell is known (or in test mode)
