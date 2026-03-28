@@ -12,5 +12,5 @@
 - 🛠️ _**IMPROVEMENT** -_ Russian translation updated, thank you **Hollicsh**.
 - 🛠️ _**IMPROVEMENT** -_ Replaced some localized strings with Blizzard's GlobalStrings.
 - 🛠️ _**IMPROVEMENT** -_ Renamed the **Inform Group** options to **Inform Group Button**.
-- 🐞 _**BUGFIX** -_ Fixing LUA errors with dungeons data export.
-- 🐞 _**BUGFIX** -_ Fixing multiple LUA errors happening in various situations.
+- 🐞 _**BUGFIX** -_ Fixing Lua errors with dungeons data export.
+- 🐞 _**BUGFIX** -_ Fixing multiple Lua errors happening in various situations.

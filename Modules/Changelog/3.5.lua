@@ -64,12 +64,12 @@ KeystonePolaris.Changelog[3500] = {
         ["zhCN"] = {},
         ["zhTW"] = {},
         ["enUS"] = {
-            "Fixing LUA errors with dungeons data export.",
-            "Fixing multiple LUA errors happening in various situations.",
+            "Fixing Lua errors with dungeons data export.",
+            "Fixing multiple Lua errors happening in various situations.",
         },
         ["frFR"] = {
-            "Correction des erreurs LUA causées par l'exportation des données de donjons.",
-            "Correction de plusieurs erreurs LUA survenant dans diverses situations.",
+            "Correction des erreurs Lua causées par l'exportation des données de donjons.",
+            "Correction de plusieurs erreurs Lua survenant dans diverses situations.",
         },
         ["koKR"] = {},
         ["ruRU"] = {},
