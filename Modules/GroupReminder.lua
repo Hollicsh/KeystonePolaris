@@ -412,7 +412,7 @@ function KeystonePolaris:ShowStyledGroupReminderPopup(zone, groupName, groupComm
     end
 
     -- Configure teleport link (secure button) only if spell is known (or in test mode)
-    local isKnown = teleportSpellID and IsSpellKnown and IsSpellKnown(teleportSpellID)
+    local isKnown = teleportSpellID and type(teleportSpellID) == "number" and IsSpellKnown and IsSpellKnown(teleportSpellID)
     if self._testingGroupReminder and teleportSpellID then isKnown = true end
 
     if teleportSpellID and isKnown then
