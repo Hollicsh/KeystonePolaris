@@ -258,7 +258,7 @@ local function EnsureGroupReminderStyledFrame(self)
     -- Text label "Teleport to dungeon" above the icon
     f.TeleportLabel = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     f.TeleportLabel:SetPoint("BOTTOM", 0, 55) -- Position above the icon
-    f.TeleportLabel:SetText(L["KPL_GR_TELEPORT"] or "Teleport to dungeon")
+    f.TeleportLabel:SetText(TELEPORT_TO_DUNGEON)
     f.TeleportLabel:SetTextColor(1, 0.82, 0, 1) -- Gold color
 
     -- Single centered content block
