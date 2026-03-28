@@ -73,6 +73,8 @@ L["ENABLE_ADVANCED_OPTIONS"] = "Benutzerdefinierte Routen aktivieren"
 L["ADVANCED_OPTIONS_DESC"] = "Ermöglicht es dir, eigene Prozentsätze festzulegen, die vor jedem Boss erreicht werden sollen, und zu wählen, ob die Gruppe über fehlende Prozente informiert wird"
 L["INFORM_GROUP"] = "Gruppe informieren"
 L["INFORM_GROUP_DESC"] = "Sendet Nachrichten in den Chat, wenn Prozente fehlen"
+L["SHOW_INFORM_GROUP_BUTTON"] = "Inform Group Button" -- TODO: To Translate
+L["SHOW_INFORM_GROUP_BUTTON_DESC"] = "Show the Inform Group button on the addon's display" -- TODO: To Translate
 L["MESSAGE_CHANNEL"] = "Chat-Kanal"
 L["MESSAGE_CHANNEL_DESC"] = "Wähle, welchen Chat-Kanal du für Benachrichtigungen verwenden möchtest"
 L["PARTY"] = "Gruppe"
@@ -245,11 +247,6 @@ L["RESET_FORMAT_DESC"] = "Setzt das Textformat auf den Standardwert (Klammern) z
 
 -- Group Reminder (Popup labels)
 L["KPL_GR_HEADER"] = "Group Reminder"
-L["KPL_GR_DUNGEON"] = "Dungeon:"
-L["KPL_GR_GROUP"] = "Group:"
-L["KPL_GR_DESCRIPTION"] = "Description:"
-L["KPL_GR_ROLE"] = "Role:"
-L["KPL_GR_TELEPORT"] = "Teleport to dungeon:"
 L["KPL_GR_TELEPORT_UNKNOWN"] = "Teleport spell not known"
 L["KPL_GR_OPEN_REMINDER"] = "Open reminder"
 L["KPL_GR_INVITED"] = "You have been invited to"
@@ -274,3 +271,4 @@ L["KPL_GR_SHOW_DUNGEON"] = "Show dungeon name"
 L["KPL_GR_SHOW_GROUP"] = "Show group name"
 L["KPL_GR_SHOW_DESC"] = "Show group description"
 L["KPL_GR_SHOW_ROLE"] = "Show applied role"
+L["KPL_GR_SHOW_PLAYSTYLE"] = "Show group playstyle" -- TODO: To Translate

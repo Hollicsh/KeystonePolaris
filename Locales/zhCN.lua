@@ -73,6 +73,8 @@ L["ENABLE_ADVANCED_OPTIONS"] = "启用自定义路线"
 L["ADVANCED_OPTIONS_DESC"] = "这将允许你为每个首领之前设置自定义进度百分比目标，并选择是否在缺少进度时通知团队"
 L["INFORM_GROUP"] = "通知团队"
 L["INFORM_GROUP_DESC"] = "当缺少进度时向聊天频道发送消息"
+L["SHOW_INFORM_GROUP_BUTTON"] = "Inform Group Button" -- TODO: To Translate
+L["SHOW_INFORM_GROUP_BUTTON_DESC"] = "Show the Inform Group button on the addon's display" -- TODO: To Translate
 L["MESSAGE_CHANNEL"] = "聊天频道"
 L["MESSAGE_CHANNEL_DESC"] = "选择用于通知的聊天频道"
 L["PARTY"] = "队伍"
@@ -245,11 +247,6 @@ L["RESET_FORMAT_DESC"] = "Reset the text format to the default value (parenthese
 
 -- Group Reminder (Popup labels)
 L["KPL_GR_HEADER"] = "Group Reminder"
-L["KPL_GR_DUNGEON"] = "Dungeon:"
-L["KPL_GR_GROUP"] = "Group:"
-L["KPL_GR_DESCRIPTION"] = "Description:"
-L["KPL_GR_ROLE"] = "Role:"
-L["KPL_GR_TELEPORT"] = "Teleport to dungeon:"
 L["KPL_GR_TELEPORT_UNKNOWN"] = "Teleport spell not known"
 L["KPL_GR_OPEN_REMINDER"] = "Open reminder"
 L["KPL_GR_INVITED"] = "You have been invited to"
@@ -274,3 +271,4 @@ L["KPL_GR_SHOW_DUNGEON"] = "Show dungeon name"
 L["KPL_GR_SHOW_GROUP"] = "Show group name"
 L["KPL_GR_SHOW_DESC"] = "Show group description"
 L["KPL_GR_SHOW_ROLE"] = "Show applied role"
+L["KPL_GR_SHOW_PLAYSTYLE"] = "Show group playstyle" -- TODO: To Translate

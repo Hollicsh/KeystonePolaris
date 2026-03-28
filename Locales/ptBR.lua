@@ -68,6 +68,8 @@ L["ENABLE_ADVANCED_OPTIONS"] = "Habilitar rotas personalizadas"
 L["ADVANCED_OPTIONS_DESC"] = "Isso permitirá que você defina percentagens personalizadas para atingir antes de cada boss e escolher se você quer informar o grupo de qualquer percentagem perdida"
 L["INFORM_GROUP"] = "Informar grupo"
 L["INFORM_GROUP_DESC"] = "Enviar mensagens para o chat quando a percentagem estiver faltando"
+L["SHOW_INFORM_GROUP_BUTTON"] = "Inform Group Button" -- TODO: To Translate
+L["SHOW_INFORM_GROUP_BUTTON_DESC"] = "Show the Inform Group button on the addon's display" -- TODO: To Translate
 L["MESSAGE_CHANNEL"] = "Canal de chat"
 L["MESSAGE_CHANNEL_DESC"] = "Selecione qual canal de chat usar para notificações"
 L["PARTY"] = "Grupo"
@@ -240,11 +242,6 @@ L["RESET_FORMAT_DESC"] = "Reiniciar o formato de texto para o valor padrão (par
 
 -- Group Reminder (Popup labels)
 L["KPL_GR_HEADER"] = "Lembrete de grupo"
-L["KPL_GR_DUNGEON"] = "Masmorra:"
-L["KPL_GR_GROUP"] = "Grupo:"
-L["KPL_GR_DESCRIPTION"] = "Descrição:"
-L["KPL_GR_ROLE"] = "Função:"
-L["KPL_GR_TELEPORT"] = "Teleportar para a masmorra:"
 L["KPL_GR_TELEPORT_UNKNOWN"] = "Teleporte não conhecido"
 L["KPL_GR_OPEN_REMINDER"] = "Abrir lembrete"
 L["KPL_GR_INVITED"] = "Você foi convidado para"
@@ -269,3 +266,4 @@ L["KPL_GR_SHOW_DUNGEON"] = "Mostrar nome da masmorra"
 L["KPL_GR_SHOW_GROUP"] = "Mostrar nome do grupo"
 L["KPL_GR_SHOW_DESC"] = "Mostrar descrição do grupo"
 L["KPL_GR_SHOW_ROLE"] = "Mostrar função escolhida"
+L["KPL_GR_SHOW_PLAYSTYLE"] = "Show group playstyle" -- TODO: To Translate
