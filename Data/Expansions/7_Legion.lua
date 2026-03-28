@@ -116,7 +116,7 @@ KeystonePolaris.LEGION_DUNGEON_DATA = {
     SotT = { -- Seat of the Triumvirate
         id = 239,
         mapID = 1753,
-        teleportID = 0,
+        teleportID = 1254551,
         bosses = {
             {1, 14.61, false, 1, 1979}, -- Zuraal the Ascended
             {2, 56.87, false, 2, 1980}, -- Saprish

@@ -6,7 +6,7 @@ KeystonePolaris.WOD_DUNGEON_DATA = {
     SKY = { -- Skyreach
         id = 161,
         mapID = 1209,
-        teleportID = 445424,
+        teleportID = {159898, 1254557},
         bosses = {
             {1, 28.07, false, 1, 965},
             {2, 52.2,  false, 2, 966},

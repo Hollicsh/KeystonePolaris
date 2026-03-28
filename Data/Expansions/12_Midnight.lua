@@ -7,7 +7,7 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         id = 558,
         mapID = 2811,
         displayName = "Magisters' Terrace",
-        teleportID = 445417,
+        teleportID = 1254572,
         bosses = {
             {1, 27.81, false, 1, 2659, "Arcanotron Custos"}, -- Arcanotron Custos
             {2, 48.91, false, 2, 2661, "Seranel Sunlash"}, -- Seranel Sunlash
@@ -19,7 +19,7 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         id = 560,
         mapID = 2874,
         displayName = "Maisara Caverns",
-        teleportID = 445417,
+        teleportID = 1254559,
         bosses = {
             {1, 48.6,  false, 1, 2810, "Muro'jin and Nekraxx"}, -- Muro'jin and Nekraxx
             {2, 89.95, false, 2, 2811, "Vordaza"}, -- Vordaza
@@ -30,7 +30,7 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         id = 559,
         mapID = 2915,
         displayName = "Nexus-Point Xenas",
-        teleportID = 445417,
+        teleportID = 1254563,
         bosses = {
             {1, 29.36, false, 1, 2813, "Chief Corewright Kasreth"}, -- Chief Corewright Kasreth
             {2, 73.66, false, 2, 2814, "Corewarden Nysarra"}, -- Corewarden Nysarra
@@ -41,7 +41,7 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         id = 557,
         mapID = 2805,
         displayName = "Windrunner Spire",
-        teleportID = 445417,
+        teleportID = 1254400,
         bosses = {
             {1, 45.35, false, 1, 2655, "Emberdawn"}, -- Emberdawn
             {2, 57.36, false, 2, 2656, "Derelict Duo"}, -- Derelict Duo

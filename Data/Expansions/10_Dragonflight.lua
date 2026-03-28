@@ -6,7 +6,7 @@ KeystonePolaris.DF_DUNGEON_DATA = {
     AA = { -- Algeth'ar Academy
         id = 402,
         mapID = 2526,
-        teleportID = 445424,
+        teleportID = 393273,
         bosses = {
             {1, 51.09, false, 2, 2495}, -- Crawth
             {2, 21.52, false, 1, 2512}, -- Overgrown Ancient
