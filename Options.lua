@@ -1024,7 +1024,7 @@ function KeystonePolaris:GetAdvancedOptions()
             end
             return nil
         end
-        
+
         local daysUntilEnd = currentSeasonEnd and GetDaysUntil(currentSeasonEnd)
         local countdownText = GetSeasonCountdownText(daysUntilEnd, "SEASON_ENDS_IN", true, currentSeasonEnd)
         local hasEndSoon = countdownText ~= nil
@@ -1223,7 +1223,7 @@ function KeystonePolaris:GetAdvancedOptions()
         local year, month, day = strsplit("-", dateStr)
         year, month, day = tonumber(year), tonumber(month), tonumber(day)
         if not year or not month or not day then return dateStr end
-        
+
         -- Convert to timestamp, add seconds, convert back
         -- Note: os.time takes a table. Basic implementation for simple date math.
         local time = time({year=year, month=month, day=day, hour=12}) -- noon to avoid DST issues
@@ -1243,7 +1243,7 @@ function KeystonePolaris:GetAdvancedOptions()
                     end
             end
         end
-        
+
         -- Sort dungeons alphabetically by their localized names
         table.sort(remixDungeons, function(a, b)
             local mapIdA = a.id or self:GetDungeonIdByKey(a.key)
@@ -1267,7 +1267,7 @@ function KeystonePolaris:GetAdvancedOptions()
 
         -- Handle dates with region offset
         local eDate = data.end_date
-        
+
         -- Add +1 day for non-US regions if dates are present
         local portal = C_CVar.GetCVar("portal")
         local eDateFromTable = false

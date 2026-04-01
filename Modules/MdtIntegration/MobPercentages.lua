@@ -301,7 +301,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                     if self.isMidnight then
                         return
                     end
-                    
+
                     self.db.profile.mobPercentages.enabled = value
                     if value then
                         self:InitializeMobPercentages()
