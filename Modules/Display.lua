@@ -565,6 +565,76 @@ end
 -- Positioning Border (dashed bounding box)
 -- ---------------------------------------------------------------------------
 
+function KeystonePolaris:UpdatePositioningBorderAnimation()
+    local anchor = self._borderAnchor
+    local state = self._borderAnimationState
+    if not (self._positioningMode and anchor and state and self._borderTexturePool) then return end
+
+    local w = state.width
+    local h = state.height
+    local dash = state.dash
+    local gap = state.gap
+    local thickness = state.thickness
+    local r, g, b, a = state.r, state.g, state.b, state.a
+    local spacing = dash + gap
+    local offset = (GetTime() * state.speed) % spacing
+    local poolIndex = 0
+
+    local function GetOrCreateDash()
+        poolIndex = poolIndex + 1
+        local seg = self._borderTexturePool[poolIndex]
+        if not seg then
+            seg = anchor:CreateTexture(nil, "OVERLAY")
+            self._borderTexturePool[poolIndex] = seg
+        end
+        seg:ClearAllPoints()
+        seg:SetColorTexture(r, g, b, a)
+        seg:SetAlpha(a)
+        seg:Show()
+        return seg
+    end
+
+    local function CreateDashes(side, totalLen, startPos)
+        local isHorizontal = (side == "TOP" or side == "BOTTOM")
+        local pos = startPos - spacing
+        while pos < totalLen do
+            local visibleStart = math.max(pos, 0)
+            local visibleEnd = math.min(pos + dash, totalLen)
+            local visibleLength = visibleEnd - visibleStart
+
+            if visibleLength > 0 then
+                local seg = GetOrCreateDash()
+                if isHorizontal then
+                    seg:SetSize(visibleLength, thickness)
+                    if side == "TOP" then
+                        seg:SetPoint("TOPLEFT", anchor, "TOPLEFT", visibleStart, 0)
+                    else
+                        seg:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", visibleStart, 0)
+                    end
+                else
+                    seg:SetSize(thickness, visibleLength)
+                    if side == "LEFT" then
+                        seg:SetPoint("TOPLEFT", anchor, "TOPLEFT", 0, -visibleStart)
+                    else
+                        seg:SetPoint("TOPRIGHT", anchor, "TOPRIGHT", 0, -visibleStart)
+                    end
+                end
+            end
+
+            pos = pos + spacing
+        end
+    end
+
+    CreateDashes("TOP", w, offset)
+    CreateDashes("RIGHT", h, offset)
+    CreateDashes("BOTTOM", w, spacing - offset)
+    CreateDashes("LEFT", h, spacing - offset)
+
+    for i = poolIndex + 1, #self._borderTexturePool do
+        self._borderTexturePool[i]:Hide()
+    end
+end
+
 function KeystonePolaris:ShowPositioningBorder()
     if not self.displayFrame or not self.displayFrame.text then return end
 
@@ -597,60 +667,24 @@ function KeystonePolaris:ShowPositioningBorder()
     anchor:SetSize(w, h)
     anchor:Show()
 
-    local dash = 4
-    local gap = 4
-    local thickness = 1
-    local r, g, b, a = 1, 1, 1, 0.6
-
     self._borderTexturePool = self._borderTexturePool or {}
-    local poolIndex = 0
+    self._borderAnimationState = {
+        width = w,
+        height = h,
+        dash = 5,
+        gap = 4,
+        thickness = 2,
+        speed = 25,
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 0.65,
+    }
 
-    local function GetOrCreateDash()
-        poolIndex = poolIndex + 1
-        local seg = self._borderTexturePool[poolIndex]
-        if not seg then
-            seg = anchor:CreateTexture(nil, "OVERLAY")
-            self._borderTexturePool[poolIndex] = seg
-        end
-        seg:ClearAllPoints()
-        seg:SetColorTexture(r, g, b, a)
-        seg:Show()
-        return seg
-    end
-
-    local function CreateDashes(side)
-        local isHorizontal = (side == "TOP" or side == "BOTTOM")
-        local totalLen = isHorizontal and w or h
-        local pos = 0
-        while pos < totalLen do
-            local seg = GetOrCreateDash()
-            if isHorizontal then
-                seg:SetSize(math.min(dash, totalLen - pos), thickness)
-                if side == "TOP" then
-                    seg:SetPoint("TOPLEFT", anchor, "TOPLEFT", pos, 0)
-                else
-                    seg:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", pos, 0)
-                end
-            else
-                seg:SetSize(thickness, math.min(dash, totalLen - pos))
-                if side == "LEFT" then
-                    seg:SetPoint("TOPLEFT", anchor, "TOPLEFT", 0, -pos)
-                else
-                    seg:SetPoint("TOPRIGHT", anchor, "TOPRIGHT", 0, -pos)
-                end
-            end
-            pos = pos + dash + gap
-        end
-    end
-
-    CreateDashes("TOP")
-    CreateDashes("BOTTOM")
-    CreateDashes("LEFT")
-    CreateDashes("RIGHT")
-
-    for i = poolIndex + 1, #self._borderTexturePool do
-        self._borderTexturePool[i]:Hide()
-    end
+    anchor:SetScript("OnUpdate", function()
+        self:UpdatePositioningBorderAnimation()
+    end)
+    self:UpdatePositioningBorderAnimation()
 end
 
 function KeystonePolaris:HidePositioningBorder()
@@ -660,8 +694,10 @@ function KeystonePolaris:HidePositioningBorder()
         end
     end
     if self._borderAnchor then
+        self._borderAnchor:SetScript("OnUpdate", nil)
         self._borderAnchor:Hide()
     end
+    self._borderAnimationState = nil
 end
 
 function KeystonePolaris:RefreshPositioningBorder()
