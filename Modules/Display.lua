@@ -1793,7 +1793,8 @@ function KeystonePolaris:Refresh()
 
     -- Update text color
     local color = self.db.profile.color.inProgress
-    self.displayFrame.text:SetTextColor(color.r, color.g, color.b, color.a)
+    self.displayFrame.text:SetTextColor(color.r, color.g, color.b, 1)
+    self.displayFrame.text:SetAlpha(self.db.profile.general.textOpacity or 1)
 
     -- Update dungeon data with advanced options if enabled
     if self.UpdateDungeonData then self:UpdateDungeonData() end

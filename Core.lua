@@ -309,6 +309,7 @@ function KeystonePolaris:OnInitialize()
                 name = L["GENERAL_SETTINGS"],
                 type = "group",
                 order = 1,
+                childGroups = "tree",
                 args = {
                     disclaimerHeader = {
                         order = 0,
@@ -322,65 +323,11 @@ function KeystonePolaris:OnInitialize()
                         width = "full",
                         fontSize = "medium",
                     },
-                    separator = {
-                        type = "header",
-                        name = "",
-                        order = 0.25,
-                    },
-                    showCompartmentIcon = {
-                        order = 0.5,
-                        type = "toggle",
-                        name = L["SHOW_COMPARTMENT_ICON"],
-                        width = "2",
-                        get = function()
-                            return self.db.profile.general.showCompartmentIcon
-                        end,
-                        set = function(_, value)
-                            self.db.profile.general.showCompartmentIcon = not not value
-                            self:UpdateCompartmentIconVisibility()
-                        end,
-                    },
-                    showMinimapIcon = {
-                        order = 1,
-                        type = "toggle",
-                        name = L["SHOW_MINIMAP_ICON"],
-                        --[[ width = "full", ]]
-                        get = function()
-                            return self.db.profile.general.showMinimapIcon
-                        end,
-                        set = function(_, value)
-                            self.db.profile.general.showMinimapIcon = not not value
-                            self:UpdateMinimapIconVisibility()
-                        end,
-                    },
-                    testModeHeader = {
-                        order = 2,
-                        type = "header",
-                        name = "",
-                    },
-                    commandsHeader = {
-                        order = 3.5,
-                        type = "header",
-                        name = L["COMMANDS_HEADER"] or "Commands",
-                    },
-                    commandsDescription = {
-                        order = 3.6,
-                        type = "description",
-                        name = function()
-                            return self:ColorizeCommands(L["COMMANDS_HELP_DESC"] or "")
-                        end,
-                        fontSize = "medium",
-                    },
-                    generalHeader = {
-                        order = 4,
-                        type = "header",
-                        name = L["GENERAL_SETTINGS"],
-                    },
+                    display = self:GetDisplayOptions(),
+                    appearance = self:GetAppearanceOptions(),
                     positioning = self:GetPositioningOptions(),
-                    font = self:GetFontOptions(),
-                    colors = self:GetColorOptions(),
-                    mainDisplay = self:GetMainDisplayOptions(),
-                    otherOptions = self:GetOtherOptions(),
+                    informGroup = self:GetInformGroupOptions(),
+                    interface = self:GetInterfaceOptions(),
                 }
             },
             modules = {
