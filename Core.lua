@@ -358,30 +358,6 @@ function KeystonePolaris:OnInitialize()
                         type = "header",
                         name = "",
                     },
-                    testMode = {
-                        order = 3,
-                        type = "toggle",
-                        name = L["TEST_MODE"] or "Test Mode",
-                        desc = L["TEST_MODE_DESC"],
-                        width = "full",
-                        get = function()
-                            return self._testMode or false
-                        end,
-                        set = function(_, value)
-                            self._testMode = not not value
-                            if self._testMode then
-                                -- Close settings so the user can see the preview behind
-                                if _G.HideUIPanel and _G.SettingsPanel then _G.HideUIPanel(_G.SettingsPanel) end
-                                if self.ShowTestOverlay then self:ShowTestOverlay() end
-                                if self.StartTestModeTicker then self:StartTestModeTicker() end
-                            else
-                                if self.HideTestOverlay then self:HideTestOverlay() end
-                                if self.StopTestModeTicker then self:StopTestModeTicker() end
-                            end
-                            if self.UpdatePercentageText then self:UpdatePercentageText() end
-                            if self.Refresh then self:Refresh() end
-                        end,
-                    },
                     commandsHeader = {
                         order = 3.5,
                         type = "header",

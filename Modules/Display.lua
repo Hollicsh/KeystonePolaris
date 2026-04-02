@@ -328,149 +328,251 @@ function KeystonePolaris:UpdateColorCache()
 end
 
 function KeystonePolaris:InitializeDisplay()
-    -- Initialize color cache
     self:UpdateColorCache()
-
-    -- Create overlay frame for positioning UI
-    self.overlayFrame = CreateFrame("Frame", "KeystonePolarisOverlay", UIParent, "BackdropTemplate")
-    self.overlayFrame:SetFrameStrata("FULLSCREEN_DIALOG")
-    self.overlayFrame:SetAllPoints()
-    self.overlayFrame:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tile = true, tileSize = 16,
-    })
-    self.overlayFrame:SetBackdropColor(0, 0, 0, 0.7)
-
-    -- Create plus sign crosshair for positioning
-    local lineThickness = 2
-
-    -- Horizontal line for crosshair
-    local horizontalLine = self.overlayFrame:CreateLine()
-    horizontalLine:SetThickness(lineThickness)
-    horizontalLine:SetColorTexture(1, 1, 1, 0.1)
-    horizontalLine:SetStartPoint("LEFT")
-    horizontalLine:SetEndPoint("RIGHT")
-
-    -- Vertical line for crosshair
-    local verticalLine = self.overlayFrame:CreateLine()
-    verticalLine:SetThickness(lineThickness)
-    verticalLine:SetColorTexture(1, 1, 1, 0.1)
-    verticalLine:SetStartPoint("TOP")
-    verticalLine:SetEndPoint("BOTTOM")
-
-    self.overlayFrame:Hide()
-
-    -- Create main display frame
     self:CreateDisplayFrame()
+    self:CreatePositioningToolbar()
+end
 
-    -- Create anchor frame for moving the display
-    self.anchorFrame = CreateFrame("Frame", "KeystonePolarisAnchorFrame", self.overlayFrame, "BackdropTemplate")
-    self.anchorFrame:SetFrameStrata("TOOLTIP")
-    self.anchorFrame:SetSize(200, 30)
-    self.anchorFrame:SetPoint("CENTER", self.displayFrame, "CENTER", 0, 0)
-    self.anchorFrame:SetBackdrop({
+-- ---------------------------------------------------------------------------
+-- Positioning Mode
+-- ---------------------------------------------------------------------------
+
+function KeystonePolaris:CreatePositioningToolbar()
+    local toolbar = CreateFrame("Frame", "KPL_PositioningToolbar", UIParent, "BackdropTemplate")
+    toolbar:SetSize(180, 36)
+    toolbar:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    toolbar:SetFrameStrata("TOOLTIP")
+    toolbar:SetBackdrop({
         bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
         edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
         tile = true, tileSize = 16, edgeSize = 1,
     })
-    self.anchorFrame:SetBackdropColor(0, 0, 0, 0.5)
-    self.anchorFrame:SetBackdropBorderColor(1, 1, 1, 1)
+    toolbar:SetBackdropColor(0, 0, 0, 0.7)
+    toolbar:SetBackdropBorderColor(1, 1, 1, 0.5)
 
-    -- Create text for the anchor frame
-    local text = self.anchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    text:SetPoint("CENTER")
-    text:SetText(L["ANCHOR_TEXT"])
+    toolbar:EnableMouse(true)
+    toolbar:SetMovable(true)
+    toolbar:SetClampedToScreen(true)
+    toolbar:RegisterForDrag("LeftButton")
+    toolbar:SetScript("OnDragStart", function() toolbar:StartMoving() end)
+    toolbar:SetScript("OnDragStop", function() toolbar:StopMovingOrSizing() end)
 
-    -- Function to cancel positioning and return to settings
-    local function CancelPositioning()
-        self.anchorFrame:Hide()
-        self.overlayFrame:Hide()
-        -- Show the settings panel and navigate to our addon
-        if self.ToggleConfig then
-            self:ToggleConfig()
-        elseif Settings and Settings.OpenToCategory then
-            Settings.OpenToCategory(self.optionsCategoryId or "Keystone Polaris")
-        end
-    end
+    local validateBtn = CreateFrame("Button", nil, toolbar, "UIPanelButtonTemplate")
+    validateBtn:SetSize(80, 28)
+    validateBtn:SetPoint("RIGHT", toolbar, "CENTER", -2, 0)
+    validateBtn:SetText(L["VALIDATE"])
+    validateBtn:SetScript("OnClick", function() self:ExitPositioningMode(true) end)
 
-    -- Create validate button to confirm position
-    local validateButton = CreateFrame("Button", nil, self.anchorFrame, "UIPanelButtonTemplate")
-    validateButton:SetSize(80, 30)
-    validateButton:SetPoint("BOTTOMRIGHT", self.anchorFrame, "BOTTOMRIGHT", -10, -40)
-    validateButton:SetText(L["VALIDATE"])
-    validateButton:SetScript("OnClick", function()
-        self.anchorFrame:Hide()
-        self.overlayFrame:Hide()
-        -- Show the settings panel and navigate to our addon
-        if self.ToggleConfig then
-            self:ToggleConfig()
-        elseif Settings and Settings.OpenToCategory then
-            Settings.OpenToCategory(self.optionsCategoryId or "Keystone Polaris")
-        end
-    end)
+    local cancelBtn = CreateFrame("Button", nil, toolbar, "UIPanelButtonTemplate")
+    cancelBtn:SetSize(80, 28)
+    cancelBtn:SetPoint("LEFT", toolbar, "CENTER", 2, 0)
+    cancelBtn:SetText(L["CANCEL"])
+    cancelBtn:SetScript("OnClick", function() self:ExitPositioningMode(false) end)
 
-    -- Create cancel button to abort positioning
-    local cancelButton = CreateFrame("Button", nil, self.anchorFrame, "UIPanelButtonTemplate")
-    cancelButton:SetSize(80, 30)
-    cancelButton:SetPoint("BOTTOMLEFT", self.anchorFrame, "BOTTOMLEFT", 10, -40)
-    cancelButton:SetText(L["CANCEL"])
-    cancelButton:SetScript("OnClick", CancelPositioning)
-
-    -- Handle ESC key to cancel positioning
-    self.anchorFrame:SetScript("OnKeyDown", function(_, key)
+    toolbar:EnableKeyboard(true)
+    toolbar:SetScript("OnKeyDown", function(_, key)
         if key == "ESCAPE" then
-            CancelPositioning()
-        end
-    end)
-    self.anchorFrame:EnableKeyboard(true)
-
-    -- Handle combat state to hide positioning UI during combat
-    local combatFrame = CreateFrame("Frame")
-    combatFrame.wasShown = false
-    combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-    combatFrame:SetScript("OnEvent", function(_, event)
-        if event == "PLAYER_REGEN_DISABLED" then
-            -- Hide positioning UI when entering combat
-            if self.anchorFrame:IsShown() then
-                combatFrame.wasShown = true
-                self.anchorFrame:Hide()
-                self.overlayFrame:Hide()
-            end
-        elseif event == "PLAYER_REGEN_ENABLED" and combatFrame.wasShown then
-            -- Restore positioning UI when leaving combat
-            combatFrame.wasShown = false
-            self.anchorFrame:Show()
-            self.overlayFrame:Show()
+            self:ExitPositioningMode(false)
         end
     end)
 
-    -- Apply ElvUI skin if available for better integration
     if ElvUI then
         local E = unpack(ElvUI)
         if E and E.Skins then
-            E:GetModule('Skins'):HandleButton(validateButton)
-            E:GetModule('Skins'):HandleButton(cancelButton)
+            E:GetModule('Skins'):HandleButton(validateBtn)
+            E:GetModule('Skins'):HandleButton(cancelBtn)
         end
     end
 
-    -- Make anchor frame movable for positioning
-    self.anchorFrame:EnableMouse(true)
-    self.anchorFrame:SetMovable(true)
-    self.anchorFrame:RegisterForDrag("LeftButton")
-    self.anchorFrame:SetScript("OnDragStart", function() self.anchorFrame:StartMoving() end)
-    self.anchorFrame:SetScript("OnDragStop", function()
-        self.anchorFrame:StopMovingOrSizing()
-        -- Update position based on anchor frame position
-        local point, _, _, xOffset, yOffset = self.anchorFrame:GetPoint()
-        self.db.profile.general.position = point
+    toolbar:Hide()
+    self.positioningToolbar = toolbar
+end
+
+function KeystonePolaris:EnterPositioningMode()
+    if not self.displayFrame then return end
+
+    self._savedPosition = {
+        position = self.db.profile.general.position,
+        xOffset = self.db.profile.general.xOffset,
+        yOffset = self.db.profile.general.yOffset,
+    }
+
+    self._testMode = true
+    self._positioningMode = true
+    self:StartTestModeTicker()
+    self:UpdatePercentageText()
+
+    self.displayFrame:SetMovable(true)
+    self.displayFrame:SetClampedToScreen(false)
+    self.displayFrame:EnableMouse(true)
+    self.displayFrame:RegisterForDrag("LeftButton")
+    self.displayFrame:SetScript("OnDragStart", function() self.displayFrame:StartMoving() end)
+    self.displayFrame:SetScript("OnDragStop", function()
+        self.displayFrame:StopMovingOrSizing()
+        local centerX, centerY = self.displayFrame:GetCenter()
+        local screenWidth = GetScreenWidth()
+        local screenHeight = GetScreenHeight()
+        local position = self.db.profile.general.position
+        local h = self.displayFrame:GetHeight()
+
+        local xOffset = centerX - screenWidth / 2
+        local yOffset
+        if position == "TOP" then
+            yOffset = centerY + h / 2 - screenHeight
+        elseif position == "BOTTOM" then
+            yOffset = centerY - h / 2
+        else
+            yOffset = centerY - screenHeight / 2
+        end
+
         self.db.profile.general.xOffset = xOffset
         self.db.profile.general.yOffset = yOffset
-        self:Refresh()
     end)
 
-    self.anchorFrame:Hide()
+    self.displayFrame:Show()
+    self:ShowPositioningBorder()
+    self.displayFrame:SetScript("OnSizeChanged", function() self:RefreshPositioningBorder() end)
+
+    if self.positioningToolbar then
+        self.positioningToolbar:ClearAllPoints()
+        self.positioningToolbar:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        self.positioningToolbar:Show()
+    end
 end
+
+function KeystonePolaris:ExitPositioningMode(save)
+    self._testMode = false
+    self._positioningMode = false
+    self:StopTestModeTicker()
+
+    if self.displayFrame then
+        self.displayFrame:SetMovable(false)
+        self.displayFrame:EnableMouse(false)
+        self.displayFrame:RegisterForDrag()
+        self.displayFrame:SetScript("OnDragStart", nil)
+        self.displayFrame:SetScript("OnDragStop", nil)
+        self.displayFrame:SetScript("OnSizeChanged", nil)
+    end
+
+    if not save and self._savedPosition then
+        self.db.profile.general.position = self._savedPosition.position
+        self.db.profile.general.xOffset = self._savedPosition.xOffset
+        self.db.profile.general.yOffset = self._savedPosition.yOffset
+    end
+    self._savedPosition = nil
+
+    self:HidePositioningBorder()
+    if self.positioningToolbar then self.positioningToolbar:Hide() end
+
+    self:UpdatePercentageText()
+    self:Refresh()
+
+    if self.ToggleConfig then
+        self:ToggleConfig()
+    elseif Settings and Settings.OpenToCategory then
+        Settings.OpenToCategory(self.optionsCategoryId or "Keystone Polaris")
+    end
+end
+
+-- ---------------------------------------------------------------------------
+-- Positioning Border (dashed bounding box)
+-- ---------------------------------------------------------------------------
+
+function KeystonePolaris:ShowPositioningBorder()
+    if not self.displayFrame or not self.displayFrame.text then return end
+    self:HidePositioningBorder()
+
+    self._positioningBorder = {}
+    local text = self.displayFrame.text
+    local w = text:GetStringWidth() or 0
+    local h = text:GetStringHeight() or 0
+    if w == 0 or h == 0 then return end
+
+    local pad = 4
+    w = w + pad * 2
+    h = h + pad * 2
+
+    -- Create a helper frame anchored to the text to draw dashes around
+    if not self._borderAnchor then
+        self._borderAnchor = CreateFrame("Frame", nil, self.displayFrame)
+    end
+    local anchor = self._borderAnchor
+    anchor:ClearAllPoints()
+
+    local cfg = self.db.profile.general.mainDisplay
+    local align = (cfg and cfg.textAlign) or "CENTER"
+    local multi = cfg and cfg.multiLine
+
+    if multi and align == "LEFT" then
+        anchor:SetPoint("TOPLEFT", text, "TOPLEFT", -pad, pad)
+    elseif multi and align == "RIGHT" then
+        anchor:SetPoint("TOPRIGHT", text, "TOPRIGHT", pad, pad)
+    else
+        anchor:SetPoint("CENTER", text, "CENTER", 0, 0)
+    end
+    anchor:SetSize(w, h)
+    anchor:Show()
+
+    local dash = 4
+    local gap = 4
+    local thickness = 1
+    local r, g, b, a = 1, 1, 1, 0.6
+
+    local function CreateDashes(side)
+        local isHorizontal = (side == "TOP" or side == "BOTTOM")
+        local totalLen = isHorizontal and w or h
+        local pos = 0
+        while pos < totalLen do
+            local seg = anchor:CreateTexture(nil, "OVERLAY")
+            seg:SetColorTexture(r, g, b, a)
+            if isHorizontal then
+                seg:SetSize(math.min(dash, totalLen - pos), thickness)
+                if side == "TOP" then
+                    seg:SetPoint("TOPLEFT", anchor, "TOPLEFT", pos, 0)
+                else
+                    seg:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", pos, 0)
+                end
+            else
+                seg:SetSize(thickness, math.min(dash, totalLen - pos))
+                if side == "LEFT" then
+                    seg:SetPoint("TOPLEFT", anchor, "TOPLEFT", 0, -pos)
+                else
+                    seg:SetPoint("TOPRIGHT", anchor, "TOPRIGHT", 0, -pos)
+                end
+            end
+            table.insert(self._positioningBorder, seg)
+            pos = pos + dash + gap
+        end
+    end
+
+    CreateDashes("TOP")
+    CreateDashes("BOTTOM")
+    CreateDashes("LEFT")
+    CreateDashes("RIGHT")
+end
+
+function KeystonePolaris:HidePositioningBorder()
+    if self._positioningBorder then
+        for _, seg in ipairs(self._positioningBorder) do
+            seg:Hide()
+            seg:ClearAllPoints()
+        end
+        self._positioningBorder = nil
+    end
+    if self._borderAnchor then
+        self._borderAnchor:Hide()
+    end
+end
+
+function KeystonePolaris:RefreshPositioningBorder()
+    if self._positioningMode then
+        self:ShowPositioningBorder()
+    end
+end
+
+-- ---------------------------------------------------------------------------
+-- Display Frame
+-- ---------------------------------------------------------------------------
 
 -- Create or recreate the main display frame
 function KeystonePolaris:CreateDisplayFrame()
@@ -1141,7 +1243,7 @@ function KeystonePolaris:ShowTestOverlay()
         else
             f:SetPoint("TOP", UIParent, "TOP", 0, -20)
         end
-        -- Use the same simple border style as the KPL mover (anchorFrame)
+        -- Simple border style
         f:SetBackdrop({ bgFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16, edgeSize = 1 })
         f:SetBackdropColor(0, 0, 0, 0.35)
         f:SetBackdropBorderColor(1, 0.82, 0, 1)
@@ -1372,6 +1474,9 @@ end
 -- Disable Test Mode programmatically with a reason and inform the player
 function KeystonePolaris:DisableTestMode(reason)
     if not self._testMode then return end
+    if self._positioningMode then
+        self:ExitPositioningMode(true)
+    end
     self._testMode = false
     if self.HideTestOverlay then self:HideTestOverlay() end
     if self.StopTestModeTicker then self:StopTestModeTicker() end
@@ -1407,20 +1512,16 @@ end
 function KeystonePolaris:Refresh()
     if not self.displayFrame then return end
 
-    -- Update frame position
-    self.displayFrame:ClearAllPoints()
-    self.displayFrame:SetPoint(
-        self.db.profile.general.position,
-        UIParent,
-        self.db.profile.general.position,
-        self.db.profile.general.xOffset,
-        self.db.profile.general.yOffset
-    )
-
-    -- Update anchor frame position
-    if self.anchorFrame then
-        self.anchorFrame:ClearAllPoints()
-        self.anchorFrame:SetPoint("CENTER", self.displayFrame, "CENTER", 0, 0)
+    -- Update frame position (skip during positioning mode — frame is being dragged)
+    if not self._positioningMode then
+        self.displayFrame:ClearAllPoints()
+        self.displayFrame:SetPoint(
+            self.db.profile.general.position,
+            UIParent,
+            self.db.profile.general.position,
+            self.db.profile.general.xOffset,
+            self.db.profile.general.yOffset
+        )
     end
 
     -- Update font size and font
