@@ -338,17 +338,11 @@ end
 -- ---------------------------------------------------------------------------
 
 function KeystonePolaris:CreatePositioningToolbar()
-    local toolbar = CreateFrame("Frame", "KPL_PositioningToolbar", UIParent, "BackdropTemplate")
-    toolbar:SetSize(180, 36)
+    local toolbar = CreateFrame("Frame", "KPL_PositioningToolbar", UIParent, "BasicFrameTemplateWithInset")
+    toolbar:SetSize(240, 190)
     toolbar:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     toolbar:SetFrameStrata("TOOLTIP")
-    toolbar:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tile = true, tileSize = 16, edgeSize = 1,
-    })
-    toolbar:SetBackdropColor(0, 0, 0, 0.7)
-    toolbar:SetBackdropBorderColor(1, 1, 1, 0.5)
+    toolbar.TitleText:SetText(self:GetGradientAddonName())
 
     toolbar:EnableMouse(true)
     toolbar:SetMovable(true)
@@ -357,15 +351,67 @@ function KeystonePolaris:CreatePositioningToolbar()
     toolbar:SetScript("OnDragStart", function() toolbar:StartMoving() end)
     toolbar:SetScript("OnDragStop", function() toolbar:StopMovingOrSizing() end)
 
+    toolbar.CloseButton:SetScript("OnClick", function() self:ExitPositioningMode(false) end)
+
+    -- Dim Background checkbox
+    local dimCheck = CreateFrame("CheckButton", "KPL_DimCheck", toolbar, "UICheckButtonTemplate")
+    dimCheck:SetPoint("TOPLEFT", toolbar, "TOPLEFT", 22, -32)
+    local dimText = dimCheck.text or _G["KPL_DimCheckText"]
+    if dimText then dimText:SetText(L["DIM_BACKGROUND"]) end
+    dimCheck:SetScript("OnClick", function(cb)
+        self.db.profile.general.positioningDimBackground = cb:GetChecked() and true or false
+        self:UpdatePositioningDim()
+    end)
+    toolbar.dimCheck = dimCheck
+
+    -- Show Grid checkbox
+    local gridCheck = CreateFrame("CheckButton", "KPL_GridCheck", toolbar, "UICheckButtonTemplate")
+    gridCheck:SetPoint("TOPLEFT", dimCheck, "BOTTOMLEFT", 0, -2)
+    local gridText = gridCheck.text or _G["KPL_GridCheckText"]
+    if gridText then gridText:SetText(L["SHOW_GRID"]) end
+    gridCheck:SetScript("OnClick", function(cb)
+        self.db.profile.general.positioningShowGrid = cb:GetChecked() and true or false
+        self:UpdatePositioningGrid()
+        self:UpdateGridSliderState()
+    end)
+    toolbar.gridCheck = gridCheck
+
+    -- Grid Spacing slider
+    local slider = CreateFrame("Slider", "KPL_GridSpacing", toolbar, "OptionsSliderTemplate")
+    slider:SetPoint("LEFT", toolbar, "LEFT", 22, 0)
+    slider:SetPoint("RIGHT", toolbar, "RIGHT", -22, 0)
+    slider:SetPoint("TOP", gridCheck, "BOTTOM", 0, -14)
+    slider:SetHeight(17)
+    slider:SetMinMaxValues(20, 200)
+    slider:SetValueStep(5)
+    slider:SetObeyStepOnDrag(true)
+
+    local sliderName = slider:GetName()
+    _G[sliderName .. "Low"]:SetText("20")
+    _G[sliderName .. "High"]:SetText("200")
+    _G[sliderName .. "Text"]:SetText(L["GRID_SPACING"] .. ": 60")
+
+    slider:SetValue(self.db.profile.general.positioningGridSpacing or 60)
+    slider:SetScript("OnValueChanged", function(_, value)
+        value = math.floor(value + 0.5)
+        self.db.profile.general.positioningGridSpacing = value
+        _G[sliderName .. "Text"]:SetText(L["GRID_SPACING"] .. ": " .. value)
+        if self.db.profile.general.positioningShowGrid and self._positioningMode then
+            self:RefreshGridLines()
+        end
+    end)
+    toolbar.gridSlider = slider
+
+    -- Button row (bottom)
     local validateBtn = CreateFrame("Button", nil, toolbar, "UIPanelButtonTemplate")
-    validateBtn:SetSize(80, 28)
-    validateBtn:SetPoint("RIGHT", toolbar, "CENTER", -2, 0)
+    validateBtn:SetSize(96, 28)
+    validateBtn:SetPoint("BOTTOMRIGHT", toolbar, "BOTTOM", -2, 10)
     validateBtn:SetText(L["VALIDATE"])
     validateBtn:SetScript("OnClick", function() self:ExitPositioningMode(true) end)
 
     local cancelBtn = CreateFrame("Button", nil, toolbar, "UIPanelButtonTemplate")
-    cancelBtn:SetSize(80, 28)
-    cancelBtn:SetPoint("LEFT", toolbar, "CENTER", 2, 0)
+    cancelBtn:SetSize(96, 28)
+    cancelBtn:SetPoint("BOTTOMLEFT", toolbar, "BOTTOM", 2, 10)
     cancelBtn:SetText(L["CANCEL"])
     cancelBtn:SetScript("OnClick", function() self:ExitPositioningMode(false) end)
 
@@ -382,8 +428,12 @@ function KeystonePolaris:CreatePositioningToolbar()
     if ElvUI then
         local E = unpack(ElvUI)
         if E and E.Skins then
-            E:GetModule('Skins'):HandleButton(validateBtn)
-            E:GetModule('Skins'):HandleButton(cancelBtn)
+            local S = E:GetModule('Skins')
+            S:HandleButton(validateBtn)
+            S:HandleButton(cancelBtn)
+            if S.HandleCheckBox then S:HandleCheckBox(dimCheck) end
+            if S.HandleCheckBox then S:HandleCheckBox(gridCheck) end
+            if S.HandleSliderFrame then S:HandleSliderFrame(slider) end
         end
     end
 
@@ -446,8 +496,21 @@ function KeystonePolaris:EnterPositioningMode()
     if self.positioningToolbar then
         self.positioningToolbar:ClearAllPoints()
         self.positioningToolbar:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        if self.positioningToolbar.dimCheck then
+            self.positioningToolbar.dimCheck:SetChecked(self.db.profile.general.positioningDimBackground)
+        end
+        if self.positioningToolbar.gridCheck then
+            self.positioningToolbar.gridCheck:SetChecked(self.db.profile.general.positioningShowGrid)
+        end
+        if self.positioningToolbar.gridSlider then
+            self.positioningToolbar.gridSlider:SetValue(self.db.profile.general.positioningGridSpacing or 60)
+        end
+        self:UpdateGridSliderState()
         self.positioningToolbar:Show()
     end
+
+    self:UpdatePositioningDim()
+    self:UpdatePositioningGrid()
 end
 
 function KeystonePolaris:ExitPositioningMode(save)
@@ -472,6 +535,14 @@ function KeystonePolaris:ExitPositioningMode(save)
     self._savedPosition = nil
 
     self:HidePositioningBorder()
+
+    if self.testDimOverlay then self.testDimOverlay:Hide() end
+    if self.gridOverlay then self.gridOverlay:Hide() end
+    if self.displayFrame and self._prevDisplayStrata then
+        self.displayFrame:SetFrameStrata(self._prevDisplayStrata)
+        self._prevDisplayStrata = nil
+    end
+
     if self.positioningToolbar then self.positioningToolbar:Hide() end
 
     self:UpdatePercentageText()
@@ -590,6 +661,132 @@ end
 function KeystonePolaris:RefreshPositioningBorder()
     if self._positioningMode then
         self:ShowPositioningBorder()
+    end
+end
+
+-- ---------------------------------------------------------------------------
+-- Positioning Overlays (dim background + alignment grid)
+-- ---------------------------------------------------------------------------
+
+function KeystonePolaris:UpdatePositioningDim()
+    if self.db.profile.general.positioningDimBackground and self._positioningMode then
+        if not self.testDimOverlay then
+            local dim = CreateFrame("Frame", "KPL_TestDimOverlay", UIParent, "BackdropTemplate")
+            dim:SetFrameStrata("FULLSCREEN_DIALOG")
+            dim:SetAllPoints(UIParent)
+            dim:SetBackdrop({ bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16 })
+            dim:SetBackdropColor(0, 0, 0, 0.7)
+            dim:EnableMouse(false)
+            self.testDimOverlay = dim
+        end
+        self.testDimOverlay:Show()
+        if self.displayFrame then
+            self._prevDisplayStrata = self._prevDisplayStrata or self.displayFrame:GetFrameStrata()
+            self.displayFrame:SetFrameStrata("TOOLTIP")
+        end
+    else
+        if self.testDimOverlay then self.testDimOverlay:Hide() end
+        if not (self.db.profile.general.positioningShowGrid and self._positioningMode) then
+            if self.displayFrame and self._prevDisplayStrata then
+                self.displayFrame:SetFrameStrata(self._prevDisplayStrata)
+                self._prevDisplayStrata = nil
+            end
+        end
+    end
+end
+
+function KeystonePolaris:EnsureGridOverlay()
+    if self.gridOverlay then return self.gridOverlay end
+    local f = CreateFrame("Frame", "KPL_GridOverlay", UIParent)
+    f:SetFrameStrata("FULLSCREEN_DIALOG")
+    f:SetAllPoints(UIParent)
+    f:EnableMouse(false)
+    f:Hide()
+    self.gridOverlay = f
+    self._gridLinePool = {}
+    return f
+end
+
+function KeystonePolaris:RefreshGridLines()
+    local overlay = self:EnsureGridOverlay()
+    local spacing = self.db.profile.general.positioningGridSpacing or 60
+    local sw, sh = GetScreenWidth(), GetScreenHeight()
+    local r, g, b, a = 1, 1, 1, 0.15
+    local thickness = 1
+
+    self._gridLinePool = self._gridLinePool or {}
+    local poolIdx = 0
+
+    local function GetOrCreateLine()
+        poolIdx = poolIdx + 1
+        local tex = self._gridLinePool[poolIdx]
+        if not tex then
+            tex = overlay:CreateTexture(nil, "ARTWORK")
+            self._gridLinePool[poolIdx] = tex
+        end
+        tex:ClearAllPoints()
+        tex:SetColorTexture(r, g, b, a)
+        tex:Show()
+        return tex
+    end
+
+    local cx = sw / 2
+    for x = cx, sw, spacing do
+        local line = GetOrCreateLine()
+        line:SetSize(thickness, sh)
+        line:SetPoint("TOP", overlay, "TOPLEFT", x, 0)
+        if x ~= cx then
+            local mirror = GetOrCreateLine()
+            mirror:SetSize(thickness, sh)
+            mirror:SetPoint("TOP", overlay, "TOPLEFT", sw - x, 0)
+        end
+    end
+
+    local cy = sh / 2
+    for y = cy, sh, spacing do
+        local line = GetOrCreateLine()
+        line:SetSize(sw, thickness)
+        line:SetPoint("LEFT", overlay, "BOTTOMLEFT", 0, y)
+        if y ~= cy then
+            local mirror = GetOrCreateLine()
+            mirror:SetSize(sw, thickness)
+            mirror:SetPoint("LEFT", overlay, "BOTTOMLEFT", 0, sh - y)
+        end
+    end
+
+    for i = poolIdx + 1, #self._gridLinePool do
+        self._gridLinePool[i]:Hide()
+    end
+end
+
+function KeystonePolaris:UpdatePositioningGrid()
+    if self.db.profile.general.positioningShowGrid and self._positioningMode then
+        self:EnsureGridOverlay()
+        self:RefreshGridLines()
+        self.gridOverlay:Show()
+        -- Ensure grid renders above dim overlay but below display/toolbar
+        if self.testDimOverlay and self.testDimOverlay:IsShown() then
+            self.gridOverlay:SetFrameLevel(self.testDimOverlay:GetFrameLevel() + 1)
+        end
+        -- Ensure display frame is above grid
+        if self.displayFrame then
+            self._prevDisplayStrata = self._prevDisplayStrata or self.displayFrame:GetFrameStrata()
+            self.displayFrame:SetFrameStrata("TOOLTIP")
+        end
+    else
+        if self.gridOverlay then self.gridOverlay:Hide() end
+    end
+end
+
+function KeystonePolaris:UpdateGridSliderState()
+    if not self.positioningToolbar or not self.positioningToolbar.gridSlider then return end
+    local slider = self.positioningToolbar.gridSlider
+    if self.db.profile.general.positioningShowGrid then
+        slider:Enable()
+        slider:SetAlpha(1.0)
+    else
+        slider:Disable()
+        slider:SetAlpha(0.5)
     end
 end
 
