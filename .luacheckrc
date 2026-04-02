@@ -39,6 +39,8 @@ read_globals = {
     'GetLFGRoles',
     'GetLocale',
     'GetNumGroupMembers',
+    'GetScreenHeight',
+    'GetScreenWidth',
     'GetSpellInfo',
     'GetTexCoordsForRole',
     'GetTexCoordsForRoleSmallCircle',

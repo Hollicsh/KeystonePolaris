@@ -76,6 +76,9 @@ KeystonePolaris.defaults = {
             position = "CENTER",
             xOffset = 0,
             yOffset = 0,
+            positioningDimBackground = false,
+            positioningShowGrid = false,
+            positioningGridSpacing = 60,
             informGroup = true,
             informChannel = "PARTY",
             showCompartmentIcon = true,
@@ -145,18 +148,15 @@ function KeystonePolaris:GetPositioningOptions()
                 order = 1,
                 width = 2,
                 func = function()
-                    if self.anchorFrame then
-                        self.anchorFrame:Show()
-                        self.overlayFrame:Show()
-                        -- Hide the WoW settings frame
-                        HideUIPanel(SettingsPanel)
-                    end
+                    HideUIPanel(SettingsPanel)
+                    self:EnterPositioningMode()
                 end
             },
             position = {
                 name = L["POSITION"],
                 type = "select",
                 order = 2,
+                sorting = { "TOP", "CENTER", "BOTTOM" },
                 values = {
                     TOP = L["TOP"],
                     CENTER = L["CENTER"],
@@ -167,6 +167,8 @@ function KeystonePolaris:GetPositioningOptions()
                 end,
                 set = function(_, value)
                     self.db.profile.general.position = value
+                    self.db.profile.general.xOffset = 0
+                    self.db.profile.general.yOffset = 0
                     self:Refresh()
                 end
             },
@@ -174,8 +176,8 @@ function KeystonePolaris:GetPositioningOptions()
                 name = L["X_OFFSET"],
                 type = "range",
                 order = 3,
-                min = -500,
-                max = 500,
+                min = -math.ceil(GetScreenWidth()),
+                max = math.ceil(GetScreenWidth()),
                 step = 1,
                 get = function()
                     return self.db.profile.general.xOffset
@@ -189,8 +191,8 @@ function KeystonePolaris:GetPositioningOptions()
                 name = L["Y_OFFSET"],
                 type = "range",
                 order = 4,
-                min = -500,
-                max = 500,
+                min = -math.ceil(GetScreenHeight()),
+                max = math.ceil(GetScreenHeight()),
                 step = 1,
                 get = function()
                     return self.db.profile.general.yOffset
