@@ -429,6 +429,12 @@ function KeystonePolaris:CreatePositioningToolbar()
         local E = unpack(ElvUI)
         if E and E.Skins then
             local S = E:GetModule('Skins')
+            if S.HandleFrame then
+                pcall(S.HandleFrame, S, toolbar)
+            end
+            if S.HandleCloseButton and toolbar.CloseButton then
+                pcall(S.HandleCloseButton, S, toolbar.CloseButton)
+            end
             S:HandleButton(validateBtn)
             S:HandleButton(cancelBtn)
             if S.HandleCheckBox then S:HandleCheckBox(dimCheck) end
