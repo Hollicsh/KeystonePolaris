@@ -370,9 +370,12 @@ function KeystonePolaris:CreatePositioningToolbar()
     cancelBtn:SetScript("OnClick", function() self:ExitPositioningMode(false) end)
 
     toolbar:EnableKeyboard(true)
-    toolbar:SetScript("OnKeyDown", function(_, key)
+    toolbar:SetScript("OnKeyDown", function(f, key)
         if key == "ESCAPE" then
+            f:SetPropagateKeyboardInput(false)
             self:ExitPositioningMode(false)
+        else
+            f:SetPropagateKeyboardInput(true)
         end
     end)
 
@@ -383,6 +386,14 @@ function KeystonePolaris:CreatePositioningToolbar()
             E:GetModule('Skins'):HandleButton(cancelBtn)
         end
     end
+
+    local combatFrame = CreateFrame("Frame")
+    combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    combatFrame:SetScript("OnEvent", function()
+        if self._positioningMode then
+            self:ExitPositioningMode(true)
+        end
+    end)
 
     toolbar:Hide()
     self.positioningToolbar = toolbar
@@ -403,7 +414,6 @@ function KeystonePolaris:EnterPositioningMode()
     self:UpdatePercentageText()
 
     self.displayFrame:SetMovable(true)
-    self.displayFrame:SetClampedToScreen(false)
     self.displayFrame:EnableMouse(true)
     self.displayFrame:RegisterForDrag("LeftButton")
     self.displayFrame:SetScript("OnDragStart", function() self.displayFrame:StartMoving() end)
@@ -480,9 +490,7 @@ end
 
 function KeystonePolaris:ShowPositioningBorder()
     if not self.displayFrame or not self.displayFrame.text then return end
-    self:HidePositioningBorder()
 
-    self._positioningBorder = {}
     local text = self.displayFrame.text
     local w = text:GetStringWidth() or 0
     local h = text:GetStringHeight() or 0
@@ -492,7 +500,6 @@ function KeystonePolaris:ShowPositioningBorder()
     w = w + pad * 2
     h = h + pad * 2
 
-    -- Create a helper frame anchored to the text to draw dashes around
     if not self._borderAnchor then
         self._borderAnchor = CreateFrame("Frame", nil, self.displayFrame)
     end
@@ -518,13 +525,28 @@ function KeystonePolaris:ShowPositioningBorder()
     local thickness = 1
     local r, g, b, a = 1, 1, 1, 0.6
 
+    self._borderTexturePool = self._borderTexturePool or {}
+    local poolIndex = 0
+
+    local function GetOrCreateDash()
+        poolIndex = poolIndex + 1
+        local seg = self._borderTexturePool[poolIndex]
+        if not seg then
+            seg = anchor:CreateTexture(nil, "OVERLAY")
+            self._borderTexturePool[poolIndex] = seg
+        end
+        seg:ClearAllPoints()
+        seg:SetColorTexture(r, g, b, a)
+        seg:Show()
+        return seg
+    end
+
     local function CreateDashes(side)
         local isHorizontal = (side == "TOP" or side == "BOTTOM")
         local totalLen = isHorizontal and w or h
         local pos = 0
         while pos < totalLen do
-            local seg = anchor:CreateTexture(nil, "OVERLAY")
-            seg:SetColorTexture(r, g, b, a)
+            local seg = GetOrCreateDash()
             if isHorizontal then
                 seg:SetSize(math.min(dash, totalLen - pos), thickness)
                 if side == "TOP" then
@@ -540,7 +562,6 @@ function KeystonePolaris:ShowPositioningBorder()
                     seg:SetPoint("TOPRIGHT", anchor, "TOPRIGHT", 0, -pos)
                 end
             end
-            table.insert(self._positioningBorder, seg)
             pos = pos + dash + gap
         end
     end
@@ -549,15 +570,17 @@ function KeystonePolaris:ShowPositioningBorder()
     CreateDashes("BOTTOM")
     CreateDashes("LEFT")
     CreateDashes("RIGHT")
+
+    for i = poolIndex + 1, #self._borderTexturePool do
+        self._borderTexturePool[i]:Hide()
+    end
 end
 
 function KeystonePolaris:HidePositioningBorder()
-    if self._positioningBorder then
-        for _, seg in ipairs(self._positioningBorder) do
+    if self._borderTexturePool then
+        for _, seg in ipairs(self._borderTexturePool) do
             seg:Hide()
-            seg:ClearAllPoints()
         end
-        self._positioningBorder = nil
     end
     if self._borderAnchor then
         self._borderAnchor:Hide()
