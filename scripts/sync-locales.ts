@@ -62,10 +62,17 @@ interface LocaleReport {
   translatedKeys: number;
 }
 
+// ── Patterns ───────────────────────────────────────────────────────────────────
+
+const L_KEY_RE = /^L\["([^"]+)"\]\s*=/;
+const TODO_L_KEY_RE = /^\s*--\s*TODO:\s*L\["([^"]+)"\]\s*=/;
+const DIFF_L_KEY_RE = /^\+\s*L\["([^"]+)"\]\s*=/;
+const COMMENT_RE = /^\s*--/;
+const TO_TRANSLATE_RE = /--\s*(?:TODO:\s*)?To Translate\s*$/;
+
 // ── Parsing helpers ────────────────────────────────────────────────────────────
 
 function extractValueString(rawLines: string[]): string {
-  // Extract the value portion (after the first =) and concatenate all quoted segments
   const full = rawLines.join("\n");
   const eqIdx = full.indexOf("=");
   if (eqIdx === -1) return "";
@@ -118,7 +125,7 @@ function parseEnusDiff(diffPath: string): Set<string> {
 
   for (const line of lines) {
     if (!line.startsWith("+") || line.startsWith("+++")) continue;
-    const match = line.match(/^\+\s*L\["([^"]+)"\]\s*=/);
+    const match = line.match(DIFF_L_KEY_RE);
     if (match) {
       changedKeys.add(match[1]);
     }
@@ -156,13 +163,7 @@ function parseEnUS(filePath: string): { header: string[]; elements: EnusElement[
       continue;
     }
 
-    if (/^\s*--/.test(line) && !/^\s*--\s*TODO:/.test(line)) {
-      elements.push({ kind: "comment", rawLine: line });
-      i++;
-      continue;
-    }
-
-    const assignMatch = line.match(/^L\["([^"]+)"\]\s*=/);
+    const assignMatch = line.match(L_KEY_RE);
     if (assignMatch) {
       const key = assignMatch[1];
       const { rawLines, endIndex } = collectContinuationLines(lines, i);
@@ -172,6 +173,7 @@ function parseEnUS(filePath: string): { header: string[]; elements: EnusElement[
       continue;
     }
 
+    // Comments and non-assignment lines (including TODO: lines without L["KEY"])
     elements.push({ kind: "comment", rawLine: line });
     i++;
   }
@@ -222,14 +224,7 @@ function parseLocale(
       continue;
     }
 
-    // Non-TODO comments (section headers, etc.) — skip, output uses enUS ordering
-    if (/^\s*--/.test(line) && !/^\s*--\s*TODO:\s*L\[/.test(line)) {
-      i++;
-      continue;
-    }
-
-    // TODO-commented entry: -- TODO: L["KEY"] = "value"
-    const todoMatch = line.match(/^\s*--\s*TODO:\s*L\["([^"]+)"\]\s*=/);
+    const todoMatch = line.match(TODO_L_KEY_RE);
     if (todoMatch) {
       const key = todoMatch[1];
       const { rawLines, endIndex } = collectContinuationLines(lines, i);
@@ -239,8 +234,7 @@ function parseLocale(
       continue;
     }
 
-    // Active assignment: L["KEY"] = "value" possibly with markers
-    const assignMatch = line.match(/^L\["([^"]+)"\]\s*=/);
+    const assignMatch = line.match(L_KEY_RE);
     if (assignMatch) {
       const key = assignMatch[1];
       const { rawLines, endIndex } = collectContinuationLines(lines, i);
@@ -260,9 +254,7 @@ function parseLocale(
         continue;
       }
 
-      const hasToTranslateMarker =
-        /--\s*To Translate\s*$/.test(lastLine) ||
-        /--\s*TODO:\s*To Translate\s*$/.test(lastLine);
+      const hasToTranslateMarker = TO_TRANSLATE_RE.test(lastLine);
 
       const value = extractValueString(rawLines);
 
@@ -294,9 +286,6 @@ function parseLocale(
 // ── Output generation ──────────────────────────────────────────────────────────
 
 function formatTodoEntry(enusEntry: EnusEntry): string[] {
-  if (enusEntry.rawLines.length === 1) {
-    return [`-- TODO: ${enusEntry.rawLines[0]}`];
-  }
   return enusEntry.rawLines.map((line) => `-- TODO: ${line}`);
 }
 
@@ -427,7 +416,6 @@ function main(): void {
   const args = process.argv.slice(2);
 
   const dryRun = args.includes("--dry-run");
-  const reportJson = args.includes("--report-json");
 
   const diffIdx = args.indexOf("--diff");
   let diffPath: string | null = null;
@@ -513,10 +501,6 @@ function main(): void {
   }
 
   process.stderr.write("\n");
-
-  if (reportJson) {
-    process.stdout.write(JSON.stringify(reports, null, 2) + "\n");
-  }
 }
 
 main();
