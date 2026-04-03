@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Sync locale files when enUS.lua is staged
+if git diff --cached --name-only | grep -q '^Locales/enUS.lua$'; then
+  git diff --cached -- Locales/enUS.lua > /tmp/enus-staged.patch
+
+  if [ -s /tmp/enus-staged.patch ]; then
+    npx tsx scripts/sync-locales.ts --diff /tmp/enus-staged.patch
+    git add Locales/
+  fi
+
+  rm -f /tmp/enus-staged.patch
+fi
