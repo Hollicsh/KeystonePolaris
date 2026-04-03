@@ -135,6 +135,23 @@ L["SELECT_ALL"] = "Select All"
 L["TRANSLATE"] = "Translate"
 L["TRANSLATE_DESC"] = "Copy this changelog in a popup to paste into your translator."
 
+-- About
+L["ABOUT"] = "About" -- TODO: To Translate
+L["ABOUT_DESC"] = "This page highlights the people actively helping Keystone Polaris through development, localization, and community support." -- TODO: To Translate
+L["DEVELOPMENT"] = "Development" -- TODO: To Translate
+L["MAINTAINER_AND_DEVELOPER"] = "Maintainer and developer" -- TODO: To Translate
+L["DEVELOPER"] = "Development contributor" -- TODO: To Translate
+L["LOCALIZATION"] = "Localization" -- TODO: To Translate
+L["LOCALIZATION_STRING"] = "%s localization" -- TODO: To Translate
+L["DONATE"] = "Donation" -- TODO: To Translate
+L["DONATE_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a donation link." -- TODO: To Translate
+L["SUPPORT"] = "Support" -- TODO: To Translate
+L["SUPPORT_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a support link." -- TODO: To Translate
+L["GITHUB_SPONSORS"] = "GitHub Sponsors" -- TODO: To Translate
+L["GITHUB_SPONSORS_DESC"] = "Copy the GitHub Sponsors link." -- TODO: To Translate
+L["PAYPAL"] = "PayPal" -- TODO: To Translate
+L["PAYPAL_DESC"] = "Copy the PayPal donation link." -- TODO: To Translate
+
 -- Test Mode
 L["TEST_MODE"] = "Test Mode"
 L["TEST_MODE_OVERLAY"] = "Keystone Polaris: Test Mode"

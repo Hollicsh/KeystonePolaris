@@ -151,6 +151,23 @@ L["SELECT_ALL"] = "Select All"
 L["TRANSLATE"] = "Translate"
 L["TRANSLATE_DESC"] = "Copy this changelog in a popup to paste into your translator."
 
+-- About
+L["ABOUT"] = "About"
+L["ABOUT_DESC"] = "This page highlights the people actively helping Keystone Polaris through development, localization, and community support."
+L["DEVELOPMENT"] = "Development"
+L["MAINTAINER_AND_DEVELOPER"] = "Maintainer and developer"
+L["DEVELOPER"] = "Development contributor"
+L["LOCALIZATION"] = "Localization"
+L["LOCALIZATION_STRING"] = "%s localization"
+L["DONATE"] = "Donation"
+L["DONATE_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a donation link."
+L["SUPPORT"] = "Support"
+L["SUPPORT_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a support link."
+L["GITHUB_SPONSORS"] = "GitHub Sponsors"
+L["GITHUB_SPONSORS_DESC"] = "Copy the GitHub Sponsors link."
+L["PAYPAL"] = "PayPal"
+L["PAYPAL_DESC"] = "Copy the PayPal donation link."
+
 -- Test Mode
 L["TEST_MODE"] = "Test Mode"
 L["TEST_MODE_OVERLAY"] = "Keystone Polaris: Test Mode"

@@ -283,6 +283,7 @@ function KeystonePolaris:OnInitialize()
 
     -- Generate changelog for display in options
     self:GenerateChangelog()
+    self:GenerateAbout()
 
     -- Check if a new season has started
     self:CheckForNewSeason()
@@ -385,9 +386,11 @@ function KeystonePolaris:OnInitialize()
         }
     })
     AceConfig:RegisterOptionsTable(AddOnName .. "_Changelog", self.changelogOptions)
+    AceConfig:RegisterOptionsTable(AddOnName .. "_About", self.aboutOptions)
 
     self.optionsCategoryId = select(2, AceConfigDialog:AddToBlizOptions(AddOnName, optionsAddonName))
     self.changelogCategoryId = select(2, AceConfigDialog:AddToBlizOptions(AddOnName .. "_Changelog", L["Changelog"], optionsAddonName))
+    self.aboutCategoryId = select(2, AceConfigDialog:AddToBlizOptions(AddOnName .. "_About", L["ABOUT"], optionsAddonName))
 
 
     -- Register chat command and events
