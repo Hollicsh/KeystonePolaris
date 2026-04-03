@@ -218,6 +218,7 @@ local function Constructor()
     local ACR = LibStub("AceConfigRegistry-3.0", true)
     if ACR then
         ACR.RegisterCallback(widget, "ConfigTableChange", function(_, appName)
+            -- scenarioIndex is nil when widget is released back to the AceGUI pool
             if appName == AddOnName and widget.scenarioIndex then
                 RenderPreview(widget, widget.scenarioIndex)
             end
