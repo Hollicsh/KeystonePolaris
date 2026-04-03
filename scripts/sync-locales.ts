@@ -3,23 +3,23 @@ import { join, basename } from "path";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-interface EnusEntry {
+interface BaseEntry {
   kind: "assignment";
   key: string;
   value: string;
   rawLines: string[];
 }
 
-interface EnusComment {
+interface BaseComment {
   kind: "comment";
   rawLine: string;
 }
 
-interface EnusBlank {
+interface BaseBlank {
   kind: "blank";
 }
 
-type EnusElement = EnusEntry | EnusComment | EnusBlank;
+type BaseElement = BaseEntry | BaseComment | BaseBlank;
 
 type LocaleEntryStatus =
   | "translated"
@@ -40,7 +40,7 @@ const SAME_VALUE_ALLOWLIST: ReadonlySet<string> = new Set([
   "EXPANSION_WOTLK",
   "EXPANSION_MOP",
   "EXPANSION_CLASSIC",
-  // Date format key — translators set locale-appropriate format which may match enUS
+  // Date format key — translators set locale-appropriate format which may match base
   "%month%-%day%-%year%",
 ]);
 
@@ -115,7 +115,7 @@ function collectContinuationLines(
 
 // ── Diff parser ────────────────────────────────────────────────────────────────
 
-function parseEnusDiff(diffPath: string): Set<string> {
+function parseBaseDiff(diffPath: string): Set<string> {
   // Parse a unified diff of enUS.lua to find keys whose values changed.
   // We look at added lines (starting with +) that contain L["KEY"] assignments,
   // since a changed value appears as a removed old line and an added new line.
@@ -134,7 +134,7 @@ function parseEnusDiff(diffPath: string): Set<string> {
   return changedKeys;
 }
 
-// ── enUS parser ────────────────────────────────────────────────────────────────
+// ── Base locale parser ────────────────────────────────────────────────────────
 
 const TRANSLATIONS_START_MARKER = "-- ## Translations Start ## --";
 
@@ -147,11 +147,11 @@ function findTranslationsStart(lines: string[]): number {
   throw new Error(`Missing "${TRANSLATIONS_START_MARKER}" marker in enUS.lua`);
 }
 
-function parseEnUS(filePath: string): { header: string[]; elements: EnusElement[] } {
+function parseBaseLocale(filePath: string): { header: string[]; elements: BaseElement[] } {
   const lines = readLines(filePath);
   const contentStart = findTranslationsStart(lines);
   const header = lines.slice(0, contentStart);
-  const elements: EnusElement[] = [];
+  const elements: BaseElement[] = [];
   let i = contentStart;
 
   while (i < lines.length) {
@@ -181,7 +181,7 @@ function parseEnUS(filePath: string): { header: string[]; elements: EnusElement[
   return { header, elements };
 }
 
-// ── Non-enUS locale parser ─────────────────────────────────────────────────────
+// ── Translation locale parser ─────────────────────────────────────────────────
 
 function findLocaleHeaderEnd(lines: string[]): number {
   for (let i = 0; i < lines.length; i++) {
@@ -194,7 +194,7 @@ function findLocaleHeaderEnd(lines: string[]): number {
 
 function parseLocale(
   filePath: string,
-  enusEntries: Map<string, EnusEntry>
+  baseEntries: Map<string, BaseEntry>
 ): {
   header: string[];
   fileComment: string | null;
@@ -261,10 +261,10 @@ function parseLocale(
       if (hasToTranslateMarker) {
         entries.set(key, { key, value, status: "untranslated-marked", rawLines });
       } else {
-        const enusEntry = enusEntries.get(key);
+        const baseEntry = baseEntries.get(key);
         if (
-          enusEntry !== undefined &&
-          value === enusEntry.value &&
+          baseEntry !== undefined &&
+          value === baseEntry.value &&
           !SAME_VALUE_ALLOWLIST.has(key)
         ) {
           entries.set(key, { key, value, status: "untranslated-marked", rawLines });
@@ -285,15 +285,15 @@ function parseLocale(
 
 // ── Output generation ──────────────────────────────────────────────────────────
 
-function formatTodoEntry(enusEntry: EnusEntry): string[] {
-  return enusEntry.rawLines.map((line) => `-- TODO: ${line}`);
+function formatTodoEntry(baseEntry: BaseEntry): string[] {
+  return baseEntry.rawLines.map((line) => `-- TODO: ${line}`);
 }
 
-function formatStaleEntry(localeEntry: LocaleEntry, newEnusValue: string): string[] {
+function formatStaleEntry(localeEntry: LocaleEntry, newBaseValue: string): string[] {
   const lines = [...localeEntry.rawLines];
   const lastIdx = lines.length - 1;
   const lastLine = lines[lastIdx].replace(/\s*--\s*TODO:.*$/, "");
-  lines[lastIdx] = `${lastLine} -- TODO: "${newEnusValue}"`;
+  lines[lastIdx] = `${lastLine} -- TODO: "${newBaseValue}"`;
   return lines;
 }
 
@@ -305,10 +305,10 @@ function generateLocaleFile(
   localeCode: string,
   localeHeader: string[],
   fileComment: string | null,
-  enusElements: EnusElement[],
-  enusEntries: Map<string, EnusEntry>,
+  baseElements: BaseElement[],
+  baseEntries: Map<string, BaseEntry>,
   localeEntries: Map<string, LocaleEntry>,
-  changedEnusKeys: Set<string>
+  changedBaseKeys: Set<string>
 ): { content: string; report: LocaleReport } {
   const outputLines: string[] = [];
   const report: LocaleReport = {
@@ -321,7 +321,7 @@ function generateLocaleFile(
     translatedKeys: 0,
   };
 
-  const seenEnusKeys = new Set<string>();
+  const seenBaseKeys = new Set<string>();
 
   outputLines.push(...localeHeader);
   outputLines.push("");
@@ -330,7 +330,7 @@ function generateLocaleFile(
     outputLines.push(fileComment);
   }
 
-  for (const element of enusElements) {
+  for (const element of baseElements) {
     if (element.kind === "blank") {
       outputLines.push("");
       continue;
@@ -342,12 +342,12 @@ function generateLocaleFile(
     }
 
     const key = element.key;
-    const enusValue = element.value;
+    const baseValue = element.value;
 
-    if (seenEnusKeys.has(key)) {
+    if (seenBaseKeys.has(key)) {
       continue;
     }
-    seenEnusKeys.add(key);
+    seenBaseKeys.add(key);
     report.totalKeys++;
 
     const localeEntry = localeEntries.get(key);
@@ -360,9 +360,9 @@ function generateLocaleFile(
 
     switch (localeEntry.status) {
       case "translated": {
-        // If this key's enUS value changed in the diff, flag the translation as stale
-        if (changedEnusKeys.has(key)) {
-          outputLines.push(...formatStaleEntry(localeEntry, enusValue));
+        // If this key's base value changed in the diff, flag the translation as stale
+        if (changedBaseKeys.has(key)) {
+          outputLines.push(...formatStaleEntry(localeEntry, baseValue));
           report.staleKeys.push(key);
         } else {
           outputLines.push(...localeEntry.rawLines);
@@ -377,7 +377,7 @@ function generateLocaleFile(
       }
 
       case "todo-commented": {
-        if (localeEntry.value !== enusValue) {
+        if (localeEntry.value !== baseValue) {
           outputLines.push(...formatTodoEntry(element));
           report.updatedTodoValues.push(key);
         } else {
@@ -387,9 +387,9 @@ function generateLocaleFile(
       }
 
       case "stale-flagged": {
-        // Update the TODO marker to the current enUS value
-        if (localeEntry.todoValue !== enusValue) {
-          outputLines.push(...formatStaleEntry(localeEntry, enusValue));
+        // Update the TODO marker to the current base value
+        if (localeEntry.todoValue !== baseValue) {
+          outputLines.push(...formatStaleEntry(localeEntry, baseValue));
           report.staleKeys.push(key);
         } else {
           outputLines.push(...localeEntry.rawLines);
@@ -401,7 +401,7 @@ function generateLocaleFile(
   }
 
   for (const key of localeEntries.keys()) {
-    if (!enusEntries.has(key)) {
+    if (!baseEntries.has(key)) {
       report.removedKeys.push(key);
     }
   }
@@ -427,19 +427,19 @@ function main(): void {
     }
     diffPath = next;
   }
-  const changedEnusKeys = diffPath ? parseEnusDiff(diffPath) : new Set<string>();
+  const changedBaseKeys = diffPath ? parseBaseDiff(diffPath) : new Set<string>();
 
   const fileArgs = args.filter((a, i) => !a.startsWith("--") && i !== diffIdx + 1);
 
   const localesDir = join(process.cwd(), "Locales");
-  const enusPath = join(localesDir, "enUS.lua");
+  const basePath = join(localesDir, "enUS.lua");
 
-  const { elements: enusElements } = parseEnUS(enusPath);
+  const { elements: baseElements } = parseBaseLocale(basePath);
 
-  const enusEntries = new Map<string, EnusEntry>();
-  for (const el of enusElements) {
+  const baseEntries = new Map<string, BaseEntry>();
+  for (const el of baseElements) {
     if (el.kind === "assignment") {
-      enusEntries.set(el.key, el);
+      baseEntries.set(el.key, el);
     }
   }
 
@@ -460,16 +460,16 @@ function main(): void {
 
   for (const filePath of localeFiles) {
     const localeCode = basename(filePath, ".lua");
-    const { header, fileComment, entries } = parseLocale(filePath, enusEntries);
+    const { header, fileComment, entries } = parseLocale(filePath, baseEntries);
 
     const { content, report } = generateLocaleFile(
       localeCode,
       header,
       fileComment,
-      enusElements,
-      enusEntries,
+      baseElements,
+      baseEntries,
       entries,
-      changedEnusKeys
+      changedBaseKeys
     );
 
     reports.push(report);
@@ -479,12 +479,12 @@ function main(): void {
     }
   }
 
-  const totalEnusKeys = enusEntries.size;
+  const totalBaseKeys = baseEntries.size;
   process.stderr.write("\nLocale Sync Report\n");
   process.stderr.write("==================\n");
 
   for (const r of reports) {
-    const pct = totalEnusKeys > 0 ? Math.round((r.translatedKeys / totalEnusKeys) * 100) : 0;
+    const pct = totalBaseKeys > 0 ? Math.round((r.translatedKeys / totalBaseKeys) * 100) : 0;
     const changes: string[] = [];
     if (r.newKeys.length > 0) changes.push(`${r.newKeys.length} new TODOs`);
     if (r.staleKeys.length > 0) changes.push(`${r.staleKeys.length} stale flagged`);
@@ -492,7 +492,7 @@ function main(): void {
     if (r.removedKeys.length > 0) changes.push(`${r.removedKeys.length} removed`);
     const changesStr = changes.length > 0 ? changes.join(", ") : "no changes";
     process.stderr.write(
-      `${r.locale}.lua:  ${r.translatedKeys}/${totalEnusKeys} translated (${pct}%)  |  ${changesStr}\n`
+      `${r.locale}.lua:  ${r.translatedKeys}/${totalBaseKeys} translated (${pct}%)  |  ${changesStr}\n`
     );
   }
 
