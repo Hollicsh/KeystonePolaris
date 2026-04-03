@@ -24,7 +24,6 @@ type EnusElement = EnusEntry | EnusComment | EnusBlank;
 type LocaleEntryStatus =
   | "translated"
   | "untranslated-marked"
-  | "untranslated-unmarked"
   | "todo-commented"
   | "stale-flagged";
 
@@ -175,8 +174,7 @@ function findLocaleHeaderEnd(lines: string[]): number {
 }
 
 function parseLocale(
-  filePath: string,
-  enusEntries: Map<string, EnusEntry>
+  filePath: string
 ): {
   header: string[];
   fileComment: string | null;
@@ -253,12 +251,7 @@ function parseLocale(
       if (hasToTranslateMarker) {
         entries.set(key, { key, value, status: "untranslated-marked", rawLines });
       } else {
-        const enusEntry = enusEntries.get(key);
-        if (enusEntry !== undefined && value === enusEntry.value) {
-          entries.set(key, { key, value, status: "untranslated-unmarked", rawLines });
-        } else {
-          entries.set(key, { key, value, status: "translated", rawLines });
-        }
+        entries.set(key, { key, value, status: "translated", rawLines });
       }
 
       i = endIndex + 1;
@@ -362,8 +355,7 @@ function generateLocaleFile(
         break;
       }
 
-      case "untranslated-marked":
-      case "untranslated-unmarked": {
+      case "untranslated-marked": {
         outputLines.push(...formatTodoEntry(element));
         break;
       }
@@ -453,7 +445,7 @@ function main(): void {
 
   for (const filePath of localeFiles) {
     const localeCode = basename(filePath, ".lua");
-    const { header, fileComment, entries } = parseLocale(filePath, enusEntries);
+    const { header, fileComment, entries } = parseLocale(filePath);
 
     const { content, report } = generateLocaleFile(
       localeCode,
