@@ -27,6 +27,23 @@ type LocaleEntryStatus =
   | "todo-commented"
   | "stale-flagged";
 
+const SAME_VALUE_ALLOWLIST: ReadonlySet<string> = new Set([
+  // Expansion names are intentionally kept in English by most translators
+  "EXPANSION_MIDNIGHT",
+  "EXPANSION_WW",
+  "EXPANSION_DF",
+  "EXPANSION_SL",
+  "EXPANSION_BFA",
+  "EXPANSION_LEGION",
+  "EXPANSION_WOD",
+  "EXPANSION_CATA",
+  "EXPANSION_WOTLK",
+  "EXPANSION_MOP",
+  "EXPANSION_CLASSIC",
+  // Date format key — translators set locale-appropriate format which may match enUS
+  "%month%-%day%-%year%",
+]);
+
 interface LocaleEntry {
   key: string;
   value: string;
@@ -174,7 +191,8 @@ function findLocaleHeaderEnd(lines: string[]): number {
 }
 
 function parseLocale(
-  filePath: string
+  filePath: string,
+  enusEntries: Map<string, EnusEntry>
 ): {
   header: string[];
   fileComment: string | null;
@@ -251,7 +269,16 @@ function parseLocale(
       if (hasToTranslateMarker) {
         entries.set(key, { key, value, status: "untranslated-marked", rawLines });
       } else {
-        entries.set(key, { key, value, status: "translated", rawLines });
+        const enusEntry = enusEntries.get(key);
+        if (
+          enusEntry !== undefined &&
+          value === enusEntry.value &&
+          !SAME_VALUE_ALLOWLIST.has(key)
+        ) {
+          entries.set(key, { key, value, status: "untranslated-marked", rawLines });
+        } else {
+          entries.set(key, { key, value, status: "translated", rawLines });
+        }
       }
 
       i = endIndex + 1;
@@ -445,7 +472,7 @@ function main(): void {
 
   for (const filePath of localeFiles) {
     const localeCode = basename(filePath, ".lua");
-    const { header, fileComment, entries } = parseLocale(filePath);
+    const { header, fileComment, entries } = parseLocale(filePath, enusEntries);
 
     const { content, report } = generateLocaleFile(
       localeCode,

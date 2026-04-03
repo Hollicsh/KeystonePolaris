@@ -8,7 +8,7 @@ if not L then return end
 -- TRANSLATION REQUIRED
 
 -- Temporary locales for Midnight Compatibility Warning
-L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
+-- TODO: L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
                                 "|cff8888ff• Mob percentages on nameplates (MDT Integration)|r\n" ..
                                 "|cff8888ff• Current pull tracking|r\n" ..
@@ -276,7 +276,7 @@ L["KPL_GR_SHOW_CHAT"] = "채팅창에 표시"
 L["KPL_GR_SHOW_CHAT_DESC"] = "채팅창에 파티 세부 정보를 출력합니다."
 L["KPL_GR_TEST_CURRENT_SEASON"] = "현재 시즌 던전 시뮬레이션"
 L["KPL_GR_TEST_CURRENT_SEASON_DESC"] = "현재 시즌의 던전을 사용하여 파티 알림을 표시합니다."
-L["KPL_GR_CONTENT"] = "Content"
+-- TODO: L["KPL_GR_CONTENT"] = "Content"
 L["KPL_GR_SHOW_DUNGEON"] = "던전명 표시"
 L["KPL_GR_SHOW_GROUP"] = "파티명 표시"
 L["KPL_GR_SHOW_DESC"] = "파티 요약 표시"
