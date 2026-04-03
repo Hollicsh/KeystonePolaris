@@ -32,6 +32,39 @@ local function PreviewScenarioValues()
     return vals
 end
 
+local function PreviewGroup(order)
+    return {
+        type = "group",
+        inline = true,
+        name = "",
+        order = order,
+        args = {
+            previewScenario = {
+                name = L["PREVIEW_SCENARIO"],
+                type = "select",
+                order = 1,
+                width = "full",
+                values = PreviewScenarioValues,
+                get = function() return KeystonePolaris._previewScenario or 1 end,
+                set = function(_, value)
+                    KeystonePolaris._previewScenario = value
+                    ACR:NotifyChange(AddOnName)
+                end,
+            },
+            preview = {
+                name = "",
+                type = "select",
+                dialogControl = "KeystonePolaris_Preview",
+                order = 2,
+                width = "full",
+                values = PreviewScenarioValues,
+                get = function() return KeystonePolaris._previewScenario or 1 end,
+                set = function() end,
+            },
+        },
+    }
+end
+
 local function ColumnRow(order, left, right, spacerWidth)
     left.order = 1
     left.width = left.width or 1.25
@@ -305,32 +338,7 @@ function KeystonePolaris:GetAppearanceOptions()
         type = "group",
         order = 2,
         args = {
-            previewScenario = {
-                name = L["PREVIEW_SCENARIO"],
-                type = "select",
-                order = 0.01,
-                width = "full",
-                values = PreviewScenarioValues,
-                get = function()
-                    return KeystonePolaris._previewScenario or 1
-                end,
-                set = function(_, value)
-                    KeystonePolaris._previewScenario = value
-                    ACR:NotifyChange(AddOnName)
-                end,
-            },
-            preview = {
-                name = "",
-                type = "select",
-                dialogControl = "KeystonePolaris_Preview",
-                order = 0.02,
-                width = "full",
-                values = PreviewScenarioValues,
-                get = function()
-                    return KeystonePolaris._previewScenario or 1
-                end,
-                set = function() end,
-            },
+            previewGroup = PreviewGroup(0.01),
             fontRow = ColumnRow(1, {
                 name = L["FONT"],
                 type = "select",
@@ -482,32 +490,7 @@ function KeystonePolaris:GetDisplayOptions()
         type = "group",
         order = 1,
         args = {
-            previewScenario = {
-                name = L["PREVIEW_SCENARIO"],
-                type = "select",
-                order = 0.01,
-                width = "full",
-                values = PreviewScenarioValues,
-                get = function()
-                    return KeystonePolaris._previewScenario or 1
-                end,
-                set = function(_, value)
-                    KeystonePolaris._previewScenario = value
-                    ACR:NotifyChange(AddOnName)
-                end,
-            },
-            preview = {
-                name = "",
-                type = "select",
-                dialogControl = "KeystonePolaris_Preview",
-                order = 1,
-                width = "full",
-                values = PreviewScenarioValues,
-                get = function()
-                    return KeystonePolaris._previewScenario or 1
-                end,
-                set = function() end,
-            },
+            previewGroup = PreviewGroup(0.01),
             formatMode = {
                 name = L["FORMAT_MODE"],
                 desc = L["FORMAT_MODE_DESC"],
