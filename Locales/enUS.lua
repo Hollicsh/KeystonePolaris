@@ -198,7 +198,6 @@ L["PULL_DEFAULT"] = "Pull:"
 L["SHOW_SECTION_REQUIRED_PREFIX"] = "Show section required"
 L["SHOW_SECTION_REQUIRED_PREFIX_DESC"] = "Display the current overall enemy forces percent required for the current section without taking into account the progress already done."
 L["SECTION_REQUIRED_LABEL_DESC"] = "Label displayed before the section required value.\n\nClear the field to reset to the default value."
-L["SECTION_REQUIRED_DEFAULT"] = "Total required for section:"
 
 L["FORMAT_MODE"] = "Text format"
 L["FORMAT_MODE_DESC"] = "Select how to display the progress."
