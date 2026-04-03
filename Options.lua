@@ -221,6 +221,8 @@ KeystonePolaris.defaults.profile.groupReminder = {
     showGroupDescription = true,
     showAppliedRole = true,
     lastReminder = nil,
+    popupXOffset = 0,
+    popupYOffset = 0,
 }
 
 local expansions = KeystonePolaris.Expansions
