@@ -156,6 +156,6 @@ Distributed under the All Rights Reserved License. See `LICENSE` for more inform
 [discord-shield]: https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white
 [discord-url]: https://discord.gg/g7JZNGSU32
 [license-shield]: https://img.shields.io/badge/License-All%20Rights%20Reserved-red.svg?style=for-the-badge
-[license-url]: https://github.com/ZelionGG/KeystonePolaris/blob/develop/LICENSE
+[license-url]: https://github.com/ZelionGG/KeystonePolaris/blob/main/LICENSE
 [Lua]: https://img.shields.io/badge/lua-000000?style=for-the-badge&logo=lua&logoColor=white
 [Lua-url]: https://www.lua.org/
