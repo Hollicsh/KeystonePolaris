@@ -15,7 +15,7 @@ if git diff --cached --name-only | grep -q '^Locales/enUS.lua$'; then
   git diff --cached -- Locales/enUS.lua > "$patch"
 
   if [ -s "$patch" ]; then
-    npx tsx scripts/sync-locales.ts --diff "$patch"
+    npx tsx scripts/sync-locales.ts --diff "$patch" || exit 1
     git add Locales/
   fi
 fi
