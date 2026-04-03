@@ -411,7 +411,15 @@ function main(): void {
   const reportJson = args.includes("--report-json");
 
   const diffIdx = args.indexOf("--diff");
-  const diffPath = diffIdx !== -1 ? args[diffIdx + 1] : null;
+  let diffPath: string | null = null;
+  if (diffIdx !== -1) {
+    const next = args[diffIdx + 1];
+    if (!next || next.startsWith("--")) {
+      process.stderr.write("Error: --diff requires a file path argument\n");
+      process.exit(1);
+    }
+    diffPath = next;
+  }
   const changedEnusKeys = diffPath ? parseEnusDiff(diffPath) : new Set<string>();
 
   const fileArgs = args.filter((a, i) => !a.startsWith("--") && i !== diffIdx + 1);
