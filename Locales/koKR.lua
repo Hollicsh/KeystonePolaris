@@ -8,13 +8,13 @@ if not L then return end
 -- TRANSLATION REQUIRED
 
 -- Temporary locales for Midnight Compatibility Warning
--- TODO: L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
--- TODO: L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
--- TODO:                                 "|cff8888ff• Mob percentages on nameplates (MDT Integration)|r\n" ..
--- TODO:                                 "|cff8888ff• Current pull tracking|r\n" ..
--- TODO:                                 "|cff8888ff• Projected values|r\n\n" ..
--- TODO:                                 "|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\n" ..
--- TODO:                                 "All other features should remain available, sorry for the inconvenience.\n"
+L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
+L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
+                                "|cff8888ff• Mob percentages on nameplates (MDT Integration)|r\n" ..
+                                "|cff8888ff• Current pull tracking|r\n" ..
+                                "|cff8888ff• Projected values|r\n\n" ..
+                                "|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\n" ..
+                                "All other features should remain available, sorry for the inconvenience."
 
 -- Dungeons Group
 L["DUNGEONS"] = "현재 시즌"
@@ -57,7 +57,7 @@ L["Important"] = "중요"
 L["New"] = "새로운"
 L["Bugfixes"] = "오류 수정"
 L["Improvment"] = "개선 사항"
--- TODO: L["%month%-%day%-%year%"] = "%year%-%month%-%day%"
+L["%month%-%day%-%year%"] = "%year%-%month%-%day%"
 L["DEFAULT_PERCENTAGES"] = "기본 퍼센트"
 L["DEFAULT_PERCENTAGES_DESC"] = "이 보기는 애드온의 기본 제공 기본값을 표시하며 커스텀 루트 구성을 반영하지 않습니다."
 L["ROUTES_DISCLAIMER"] = "기본적으로 Keystone Polaris는 Raider.IO 주간 경로(초보자용)를 사용합니다. 커스텀 루트를 사용하면 나만의 경로를 정의할 수 있습니다. 이러한 경로를 활성화하려면 애드온의 일반 설정에서 '커스텀 루트'를 활성화해야 합니다."
@@ -276,7 +276,7 @@ L["KPL_GR_SHOW_CHAT"] = "채팅창에 표시"
 L["KPL_GR_SHOW_CHAT_DESC"] = "채팅창에 파티 세부 정보를 출력합니다."
 L["KPL_GR_TEST_CURRENT_SEASON"] = "현재 시즌 던전 시뮬레이션"
 L["KPL_GR_TEST_CURRENT_SEASON_DESC"] = "현재 시즌의 던전을 사용하여 파티 알림을 표시합니다."
--- TODO: L["KPL_GR_CONTENT"] = "Content"
+L["KPL_GR_CONTENT"] = "Content"
 L["KPL_GR_SHOW_DUNGEON"] = "던전명 표시"
 L["KPL_GR_SHOW_GROUP"] = "파티명 표시"
 L["KPL_GR_SHOW_DESC"] = "파티 요약 표시"
