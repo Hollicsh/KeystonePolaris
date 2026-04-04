@@ -147,10 +147,14 @@ function methods.OnAcquire(self)
     self.scenarioIndex = 1
     self:SetHeight(80)
     self:SetFullWidth(true)
+    KeystonePolaris._previewWidget = self
 end
 
 function methods.OnRelease(self)
     self.scenarioIndex = nil
+    if KeystonePolaris._previewWidget == self then
+        KeystonePolaris._previewWidget = nil
+    end
 end
 
 function methods.SetValue(self, value)

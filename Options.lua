@@ -96,7 +96,8 @@ local function MakeStatusColorOption(name, desc, colorKey, self, order)
             if self.UpdateColorCache then self:UpdateColorCache() end
             if self.UpdatePercentageText then self:UpdatePercentageText() end
             self:Refresh()
-            ACR:NotifyChange(AddOnName)
+            local pw = self._previewWidget
+            if pw and pw.RefreshPreview then pw:RefreshPreview() end
         end
     }
 end
