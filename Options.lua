@@ -80,18 +80,19 @@ local function ColumnRow(order, left, right, spacerWidth)
     }
 end
 
-local function MakeStatusColorOption(name, desc, colorKey, self)
+local function MakeStatusColorOption(name, desc, colorKey, self, order)
     return {
         name = name,
         desc = desc,
         type = "color",
+        order = order,
+        width = 1.25,
         get = function()
             local color = self.db.profile.color[colorKey]
             return color.r, color.g, color.b, color.a
         end,
         set = function(_, r, g, b, a)
-            local color = self.db.profile.color[colorKey]
-            color.r, color.g, color.b, color.a = r, g, b, a
+            self.db.profile.color[colorKey] = { r = r, g = g, b = b, a = a }
             if self.UpdateColorCache then self:UpdateColorCache() end
             if self.UpdatePercentageText then self:UpdatePercentageText() end
             self:Refresh()
@@ -194,7 +195,6 @@ KeystonePolaris.defaults = {
                 currentLabel = L["CURRENT_DEFAULT"],   -- Label for current percent
                 pullLabel = L["PULL_DEFAULT"],         -- Label for current pull percent
                 formatMode = "percent",               -- Display format: "percent" or "count"
-                prefixColor = { r = 1, g = 0.7960784, b = 0.2, a = 1 }, -- Color for prefixes (labels) (default: #ffcb33)
                 singleLineSeparator = " | ",           -- Separator for single-line layout
                 textAlign = "CENTER",                  -- Horizontal font alignment: LEFT, CENTER, RIGHT
                 showProjected = false                   -- Append projected values next to Current/Required
@@ -204,7 +204,8 @@ KeystonePolaris.defaults = {
         color = {
             inProgress = {r = 1, g = 1, b = 1, a = 1},
             finished = {r = 0, g = 1, b = 0, a = 1},
-            missing = {r = 1, g = 0, b = 0, a = 1}
+            missing = {r = 1, g = 0, b = 0, a = 1},
+            prefix = {r = 1, g = 0.7960784, b = 0.2, a = 1}
         },
         advanced = {}
     }
@@ -449,31 +450,10 @@ function KeystonePolaris:GetAppearanceOptions()
                 name = L["COLORS"],
                 order = 3,
             },
-            colorsRow1 = ColumnRow(4, {
-                name = L["PREFIX_COLOR"],
-                desc = L["PREFIX_COLOR_DESC"],
-                type = "color",
-                get = function()
-                    local c = self.db.profile.general.mainDisplay.prefixColor or (self.defaults and self.defaults.profile.general.mainDisplay.prefixColor) or {r=1,g=0.7960784,b=0.2,a=1}
-                    return c.r, c.g, c.b, c.a
-                end,
-                set = function(_, r, g, b, a)
-                    local cfg = self.db.profile.general.mainDisplay
-                    if not cfg.prefixColor then
-                        cfg.prefixColor = { r = r, g = g, b = b, a = a }
-                    else
-                        local c = cfg.prefixColor
-                        c.r, c.g, c.b, c.a = r, g, b, a
-                    end
-                    self:UpdateColorCache()
-                    self:UpdatePercentageText()
-                    self:Refresh()
-                    ACR:NotifyChange(AddOnName)
-                end
-            }, MakeStatusColorOption(L["IN_PROGRESS"], L["IN_PROGRESS_COLOR_DESC"], "inProgress", self)),
-            colorsRow2 = ColumnRow(5,
-                MakeStatusColorOption(L["MISSING"], L["MISSING_COLOR_DESC"], "missing", self),
-                MakeStatusColorOption(L["FINISHED_COLOR"], L["FINISHED_COLOR_DESC"], "finished", self)),
+            prefixColor = MakeStatusColorOption(L["PREFIX_COLOR"], L["PREFIX_COLOR_DESC"], "prefix", self, 4),
+            inProgressColor = MakeStatusColorOption(L["IN_PROGRESS"], L["IN_PROGRESS_COLOR_DESC"], "inProgress", self, 5),
+            missingColor = MakeStatusColorOption(L["MISSING"], L["MISSING_COLOR_DESC"], "missing", self, 6),
+            finishedColor = MakeStatusColorOption(L["FINISHED_COLOR"], L["FINISHED_COLOR_DESC"], "finished", self, 7),
         }
     }
 end
