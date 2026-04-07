@@ -278,6 +278,15 @@ function KeystonePolaris:OnInitialize()
     -- Initialize the database first with AceDB
     self.db = LibStub("AceDB-3.0"):New("KeystonePolarisDB", self.defaults, "Default")
 
+    -- Migrate prefixColor from general.mainDisplay to color.prefix
+    local oldPrefix = self.db.profile.general.mainDisplay.prefixColor
+    if oldPrefix then
+        if not self.db.profile.color.prefix then
+            self.db.profile.color.prefix = oldPrefix
+        end
+        self.db.profile.general.mainDisplay.prefixColor = nil
+    end
+
     -- Load dungeon data from expansion modules
     self:LoadExpansionDungeons()
 
