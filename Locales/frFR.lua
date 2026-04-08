@@ -139,7 +139,24 @@ L["SELECT_ALL"] = "Sélectionner tout"
 L["TRANSLATE"] = "Traduire"
 L["TRANSLATE_DESC"] = "Copier les notes de version qui vont apparaître dans une fenêtre popup pour les coller dans votre traducteur."
 
--- Test Mode
+-- About
+L["ABOUT"] = "À propos"
+L["ABOUT_DESC"] = "Cette page présente les informations sur Keystone Polaris, son développement et son équipe de contributeurs."
+L["DEVELOPMENT"] = "Développement"
+L["MAINTAINER_AND_DEVELOPER"] = "Créateur et développeur"
+L["DEVELOPER"] = "Contributeur au développement"
+L["LOCALIZATION"] = "Traduction"
+L["LOCALIZATION_STRING"] = "Traduction en %s"
+L["DONATE"] = "Donation"
+L["DONATE_DESC"] = "Vous souhaitez aider le développement de Keystone Polaris ? Utilisez l'un des boutons ci-dessous pour copier un lien de donation."
+L["SUPPORT"] = "Soutenir"
+L["SUPPORT_DESC"] = "Vous souhaitez aider le développement de Keystone Polaris ? Utilisez l'un des boutons ci-dessous pour copier un lien de soutien."
+L["GITHUB_SPONSORS"] = "GitHub Sponsors"
+L["GITHUB_SPONSORS_DESC"] = "Copier le lien GitHub Sponsors."
+L["PAYPAL"] = "PayPal"
+L["PAYPAL_DESC"] = "Copier le lien de don PayPal."
+
+-- Mode Test
 L["TEST_MODE"] = "Mode Test"
 L["TEST_MODE_OVERLAY"] = "Keystone Polaris : Mode Test"
 L["TEST_MODE_OVERLAY_HINT"] = "Aperçu simulé. Clic droit sur cet encart pour quitter le mode test et rouvrir les options."
