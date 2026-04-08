@@ -99,6 +99,16 @@ function readLines(filePath: string): string[] {
   return lines;
 }
 
+function trimTrailingBlankLines(lines: string[]): string[] {
+  const trimmedLines = [...lines];
+
+  while (trimmedLines.length > 0 && trimmedLines[trimmedLines.length - 1].trim() === "") {
+    trimmedLines.pop();
+  }
+
+  return trimmedLines;
+}
+
 function collectContinuationLines(
   lines: string[],
   startIndex: number
@@ -193,29 +203,63 @@ function findLocaleHeaderEnd(lines: string[]): number {
   throw new Error("Missing 'if not L then return end' in locale file");
 }
 
+function findFirstContentElement(baseElements: BaseElement[]): BaseComment | BaseEntry | null {
+  for (const element of baseElements) {
+    if (element.kind !== "blank") {
+      return element;
+    }
+  }
+
+  return null;
+}
+
+function hasLeadingBlank(baseElements: BaseElement[]): boolean {
+  return baseElements.length > 0 && baseElements[0].kind === "blank";
+}
+
+function isLineMatchingBaseElementStart(
+  line: string,
+  firstContentElement: BaseComment | BaseEntry | null
+): boolean {
+  if (!firstContentElement) {
+    return false;
+  }
+
+  if (firstContentElement.kind === "comment") {
+    return line === firstContentElement.rawLine;
+  }
+
+  const todoMatch = line.match(TODO_L_KEY_RE);
+  if (todoMatch?.[1] === firstContentElement.key) {
+    return true;
+  }
+
+  const assignMatch = line.match(L_KEY_RE);
+  return assignMatch?.[1] === firstContentElement.key;
+}
+
 function parseLocale(
   filePath: string,
-  baseEntries: Map<string, BaseEntry>
+  baseEntries: Map<string, BaseEntry>,
+  firstContentElement: BaseComment | BaseEntry | null
 ): {
   header: string[];
-  fileComment: string | null;
+  introLines: string[];
   entries: Map<string, LocaleEntry>;
 } {
   const lines = readLines(filePath);
   const headerEnd = findLocaleHeaderEnd(lines);
   const header = lines.slice(0, headerEnd);
+  const introLines: string[] = [];
   const entries = new Map<string, LocaleEntry>();
-  let fileComment: string | null = null;
   let i = headerEnd;
 
-  if (i < lines.length && lines[i].trim() === "") {
+  while (i < lines.length && !isLineMatchingBaseElementStart(lines[i], firstContentElement)) {
+    introLines.push(lines[i]);
     i++;
   }
 
-  if (i < lines.length && /^\s*--\s*(?:TRANSLATION REQUIRED|Traduction:)/.test(lines[i])) {
-    fileComment = lines[i];
-    i++;
-  }
+  const trimmedIntroLines = trimTrailingBlankLines(introLines);
 
   while (i < lines.length) {
     const line = lines[i];
@@ -283,7 +327,7 @@ function parseLocale(
     i++;
   }
 
-  return { header, fileComment, entries };
+  return { header, introLines: trimmedIntroLines, entries };
 }
 
 // ── Output generation ──────────────────────────────────────────────────────────
@@ -307,7 +351,7 @@ function stripToTranslateFromComment(comment: string): string {
 function generateLocaleFile(
   localeCode: string,
   localeHeader: string[],
-  fileComment: string | null,
+  introLines: string[],
   baseElements: BaseElement[],
   baseEntries: Map<string, BaseEntry>,
   localeEntries: Map<string, LocaleEntry>,
@@ -327,10 +371,11 @@ function generateLocaleFile(
   const seenBaseKeys = new Set<string>();
 
   outputLines.push(...localeHeader);
-  outputLines.push("");
 
-  if (fileComment) {
-    outputLines.push(fileComment);
+  if (introLines.length > 0) {
+    outputLines.push(...introLines);
+  } else if (!hasLeadingBlank(baseElements)) {
+    outputLines.push("");
   }
 
   for (const element of baseElements) {
@@ -438,6 +483,7 @@ function main(): void {
   const basePath = join(localesDir, "enUS.lua");
 
   const { elements: baseElements } = parseBaseLocale(basePath);
+  const firstContentElement = findFirstContentElement(baseElements);
 
   const baseEntries = new Map<string, BaseEntry>();
   for (const el of baseElements) {
@@ -463,12 +509,12 @@ function main(): void {
 
   for (const filePath of localeFiles) {
     const localeCode = basename(filePath, ".lua");
-    const { header, fileComment, entries } = parseLocale(filePath, baseEntries);
+    const { header, introLines, entries } = parseLocale(filePath, baseEntries, firstContentElement);
 
     const { content, report } = generateLocaleFile(
       localeCode,
       header,
-      fileComment,
+      introLines,
       baseElements,
       baseEntries,
       entries,
