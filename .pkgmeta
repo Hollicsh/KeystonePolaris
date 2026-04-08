@@ -5,7 +5,7 @@ ignore: # Files and directories beginning with a dot (such as .git) are automati
   - tsconfig.json
   - package.json
   - package-lock.json
-  - scripts/
+  - scripts
 
 externals:
   Libs/LibDBIcon-1.0: https://repos.wowace.com/wow/libdbicon-1-0/trunk/LibDBIcon-1.0
