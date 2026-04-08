@@ -5,6 +5,11 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "frFR", false, false);
 if not L then return end
 
+-- Reference:
+-- Some strings below are sourced from BlizzardInterfaceResources.
+-- Source: https://github.com/Ketho/BlizzardInterfaceResources/blob/live/Resources/GlobalStrings/frFR.lua
+-- @Translation Team: If you find a false positive (a string that should stay identical),
+-- add `-- @no-translate` at the end of the line so the locale sync script ignores it.
 
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "Avertissement de compatibilité avec Midnight"
@@ -310,4 +315,4 @@ L["KPL_GR_SHOW_DUNGEON"] = "Afficher le nom du donjon"
 L["KPL_GR_SHOW_GROUP"] = "Afficher le nom du groupe"
 L["KPL_GR_SHOW_DESC"] = "Afficher la description du groupe"
 L["KPL_GR_SHOW_ROLE"] = "Afficher le rôle inscrit"
-L["KPL_GR_SHOW_PLAYSTYLE"] = "Afficher le style de jeu du groupe" -- TODO: "Show group playstyle"
+L["KPL_GR_SHOW_PLAYSTYLE"] = "Afficher le style de jeu du groupe"

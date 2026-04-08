@@ -5,6 +5,11 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "ruRU", false, false);
 if not L then return end
 
+-- Reference:
+-- Some strings below are sourced from BlizzardInterfaceResources.
+-- Source: https://github.com/Ketho/BlizzardInterfaceResources/blob/live/Resources/GlobalStrings/ruRU.lua
+-- @Translation Team: If you find a false positive (a string that should stay identical),
+-- add `-- @no-translate` at the end of the line so the locale sync script ignores it.
 
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "Предупреждение о совместимости с 'Полночью'"
@@ -310,4 +315,4 @@ L["KPL_GR_SHOW_DUNGEON"] = "Показывать название подземе
 L["KPL_GR_SHOW_GROUP"] = "Показывать название группы"
 L["KPL_GR_SHOW_DESC"] = "Показывать описание группы"
 L["KPL_GR_SHOW_ROLE"] = "Показывать примененную роль"
-L["KPL_GR_SHOW_PLAYSTYLE"] = "Показать групповой стиль игры" -- TODO: "Show group playstyle"
+L["KPL_GR_SHOW_PLAYSTYLE"] = "Показать групповой стиль игры"
