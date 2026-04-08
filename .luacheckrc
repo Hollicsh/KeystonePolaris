@@ -80,6 +80,7 @@ read_globals = {
     'DEDE',
     'LFG_LIST_LANGUAGE_PTBR',
     'FRFR',
+    'LEADER',
 }
 
 files['Locales/*.lua'] = {

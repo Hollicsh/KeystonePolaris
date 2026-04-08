@@ -724,7 +724,7 @@ function KeystonePolaris:TestGroupReminder()
     local fakeID = 999999
     -- Fake a role application
     self.groupReminderRoleByResult = self.groupReminderRoleByResult or {}
-    local roles = {L["TANK"], L["HEALER"], L["DPS"]}
+    local roles = {TANK, HEALER, DAMAGER}
     self.groupReminderRoleByResult[fakeID] = roles[math.random(#roles)]
 
     -- Fake data (randomized)

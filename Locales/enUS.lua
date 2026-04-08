@@ -4,6 +4,9 @@ local LibStub = LibStub;
 local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "enUS", true, false);
 
+-- NOTE: Some strings are sourced from BlizzardInterfaceResources:
+-- https://github.com/Ketho/BlizzardInterfaceResources/blob/live/Resources/GlobalStrings/enUS.lua
+
 -- ## Translations Start ## --
 
 -- Temporary locales for Midnight Compatibility Warning
@@ -76,10 +79,6 @@ L["ADVANCED_SETTINGS"] = "Custom Routes"
 L["TANK_GROUP_HEADER"] = "Boss Percentages"
 L["ROLES_ENABLED"] = "Role(s) Required"
 L["ROLES_ENABLED_DESC"] = "Select which roles will see the percentage and inform the group"
-L["LEADER"] = "Leader"
-L["TANK"] = "Tank"
-L["HEALER"] = "Healer"
-L["DPS"] = "Damage"
 L["ENABLE"] = "Enable"
 L["ENABLE_ADVANCED_OPTIONS"] = "Enable custom routes"
 L["ADVANCED_OPTIONS_DESC"] = "This will allow you to set custom percentages to reach before each boss and to choose whether to inform the group of any missed percentage"

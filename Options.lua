@@ -721,10 +721,10 @@ function KeystonePolaris:GetInformGroupOptions()
                 type = "multiselect",
                 order = 4,
                 values = {
-                    LEADER = L["LEADER"],
-                    TANK = L["TANK"],
-                    HEALER = L["HEALER"],
-                    DAMAGER = L["DPS"]
+                    LEADER = LEADER,
+                    TANK = TANK,
+                    HEALER = HEALER,
+                    DAMAGER = DAMAGER
                 },
                 get = function(_, key)
                     return self.db.profile.general.rolesEnabled[key] or false

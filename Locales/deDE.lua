@@ -5,7 +5,6 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "deDE", false, false);
 if not L then return end
 
--- TRANSLATION REQUIRED
 
 -- Temporary locales for Midnight Compatibility Warning
 -- TODO: L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
@@ -43,7 +42,7 @@ L["EXPANSION_WOTLK"] = "Wrath of the Lich King"
 
 -- UI Strings
 -- TODO: L["MODULES"] = "Modules"
--- TODO: L["MODULES_SUMMARY_HEADER"] = "Modules overview"
+-- TODO: L["MODULES_SUMMARY_HEADER"] = "Modules Overview"
 -- TODO: L["MODULES_SUMMARY_DESC"] = "Quick tour of available modules:\n\n• MythicDungeonTools Integration\n  > Mob Percentages\n\n• Group Reminder"
 L["FINISHED"] = "Dungeon-Prozentsatz erreicht"
 L["SECTION_DONE"] = "Abschnitt abgeschlossen"
@@ -51,6 +50,18 @@ L["DONE"] = "Abschnittsprozentsatz erreicht"
 L["DUNGEON_DONE"] = "Dungeon abgeschlossen"
 L["OPTIONS"] = "Optionen"
 L["GENERAL_SETTINGS"] = "Allgemeine Einstellungen"
+-- TODO: L["DISPLAY"] = "Display"
+-- TODO: L["APPEARANCE"] = "Appearance"
+-- TODO: L["INTERFACE"] = "Interface"
+-- TODO: L["PREVIEW"] = "Preview"
+-- TODO: L["PREVIEW_SCENARIO"] = "Preview Scenario"
+-- TODO: L["PREVIEW_IDLE"] = "Mid-dungeon (idle)"
+-- TODO: L["PREVIEW_PULLING"] = "Mid-dungeon (pulling)"
+-- TODO: L["PREVIEW_PROJECTED"] = "Projected completes section"
+-- TODO: L["PREVIEW_SECTION_DONE"] = "Section complete"
+-- TODO: L["PREVIEW_MISSING"] = "Missing (boss killed)"
+-- TODO: L["PREVIEW_ALMOST_DONE"] = "Almost done (pulling)"
+-- TODO: L["PREVIEW_DUNGEON_DONE"] = "Dungeon complete"
 L["Changelog"] = "Änderungsprotokoll"
 -- TODO: L["Version"] = "Version"
 L["Important"] = "Wichtig"
@@ -65,10 +76,6 @@ L["ADVANCED_SETTINGS"] = "Benutzerdefinierte Routen"
 L["TANK_GROUP_HEADER"] = "Boss-Prozentsätze"
 L["ROLES_ENABLED"] = "Benötigte Rolle(n)"
 L["ROLES_ENABLED_DESC"] = "Wähle, welche Rollen die Prozente sehen und die Gruppe informieren sollen"
-L["LEADER"] = "Anführer"
--- TODO: L["TANK"] = "Tank"
-L["HEALER"] = "Heiler"
-L["DPS"] = "Schaden"
 L["ENABLE"] = "Aktivieren"
 L["ENABLE_ADVANCED_OPTIONS"] = "Benutzerdefinierte Routen aktivieren"
 L["ADVANCED_OPTIONS_DESC"] = "Ermöglicht es dir, eigene Prozentsätze festzulegen, die vor jedem Boss erreicht werden sollen, und zu wählen, ob die Gruppe über fehlende Prozente informiert wird"
@@ -88,8 +95,11 @@ L["FONT_SIZE_DESC"] = "Die Textgröße anpassen"
 L["POSITIONING"] = "Positionierung"
 L["COLORS"] = "Farben"
 L["IN_PROGRESS"] = "In Arbeit"
+-- TODO: L["IN_PROGRESS_COLOR_DESC"] = "Color for section values that are not yet complete."
 L["MISSING"] = "Fehlend"
+-- TODO: L["MISSING_COLOR_DESC"] = "Color for values when a boss was killed before reaching the required percentage."
 -- TODO: L["FINISHED_COLOR"] = "Done"
+-- TODO: L["FINISHED_COLOR_DESC"] = "Color for values when a section's required percentage has been reached."
 L["VALIDATE"] = "Bestätigen"
 L["CANCEL"] = "Abbrechen"
 -- TODO: L["DIM_BACKGROUND"] = "Dim Background"
@@ -120,8 +130,8 @@ L["RESET_CHANGED_ONLY"] = "Nur geänderte zurücksetzen"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "Folgende Dungeons haben aktualisierte Routen:"-- Export/Import
 -- TODO: L["BOSS"] = "Boss"
 -- TODO: L["BOSS_ORDER"] = "Boss Order"
--- TODO: L["SHOW_COMPARTMENT_ICON"] = "Compartment icon"
--- TODO: L["SHOW_MINIMAP_ICON"] = "Minimap icon"
+-- TODO: L["SHOW_COMPARTMENT_ICON"] = "Compartment Icon"
+-- TODO: L["SHOW_MINIMAP_ICON"] = "Minimap Icon"
 -- TODO: L["NEW_ROUTES_ALL_SEASON_PROMPT"] = "All dungeon routes for the current season have been updated. Do you want to reset all values to the new defaults?"
 
 -- Commands / Help
@@ -139,21 +149,21 @@ L["CHANGED_ROUTES_DUNGEONS_LIST"] = "Folgende Dungeons haben aktualisierte Route
 -- TODO: L["TRANSLATE_DESC"] = "Copy this changelog in a popup to paste into your translator."
 
 -- About
-L["ABOUT"] = "About" -- TODO: To Translate
-L["ABOUT_DESC"] = "This page highlights the people actively helping Keystone Polaris through development, localization, and community support." -- TODO: To Translate
-L["DEVELOPMENT"] = "Development" -- TODO: To Translate
-L["MAINTAINER_AND_DEVELOPER"] = "Maintainer and developer" -- TODO: To Translate
-L["DEVELOPER"] = "Development contributor" -- TODO: To Translate
-L["LOCALIZATION"] = "Localization" -- TODO: To Translate
-L["LOCALIZATION_STRING"] = "%s localization" -- TODO: To Translate
-L["DONATE"] = "Donation" -- TODO: To Translate
-L["DONATE_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a donation link." -- TODO: To Translate
-L["SUPPORT"] = "Support" -- TODO: To Translate
-L["SUPPORT_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a support link." -- TODO: To Translate
-L["GITHUB_SPONSORS"] = "GitHub Sponsors" -- TODO: To Translate
-L["GITHUB_SPONSORS_DESC"] = "Copy the GitHub Sponsors link." -- TODO: To Translate
-L["PAYPAL"] = "PayPal" -- TODO: To Translate
-L["PAYPAL_DESC"] = "Copy the PayPal donation link." -- TODO: To Translate
+-- TODO: L["ABOUT"] = "About"
+-- TODO: L["ABOUT_DESC"] = "This page highlights the people actively helping Keystone Polaris through development, localization, and community support."
+-- TODO: L["DEVELOPMENT"] = "Development"
+-- TODO: L["MAINTAINER_AND_DEVELOPER"] = "Maintainer and developer"
+-- TODO: L["DEVELOPER"] = "Development contributor"
+-- TODO: L["LOCALIZATION"] = "Localization"
+-- TODO: L["LOCALIZATION_STRING"] = "%s localization"
+-- TODO: L["DONATE"] = "Donation"
+-- TODO: L["DONATE_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a donation link."
+-- TODO: L["SUPPORT"] = "Support"
+-- TODO: L["SUPPORT_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a support link."
+-- TODO: L["GITHUB_SPONSORS"] = "GitHub Sponsors"
+-- TODO: L["GITHUB_SPONSORS_DESC"] = "Copy the GitHub Sponsors link."
+-- TODO: L["PAYPAL"] = "PayPal"
+-- TODO: L["PAYPAL_DESC"] = "Copy the PayPal donation link."
 
 -- Test Mode
 -- TODO: L["TEST_MODE"] = "Test Mode"
@@ -168,7 +178,7 @@ L["PAYPAL_DESC"] = "Copy the PayPal donation link." -- TODO: To Translate
 -- Main Display
 -- TODO: L["MAIN_DISPLAY"] = "Main Display"
 -- TODO: L["SHOW_REQUIRED_PREFIX"] = "Show required text prefix"
--- TODO: L["SHOW_REQUIRED_PREFIX_DESC"] = "When the base value is numeric (e.g., 12.34%), prefix it with a label (e.g., 'Required:'). No prefix is added for DONE/SECTION/DUNGEON states."
+-- TODO: L["SHOW_REQUIRED_PREFIX_DESC"] = "When the base value is numeric (e.g., 12.34%), prefix it with a label (e.g., 'Required:'). No prefix is added when the section or dungeon is complete."
 -- TODO: L["LABEL"] = "Prefix"
 -- TODO: L["REQUIRED_LABEL_DESC"] = "Label displayed before the numeric required percentage (e.g., 'Required: 12.34%').\n\nClear the field to reset to the default value."
 -- TODO: L["SHOW_CURRENT_PERCENT"] = "Show current %"
@@ -177,16 +187,18 @@ L["PAYPAL_DESC"] = "Copy the PayPal donation link." -- TODO: To Translate
 -- TODO: L["SHOW_CURRENT_PULL_PERCENT"] = "Show current pull % (MDT)"
 -- TODO: L["SHOW_CURRENT_PULL_PERCENT_DESC"] = "Display the real current pull percent based on engaged mobs using MDT data."
 -- TODO: L["PULL_LABEL_DESC"] = "Label displayed before the current pull percentage value.\n\nClear the field to reset to the default value."
--- TODO: L["USE_MULTI_LINE_LAYOUT"] = "Use multi-line layout"
+-- TODO: L["USE_MULTI_LINE_LAYOUT"] = "Use Multi-Line Layout"
 -- TODO: L["USE_MULTI_LINE_LAYOUT_DESC"] = "Show each selected value on a new line."
 -- TODO: L["SHOW_PROJECTED"] = "Show projected values"
 -- TODO: L["SHOW_PROJECTED_DESC"] = "Append projected values: Current shows (Current + Pull). Required shows (Required - Pull)."
--- TODO: L["SINGLE_LINE_SEPARATOR"] = "Single-line separator"
+-- TODO: L["SINGLE_LINE_SEPARATOR"] = "Single-Line Separator"
 -- TODO: L["SINGLE_LINE_SEPARATOR_DESC"] = "Separator used between items when not using multi-line layout."
--- TODO: L["FONT_ALIGN"] = "Font align"
+-- TODO: L["FONT_ALIGN"] = "Font Alignment"
 -- TODO: L["FONT_ALIGN_DESC"] = "Horizontal alignment for the display text."
--- TODO: L["PREFIX_COLOR"] = "Prefixes color"
+-- TODO: L["PREFIX_COLOR"] = "Prefix"
 -- TODO: L["PREFIX_COLOR_DESC"] = "Color applied to labels/prefixes (Required, Current, Pull)."
+-- TODO: L["TEXT_OPACITY"] = "Text Opacity"
+-- TODO: L["TEXT_OPACITY_DESC"] = "Controls the transparency of the display text."
 -- TODO: L["MAX_WIDTH"] = "Max width (single-line)"
 -- TODO: L["MAX_WIDTH_DESC"] = "Maximum width in pixels for single-line layout. 0 = automatic (no wrapping)."
 -- TODO: L["REQUIRED_DEFAULT"] = "Required:"
@@ -195,8 +207,8 @@ L["PAYPAL_DESC"] = "Copy the PayPal donation link." -- TODO: To Translate
 -- TODO: L["PULL_DEFAULT"] = "Pull:"
 
 -- Section required prefix
--- TODO: L["SHOW_SECTION_REQUIRED_PREFIX"] = "Show section required"
--- TODO: L["SHOW_SECTION_REQUIRED_PREFIX_DESC"] = "Display the current overall enemy forces percent required for the current section without taking into account the progress already done."
+-- TODO: L["SHOW_SECTION_REQUIRED_PREFIX"] = "Show Section Required"
+-- TODO: L["SHOW_SECTION_REQUIRED_PREFIX_DESC"] = "Display the current overall enemy forces percent required for the current section without accounting for progress already made."
 -- TODO: L["SECTION_REQUIRED_LABEL_DESC"] = "Label displayed before the section required value.\n\nClear the field to reset to the default value."
 
 -- TODO: L["FORMAT_MODE"] = "Text format"
@@ -256,6 +268,7 @@ L["MDT_LOADED"] = "Mythic Dungeon Tools erfolgreich geladen."
 L["MDT_NOT_FOUND"] = "Mythic Dungeon Tools nicht gefunden. Gegner-Prozente werden nicht angezeigt. Bitte MDT installieren, damit diese Funktion funktioniert."
 L["MDT_INTEGRATION"] = "MDT-Integration"
 L["MDT_SECTION_WARNING"] = "Dieser Abschnitt erfordert das Addon Mythic Dungeon Tools (MDT)."
+-- TODO: L["MDT_FEATURE_UNAVAILABLE"] = "Disabled due to Midnight API restrictions. Will be re-enabled once Blizzard releases the new Mythic+ API."
 L["DISPLAY_OPTIONS"] = "Anzeigeoptionen"
 L["APPEARANCE_OPTIONS"] = "Darstellungsoptionen"
 L["SHOW_PERCENTAGE"] = "Prozente anzeigen"
