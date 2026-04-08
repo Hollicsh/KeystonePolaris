@@ -69,6 +69,7 @@ const TODO_L_KEY_RE = /^\s*--\s*TODO:\s*L\["([^"]+)"\]\s*=/;
 const DIFF_L_KEY_RE = /^\+\s*L\["([^"]+)"\]\s*=/;
 const COMMENT_RE = /^\s*--/;
 const TO_TRANSLATE_RE = /--\s*(?:TODO:\s*)?To Translate\s*$/;
+const NO_TRANSLATE_RE = /--\s*@no-translate\s*$/;
 
 // ── Parsing helpers ────────────────────────────────────────────────────────────
 
@@ -239,6 +240,7 @@ function parseLocale(
       const key = assignMatch[1];
       const { rawLines, endIndex } = collectContinuationLines(lines, i);
       const lastLine = rawLines[rawLines.length - 1];
+      const hasNoTranslateMarker = NO_TRANSLATE_RE.test(lastLine);
 
       const staleMatch = lastLine.match(/--\s*TODO:\s*"([^"]*)"$/);
       if (staleMatch) {
@@ -265,7 +267,8 @@ function parseLocale(
         if (
           baseEntry !== undefined &&
           value === baseEntry.value &&
-          !SAME_VALUE_ALLOWLIST.has(key)
+          !SAME_VALUE_ALLOWLIST.has(key) &&
+          !hasNoTranslateMarker
         ) {
           entries.set(key, { key, value, status: "untranslated-marked", rawLines });
         } else {
