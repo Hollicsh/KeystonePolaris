@@ -4,6 +4,8 @@ local LibStub = LibStub;
 local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "enUS", true, false);
 
+-- ## Translations Start ## --
+
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
@@ -150,6 +152,23 @@ L["SELECT_ALL"] = "Select All"
 L["TRANSLATE"] = "Translate"
 L["TRANSLATE_DESC"] = "Copy this changelog in a popup to paste into your translator."
 
+-- About
+L["ABOUT"] = "About"
+L["ABOUT_DESC"] = "This page highlights the people actively helping Keystone Polaris through development, localization, and community support."
+L["DEVELOPMENT"] = "Development"
+L["MAINTAINER_AND_DEVELOPER"] = "Maintainer and developer"
+L["DEVELOPER"] = "Development contributor"
+L["LOCALIZATION"] = "Localization"
+L["LOCALIZATION_STRING"] = "%s localization"
+L["DONATE"] = "Donation"
+L["DONATE_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a donation link."
+L["SUPPORT"] = "Support"
+L["SUPPORT_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a support link."
+L["GITHUB_SPONSORS"] = "GitHub Sponsors"
+L["GITHUB_SPONSORS_DESC"] = "Copy the GitHub Sponsors link."
+L["PAYPAL"] = "PayPal"
+L["PAYPAL_DESC"] = "Copy the PayPal donation link."
+
 -- Test Mode
 L["TEST_MODE"] = "Test Mode"
 L["TEST_MODE_OVERLAY"] = "Keystone Polaris: Test Mode"
@@ -195,7 +214,8 @@ L["PULL_DEFAULT"] = "Pull:"
 L["SHOW_SECTION_REQUIRED_PREFIX"] = "Show Section Required"
 L["SHOW_SECTION_REQUIRED_PREFIX_DESC"] = "Display the current overall enemy forces percent required for the current section without accounting for progress already made."
 L["SECTION_REQUIRED_LABEL_DESC"] = "Label displayed before the section required value.\n\nClear the field to reset to the default value."
-L["FORMAT_MODE"] = "Text Format"
+
+L["FORMAT_MODE"] = "Text format"
 L["FORMAT_MODE_DESC"] = "Select how to display the progress."
 L["COUNT"] = "Count"
 

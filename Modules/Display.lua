@@ -310,17 +310,9 @@ function KeystonePolaris:UpdateColorCache()
         )
     end
 
-    -- Cache Main Display Prefix Color
-    local cfg = self.db.profile.general.mainDisplay
-    if cfg and cfg.prefixColor then
-        self.colorCache.prefix = toHex(cfg.prefixColor)
-    else
-        self.colorCache.prefix = "cccccc" -- default gray-ish
-    end
-
-    -- Cache Status Colors
     local colors = self.db.profile.color
     if colors then
+        self.colorCache.prefix = toHex(colors.prefix or {r=1, g=0.7960784, b=0.2})
         self.colorCache.finished = toHex(colors.finished or {r=0, g=1, b=0})
         self.colorCache.inProgress = toHex(colors.inProgress or {r=1, g=1, b=1})
         self.colorCache.missing = toHex(colors.missing or {r=1, g=0, b=0})

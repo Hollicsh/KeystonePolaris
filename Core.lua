@@ -278,11 +278,21 @@ function KeystonePolaris:OnInitialize()
     -- Initialize the database first with AceDB
     self.db = LibStub("AceDB-3.0"):New("KeystonePolarisDB", self.defaults, "Default")
 
+    -- Migrate prefixColor from general.mainDisplay to color.prefix
+    local oldPrefix = self.db.profile.general.mainDisplay.prefixColor
+    if oldPrefix then
+        if not self.db.profile.color.prefix then
+            self.db.profile.color.prefix = oldPrefix
+        end
+        self.db.profile.general.mainDisplay.prefixColor = nil
+    end
+
     -- Load dungeon data from expansion modules
     self:LoadExpansionDungeons()
 
     -- Generate changelog for display in options
     self:GenerateChangelog()
+    self:GenerateAbout()
 
     -- Check if a new season has started
     self:CheckForNewSeason()
@@ -385,9 +395,11 @@ function KeystonePolaris:OnInitialize()
         }
     })
     AceConfig:RegisterOptionsTable(AddOnName .. "_Changelog", self.changelogOptions)
+    AceConfig:RegisterOptionsTable(AddOnName .. "_About", self.aboutOptions)
 
     self.optionsCategoryId = select(2, AceConfigDialog:AddToBlizOptions(AddOnName, optionsAddonName))
     self.changelogCategoryId = select(2, AceConfigDialog:AddToBlizOptions(AddOnName .. "_Changelog", L["Changelog"], optionsAddonName))
+    self.aboutCategoryId = select(2, AceConfigDialog:AddToBlizOptions(AddOnName .. "_About", L["ABOUT"], optionsAddonName))
 
 
     -- Register chat command and events

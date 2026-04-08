@@ -8,7 +8,7 @@ if not L then return end
 -- TRANSLATION REQUIRED
 
 -- Temporary locales for Midnight Compatibility Warning
-L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
+-- TODO: L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
                                 "|cff8888ff• Mob percentages on nameplates (MDT Integration)|r\n" ..
                                 "|cff8888ff• Current pull tracking|r\n" ..
@@ -29,6 +29,7 @@ L["SEASON_STARTS_IN_ONE_MONTH"] = "다음 시즌이 한 달도 채 남지 않았
 L["SEASON_STARTS_IN_WEEKS"] = "다음 시즌은 %d주도 채 남지 않았습니다."
 L["SEASON_STARTS_IN_DAYS"] = "다음 시즌은 %d일 후에 시작됩니다."
 L["SEASON_STARTS_IN_TOMORROW"] = "다음 시즌이 내일 시작됩니다."
+-- TODO: L["WEEKDAY_NEXT_FORMAT"] = "(next %s)"
 
 L["EXPANSION_MIDNIGHT"] = "한밤"
 L["EXPANSION_WW"] = "내부전쟁"
@@ -73,8 +74,8 @@ L["ENABLE_ADVANCED_OPTIONS"] = "커스텀 루트 활성화"
 L["ADVANCED_OPTIONS_DESC"] = "이를 통해 각 보스가 도달하기 전에 사용자 정의 백분율을 설정하고 누락된 백분율을 그룹에 알릴지 여부를 선택할 수 있습니다."
 L["INFORM_GROUP"] = "그룹 알림"
 L["INFORM_GROUP_DESC"] = "진행도가 모자랄 경우 채팅으로 메시지 보내기"
-L["SHOW_INFORM_GROUP_BUTTON"] = "Inform Group Button" -- TODO: To Translate
-L["SHOW_INFORM_GROUP_BUTTON_DESC"] = "Show the Inform Group button on the addon's display" -- TODO: To Translate
+-- TODO: L["SHOW_INFORM_GROUP_BUTTON"] = "Inform Group Button"
+-- TODO: L["SHOW_INFORM_GROUP_BUTTON_DESC"] = "Show the Inform Group button on the addon's display"
 L["MESSAGE_CHANNEL"] = "채팅 채널"
 L["MESSAGE_CHANNEL_DESC"] = "알림에 사용할 채팅 채널을 선택하세요."
 L["PARTY"] = "파티"
@@ -91,16 +92,18 @@ L["MISSING"] = "모자람"
 L["FINISHED_COLOR"] = "완료"
 L["VALIDATE"] = "확인"
 L["CANCEL"] = "취소"
-L["DIM_BACKGROUND"] = "Dim Background" -- TODO: To Translate
-L["SHOW_GRID"] = "Show Grid" -- TODO: To Translate
-L["GRID_SPACING"] = "Grid Spacing" -- TODO: To Translate
+-- TODO: L["DIM_BACKGROUND"] = "Dim Background"
+-- TODO: L["SHOW_GRID"] = "Show Grid"
+-- TODO: L["GRID_SPACING"] = "Grid Spacing"
 L["POSITION"] = "정렬"
 L["TOP"] = "위"
 L["CENTER"] = "중앙"
 L["BOTTOM"] = "아래"
 L["X_OFFSET"] = "X 오프셋"
+-- TODO: L["X_OFFSET_DESC"] = "Adjust the horizontal position of the text"
 L["Y_OFFSET"] = "Y 오프셋"
-L["SHOW_ANCHOR"] = "표시 위치 확인" -- TODO: "Drag to Position"
+-- TODO: L["Y_OFFSET_DESC"] = "Adjust the vertical position of the text"
+L["SHOW_ANCHOR"] = "표시 위치 확인"
 L["RESET_DUNGEON"] = "기본값으로 재설정"
 L["RESET_DUNGEON_DESC"] = "이 던전의 모든 보스 진행도를 기본값으로 재설정 합니다"
 L["RESET_DUNGEON_CONFIRM"] = "이 던전의 모든 보스 진행도를 기본값으로 재설정 하시겠습니까?"
@@ -116,12 +119,12 @@ L["RESET_ALL"] = "모든 던전 초기화"
 L["RESET_CHANGED_ONLY"] = "변경 사항만 초기화"
 L["CHANGED_ROUTES_DUNGEONS_LIST"] = "다음 던전의 경로가 업데이트 되었습니다.:"
 L["BOSS"] = "보스"
-L["BOSS_ORDER"] = "Boss Order" -- To Translate
-L["SHOW_COMPARTMENT_ICON"] = "Compartment icon" -- To Translate
+-- TODO: L["BOSS_ORDER"] = "Boss Order"
+-- TODO: L["SHOW_COMPARTMENT_ICON"] = "Compartment icon"
 L["SHOW_MINIMAP_ICON"] = "미니맵 아이콘"
-L["NEW_ROUTES_ALL_SEASON_PROMPT"] = "All dungeon routes for the current season have been updated. Do you want to reset all values to the new defaults?" -- TODO: To Translate
+-- TODO: L["NEW_ROUTES_ALL_SEASON_PROMPT"] = "All dungeon routes for the current season have been updated. Do you want to reset all values to the new defaults?"
 
--- Commands / Help (To Translate)
+-- Commands / Help
 L["COMMANDS_HEADER"] = "명령어"
 L["COMMANDS_HELP_DESC"] = "사용 가능한 명령어:\n• /kpl 또는 /polaris - 설정 열기\n• /kpl reminder 또는 /polaris reminder - 마지막 파티 알람창 열기\n• /kpl help or /polaris help - 도움말 보기"
 L["COMMANDS_HELP_OPEN"] = "/kpl 또는 /polaris - 설정 열기"
@@ -134,6 +137,23 @@ L["COPY_INSTRUCTIONS"] = "전체 선택 후 Ctrl+C로 복사하세요. 선택 �
 L["SELECT_ALL"] = "전체 선택"
 L["TRANSLATE"] = "번역"
 L["TRANSLATE_DESC"] = "이 변경 사항을 팝업으로 복사하여 번역기에 붙여넣으세요."
+
+-- About
+L["ABOUT"] = "About" -- TODO: To Translate
+L["ABOUT_DESC"] = "This page highlights the people actively helping Keystone Polaris through development, localization, and community support." -- TODO: To Translate
+L["DEVELOPMENT"] = "Development" -- TODO: To Translate
+L["MAINTAINER_AND_DEVELOPER"] = "Maintainer and developer" -- TODO: To Translate
+L["DEVELOPER"] = "Development contributor" -- TODO: To Translate
+L["LOCALIZATION"] = "Localization" -- TODO: To Translate
+L["LOCALIZATION_STRING"] = "%s localization" -- TODO: To Translate
+L["DONATE"] = "Donation" -- TODO: To Translate
+L["DONATE_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a donation link." -- TODO: To Translate
+L["SUPPORT"] = "Support" -- TODO: To Translate
+L["SUPPORT_DESC"] = "Want to help support Keystone Polaris development? Use one of the buttons below to copy a support link." -- TODO: To Translate
+L["GITHUB_SPONSORS"] = "GitHub Sponsors" -- TODO: To Translate
+L["GITHUB_SPONSORS_DESC"] = "Copy the GitHub Sponsors link." -- TODO: To Translate
+L["PAYPAL"] = "PayPal" -- TODO: To Translate
+L["PAYPAL_DESC"] = "Copy the PayPal donation link." -- TODO: To Translate
 
 -- Test Mode
 L["TEST_MODE"] = "테스트 모드"
@@ -170,8 +190,8 @@ L["PREFIX_COLOR_DESC"] = "라벨/접두사에 적용되는 색상(필요한, 현
 L["MAX_WIDTH"] = "최대 너비(단일 라인)"
 L["MAX_WIDTH_DESC"] = "단일 줄 레이아웃의 최대 너비(픽셀). 0 = 자동(줄바꿈 없음)."
 L["REQUIRED_DEFAULT"] = "필요한:"
-L["CURRENT_DEFAULT"] = "현재:"
 L["SECTION_REQUIRED_DEFAULT"] = "구역에 필요한 퍼센트:"
+L["CURRENT_DEFAULT"] = "현재:"
 L["PULL_DEFAULT"] = "풀링:"
 
 -- Section required prefix
@@ -205,15 +225,15 @@ L["IMPORT_DIALOG_TEXT"] = "내보낸 문자열을 아래에 붙여넣습니다:"
 L["IMPORT_SUCCESS"] = "%s에 대한 사용자 지정 진행도 가져오기."
 L["IMPORT_ALL_SUCCESS"] = "모든 던전을 위한 사용자 지정 진행도 가져오기."
 L["IMPORT_ERROR"] = "문자열이 잘못되었습니다."
-L["IMPORT_DIALOG_INFO"] = "Supports Keystone Polaris import strings and MythicDungeonTools routes when MDT is loaded." -- TODO: To Translate
-L["IMPORT_SUCCESS_OPENED"] = "Imported custom route for %s. Opening options for that dungeon." -- TODO: To Translate
-L["IMPORT_MDT_MISSING_ADDON"] = "MDT import requires MythicDungeonTools to be loaded." -- TODO: To Translate
-L["IMPORT_MDT_NO_PULLS"] = "MDT import failed: no pulls found in this route string." -- TODO: To Translate
-L["IMPORT_MDT_DUNGEON_UNKNOWN"] = "MDT import failed: unable to map this route to a Keystone Polaris dungeon." -- TODO: To Translate
-L["IMPORT_MDT_BOSS_NPCIDS_MISSING"] = "MDT import failed for %s: this dungeon is not fully supported yet." -- TODO: To Translate
-L["IMPORT_MDT_SUCCESS"] = "Imported MDT route for %s. Updated %d boss percentages and boss order." -- TODO: To Translate
-L["IMPORT_MDT_SUCCESS_OPENED"] = "Imported MDT route for %s. Updated %d boss percentages and boss order. Opening options for that dungeon." -- TODO: To Translate
-L["IMPORT_MDT_INCOMPLETE"] = "MDT route import aborted: not all bosses were detected in the route. No changes were applied." -- TODO: To Translate
+-- TODO: L["IMPORT_DIALOG_INFO"] = "Supports Keystone Polaris import strings and MythicDungeonTools routes when MDT is loaded."
+-- TODO: L["IMPORT_SUCCESS_OPENED"] = "Imported custom route for %s. Opening options for that dungeon."
+-- TODO: L["IMPORT_MDT_MISSING_ADDON"] = "MDT import requires MythicDungeonTools to be loaded."
+-- TODO: L["IMPORT_MDT_NO_PULLS"] = "MDT import failed: no pulls found in this route string."
+-- TODO: L["IMPORT_MDT_DUNGEON_UNKNOWN"] = "MDT import failed: unable to map this route to a Keystone Polaris dungeon."
+-- TODO: L["IMPORT_MDT_BOSS_NPCIDS_MISSING"] = "MDT import failed for %s: this dungeon is not fully supported yet."
+-- TODO: L["IMPORT_MDT_SUCCESS"] = "Imported MDT route for %s. Updated %d boss percentages and boss order."
+-- TODO: L["IMPORT_MDT_SUCCESS_OPENED"] = "Imported MDT route for %s. Updated %d boss percentages and boss order. Opening options for that dungeon."
+-- TODO: L["IMPORT_MDT_INCOMPLETE"] = "MDT route import aborted: not all bosses were detected in the route. No changes were applied."
 
 -- MDT Integration
 L["MDT_INTEGRATION_FEATURES"] = "Mythic Dungeon Tools 통합 기능"
@@ -230,8 +250,6 @@ L["MOB_PERCENTAGE_POSITION"] = "위치"
 L["MOB_PERCENTAGE_POSITION_DESC"] = "네임플레이트를 기준으로 퍼센트 표시 위치를 ​​설정합니다."
 L["RIGHT"] = "오른쪽"
 L["LEFT"] = "왼쪽"
-L["TOP"] = "위"
-L["BOTTOM"] = "아래"
 L["MDT_WARNING"] = "이 기능을 사용하려면 Mythic Dungeon Tools(MDT) 애드온을 설치해야 합니다."
 L["MDT_FOUND"] = "Mythic Dungeon Tools(MDT)를 찾았습니다. 몹 퍼센트는 MDT 데이터를 사용합니다."
 L["MDT_LOADED"] = "Mythic Dungeon Tools(MDT)가 성공적으로 로드되었습니다."
@@ -259,9 +277,9 @@ L["KPL_GR_TELEPORT_UNKNOWN"] = "텔레포트 스킬 없음"
 L["KPL_GR_OPEN_REMINDER"] = "확인창 열기"
 L["KPL_GR_INVITED"] = "파티에 초대 받았습니다."
 L["KPL_GR_AS_ROLE"] = "포지션은 %s 입니다."
-L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Show popup again when the group is full" -- TODO: To Translate
-L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Reopen the reminder window when your Mythic+ group reaches 5 players." -- TODO: To Translate
-L["KPL_GR_CHAT_COMMAND_INFO"] = "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again." -- TODO: To Translate
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Show popup again when the group is full"
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Reopen the reminder window when your Mythic+ group reaches 5 players."
+-- TODO: L["KPL_GR_CHAT_COMMAND_INFO"] = "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again."
 
 -- Group Reminder (Options)
 L["KPL_GR_DESC_LONG"] = "쇄기 던전 파티에 참여가 승인되면 알림 팝업 이나 채팅 메시지를 표시하고, 던전으로 순간이동할 수 있는 버튼을 제공합니다."
@@ -274,9 +292,9 @@ L["KPL_GR_SHOW_CHAT"] = "채팅창에 표시"
 L["KPL_GR_SHOW_CHAT_DESC"] = "채팅창에 파티 세부 정보를 출력합니다."
 L["KPL_GR_TEST_CURRENT_SEASON"] = "현재 시즌 던전 시뮬레이션"
 L["KPL_GR_TEST_CURRENT_SEASON_DESC"] = "현재 시즌의 던전을 사용하여 파티 알림을 표시합니다."
-L["KPL_GR_CONTENT"] = "Content"
+-- TODO: L["KPL_GR_CONTENT"] = "Content"
 L["KPL_GR_SHOW_DUNGEON"] = "던전명 표시"
 L["KPL_GR_SHOW_GROUP"] = "파티명 표시"
 L["KPL_GR_SHOW_DESC"] = "파티 요약 표시"
 L["KPL_GR_SHOW_ROLE"] = "수락한 포지션 표시"
-L["KPL_GR_SHOW_PLAYSTYLE"] = "Show group playstyle" -- TODO: To Translate
+-- TODO: L["KPL_GR_SHOW_PLAYSTYLE"] = "Show group playstyle"
