@@ -2,10 +2,10 @@ package-as: KeystonePolaris
 enable-nolib-creation: no
 
 ignore: # Files and directories beginning with a dot (such as .git) are automatically ignored, as is the pgkmeta file itself.
-  tsconfig.json
-  package.json
-  package-lock.json
-  scripts/
+  - tsconfig.json
+  - package.json
+  - package-lock.json
+  - scripts/
 
 externals:
   Libs/LibDBIcon-1.0: https://repos.wowace.com/wow/libdbicon-1-0/trunk/LibDBIcon-1.0
