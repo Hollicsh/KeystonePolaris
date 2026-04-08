@@ -4,6 +4,8 @@ local LibStub = LibStub;
 local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale(AddonName, "enUS", true, false);
 
+-- ## Translations Start ## --
+
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
@@ -213,7 +215,6 @@ L["PULL_DEFAULT"] = "Pull:"
 L["SHOW_SECTION_REQUIRED_PREFIX"] = "Show section required"
 L["SHOW_SECTION_REQUIRED_PREFIX_DESC"] = "Display the current overall enemy forces percent required for the current section without taking into account the progress already done."
 L["SECTION_REQUIRED_LABEL_DESC"] = "Label displayed before the section required value.\n\nClear the field to reset to the default value."
-L["SECTION_REQUIRED_DEFAULT"] = "Total required for section:"
 
 L["FORMAT_MODE"] = "Text format"
 L["FORMAT_MODE_DESC"] = "Select how to display the progress."

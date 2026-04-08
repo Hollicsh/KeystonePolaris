@@ -74,6 +74,12 @@ read_globals = {
     'UnitReaction',
     'wipe',
     'YES',
+    'RURU',
+    'KOKR',
+    'ZHCN',
+    'DEDE',
+    'LFG_LIST_LANGUAGE_PTBR',
+    'FRFR',
 }
 
 files['Locales/*.lua'] = {
