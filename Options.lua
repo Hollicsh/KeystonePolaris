@@ -451,7 +451,7 @@ function KeystonePolaris:GetAppearanceOptions()
                 name = L["COLORS"],
                 order = 3,
             },
-            prefixColor = MakeStatusColorOption(L["PREFIX_COLOR"], L["PREFIX_COLOR_DESC"], "prefix", self, 4),
+            prefixColor = MakeStatusColorOption(L["PREFIX"], L["PREFIX_COLOR_DESC"], "prefix", self, 4),
             inProgressColor = MakeStatusColorOption(L["IN_PROGRESS"], L["IN_PROGRESS_COLOR_DESC"], "inProgress", self, 5),
             missingColor = MakeStatusColorOption(L["MISSING"], L["MISSING_COLOR_DESC"], "missing", self, 6),
             finishedColor = MakeStatusColorOption(L["FINISHED_COLOR"], L["FINISHED_COLOR_DESC"], "finished", self, 7),
@@ -505,7 +505,7 @@ function KeystonePolaris:GetDisplayOptions()
                     self:UpdatePercentageText()
                 end
             }, {
-                name = L["LABEL"],
+                name = L["PREFIX"],
                 desc = L["REQUIRED_LABEL_DESC"],
                 type = "input",
                 get = function() return self.db.profile.general.mainDisplay.requiredLabel end,
@@ -529,7 +529,7 @@ function KeystonePolaris:GetDisplayOptions()
                     self:UpdatePercentageText()
                 end
             }, {
-                name = L["LABEL"],
+                name = L["PREFIX"],
                 desc = L["SECTION_REQUIRED_LABEL_DESC"],
                 type = "input",
                 get = function() return self.db.profile.general.mainDisplay.sectionRequiredLabel end,
@@ -553,7 +553,7 @@ function KeystonePolaris:GetDisplayOptions()
                     self:UpdatePercentageText()
                 end
             }, {
-                name = L["LABEL"],
+                name = L["PREFIX"],
                 desc = L["CURRENT_LABEL_DESC"],
                 type = "input",
                 get = function() return self.db.profile.general.mainDisplay.currentLabel end,
@@ -594,7 +594,7 @@ function KeystonePolaris:GetDisplayOptions()
                 end,
             },
             pullLabel = {
-                name = L["LABEL"],
+                name = L["PREFIX"],
                 desc = L["PULL_LABEL_DESC"],
                 type = "input",
                 order = 13,
