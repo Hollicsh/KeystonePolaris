@@ -380,32 +380,15 @@ function KeystonePolaris:OnInitialize()
                         name = modulesSummaryDescription,
                         fontSize = "medium",
                     },
-                    mdtIntegration = {
-                        name = L["MDT_INTEGRATION"],
+                    mobPercentagesSection = {
+                        name = L["MOB_PERCENTAGES"],
                         type = "group",
                         order = 2,
                         args = {
-                            mdtIntegrationHeader = {
-                                order = 0,
-                                type = "header",
-                                name = L["MDT_INTEGRATION"],
-                            },
-                            mdtWarning = {
-                                name = L["MDT_SECTION_WARNING"],
-                                type = "description",
-                                order = 1,
-                                fontSize = "medium",
-                            },
-                            -- Information about MDT integration features
-                            featuresHeader = {
-                                order = 2,
-                                type = "header",
-                                name = L["MDT_INTEGRATION_FEATURES"],
-                            },
                             mobPercentagesInfo = {
                                 name = L["MOB_PERCENTAGES_INFO"],
                                 type = "description",
-                                order = 4,
+                                order = 0,
                                 fontSize = "medium",
                             },
                             mobPercentages = self:GetMobPercentagesOptions(),
