@@ -98,8 +98,8 @@ local function BuildModulesOverviewDescription(localeTable)
     return table.concat({
         intro,
         "",
-        featureIcon .. " |cffffd100" .. mdtTitle .. "|r",
-        "   |cffcfcfcf• " .. mobPercentagesTitle .. "|r |cff9d9d9d- " .. mobPercentagesDesc .. "|r",
+        featureIcon .. " |cffffd100" .. mobPercentagesTitle .. "|r",
+        "   |cff9d9d9d" .. mobPercentagesDesc .. "|r",
         "",
         featureIcon .. " |cffffd100" .. groupReminderTitle .. "|r",
         "   |cff9d9d9d" .. groupReminderDesc .. "|r",
@@ -390,20 +390,7 @@ function KeystonePolaris:OnInitialize()
                         name = modulesSummaryDescription,
                         fontSize = "medium",
                     },
-                    mobPercentagesSection = {
-                        name = L["MOB_PERCENTAGES"],
-                        type = "group",
-                        order = 2,
-                        args = {
-                            mobPercentagesInfo = {
-                                name = L["MOB_PERCENTAGES_INFO"],
-                                type = "description",
-                                order = 0,
-                                fontSize = "medium",
-                            },
-                            mobPercentages = self:GetMobPercentagesOptions(),
-                        }
-                    },
+                    mobPercentages = self:GetMobPercentagesOptions(),
                     groupReminder = self:GetGroupReminderOptions(),
                 }
             },
