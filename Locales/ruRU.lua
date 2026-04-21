@@ -318,4 +318,4 @@ L["KPL_GR_SHOW_DUNGEON"] = "Показывать название подземе
 L["KPL_GR_SHOW_GROUP"] = "Показывать название группы"
 L["KPL_GR_SHOW_DESC"] = "Показывать описание группы"
 L["KPL_GR_SHOW_ROLE"] = "Показывать примененную роль"
-L["KPL_GR_SHOW_PLAYSTYLE"] = "Показать групповой стиль игры" -- TODO: "Show group playstyle"
+L["KPL_GR_SHOW_PLAYSTYLE"] = "Показать групповой стиль игры"
