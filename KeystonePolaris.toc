@@ -47,6 +47,6 @@ Modules/Changelog/Changelog.lua
 Widgets/PreviewWidget.lua
 Options.lua
 Modules/ImportExport.lua
-Modules/MdtIntegration/MobPercentages.lua
+Modules/MobPercentages.lua
 
 Modules/Changelog/Load_Changelog.xml
