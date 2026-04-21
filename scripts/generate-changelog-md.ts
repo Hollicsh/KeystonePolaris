@@ -211,7 +211,7 @@ function buildHeaderLines(parsed: ParsedChangelog): string[] {
   const lines: string[] = [];
 
   if (parsed.header.title) {
-    lines.push(`> ${boldBracketTokens(stripWowMarkup(parsed.header.title))}`);
+    lines.push(`> **${stripWowMarkup(parsed.header.title)}**`);
   }
 
   if (parsed.header.text) {
