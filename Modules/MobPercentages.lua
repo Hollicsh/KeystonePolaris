@@ -520,7 +520,7 @@ function KeystonePolaris:UpdateNameplatePosition(unit)
 end
 
 KeystonePolaris.defaults.profile.mobPercentages = {
-    enabled = false,
+    enabled = true,
     fontSize = 8,
     textColor = { r = 1, g = 1, b = 1, a = 1 },
     position = "RIGHT",
