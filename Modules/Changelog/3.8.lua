@@ -4,16 +4,16 @@ local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName, true);
 
 KeystonePolaris.Changelog[3800] = {
     version_string = "3.8",
-    release_date = "2026/04/21",
+    release_date = "2026/04/22",
     header = {
         ["zhCN"] = {},
         ["zhTW"] = {},
         ["enUS"] = {
-            title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t |cff00ff00Version 3.8 - [Mob Percentages] is back|r",
+            title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t Version 3.8 - Mob contribution is back on nameplates|r",
             text = "[Mob Percentages] is back in Keystone Polaris. You can once again display each mob's enemy forces contribution directly on Mythic+ nameplates, now using Blizzard's new native API instead of [Mythic Dungeon Tools]. The feature has been re-enabled by default with this update and can still be disabled at any time in the addon's options.",
         },
         ["frFR"] = {
-            title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t |cff00ff00Retour de [Pourcentages des monstres]|r",
+            title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t Version 3.8 - La contribution des monstres est de retour sur les barres d'info|r",
             text = "[Pourcentages des monstres] est de retour dans Keystone Polaris. Il est de nouveau possible d'afficher directement sur les nameplates en Mythique+ la contribution de chaque ennemi aux forces ennemies, désormais via la nouvelle API native de Blizzard au lieu de [Mythic Dungeon Tools]. La fonctionnalité a été réactivée par défaut avec cette mise à jour et peut toujours être désactivée à tout moment dans les options de l'addon.",
         },
         ["koKR"] = {},
