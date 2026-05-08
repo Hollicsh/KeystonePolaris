@@ -324,7 +324,6 @@ function KeystonePolaris:PrepareInformMacro(message)
         btn:EnableMouse(true) -- IMPORTANT
     end
     self:ApplyInformVisibility(false)
-    btn.cooldownEndTime = nil
 end
 
 
