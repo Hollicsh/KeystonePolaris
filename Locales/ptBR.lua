@@ -14,10 +14,16 @@ if not L then return end
 -- Temporary locales for Midnight Compatibility Warning
 -- TODO: L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Algumas funcionalidades estão desabilitadas no Midnight por causa das restrições da API:|r\n\n" ..
+                                "|cff8888ff• Percentagens de mobs nos nameplates (Integração MDT)|r\n" ..
                                 "|cff8888ff• Rastreamento de pulls atuais|r\n" ..
                                 "|cff8888ff• Valores projetados|r\n\n" ..
                                 "|cff8888ffEstas funcionalidades serão reabilitadas quando a Blizzard lançar a nova API do Mythic+. Atualmente não há uma data prevista para isso.|r\n\n" ..
                                 "Todas as outras funcionalidades devem permanecer disponíveis, desculpe pelo inconveniente.\n"
+L["COMPATIBILITY_WARNING_MESSAGE_CORE"] = "|cffff0000Algumas funcionalidades estão desabilitadas no Midnight por causa das restrições da API:|r\n\n" ..
+                                "|cff8888ff• Rastreamento de pulls atuais|r\n" ..
+                                "|cff8888ff• Valores projetados|r\n\n" ..
+                                "|cff8888ffEstas funcionalidades serão reabilitadas quando a Blizzard lançar a nova API do Mythic+. Atualmente não há uma data prevista para isso.|r\n\n" ..
+                                "Todas as outras funcionalidades devem permanecer disponíveis, desculpe pelo inconveniente.\n" -- TODO: "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n|cff8888ff• Current pull tracking|r\n|cff8888ff• Projected values|r\n\n|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\nAll other features should remain available, sorry for the inconvenience.\n"
 
 -- Dungeons Group
 L["DUNGEONS"] = "Temporada Atual"

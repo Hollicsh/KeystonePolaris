@@ -14,10 +14,16 @@ if not L then return end
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "兼容问题"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000因API限制，一些功能在至暗之夜版本被禁用:|r\n\n" ..
+                                "|cff8888ff• 在血条上显示怪物进度(兼容MDT)|r\n" ..
                                 "|cff8888ff• 当前波次|r\n" ..
                                 "|cff8888ff• 规划数值|r\n\n" ..
                                 "|cff8888ff这些功能将会在暴雪发布新API支持后重新启用，请敬候佳音|r\n\n" ..
                                 "其他功能应照常工作，对产生的不变我们深表抱歉\n"
+L["COMPATIBILITY_WARNING_MESSAGE_CORE"] = "|cffff0000因API限制，一些功能在至暗之夜版本被禁用:|r\n\n" ..
+                                "|cff8888ff• 当前波次|r\n" ..
+                                "|cff8888ff• 规划数值|r\n\n" ..
+                                "|cff8888ff这些功能将会在暴雪发布新API支持后重新启用，请敬候佳音|r\n\n" ..
+                                "其他功能应照常工作，对产生的不变我们深表抱歉\n" -- TODO: "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n|cff8888ff• Current pull tracking|r\n|cff8888ff• Projected values|r\n\n|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\nAll other features should remain available, sorry for the inconvenience.\n"
 
 -- Dungeons Group
 L["DUNGEONS"] = "当前赛季"

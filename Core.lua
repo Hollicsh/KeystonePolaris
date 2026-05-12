@@ -357,7 +357,7 @@ function KeystonePolaris:OnInitialize()
                         name = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t " .. L["COMPATIBILITY_WARNING"],
                     },
                     warningMessage = {
-                        name = L["COMPATIBILITY_WARNING_MESSAGE"],
+                        name = L["COMPATIBILITY_WARNING_MESSAGE_CORE"],
                         type = "description",
                         order = 0.15,
                         width = "full",

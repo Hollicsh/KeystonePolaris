@@ -14,10 +14,16 @@ if not L then return end
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "Avertissement de compatibilité avec Midnight"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Certains fonctionnalités sont désactivées sur Midnight en raison des restrictions de l'API:|r\n\n" ..
+                                "|cff8888ff• Pourcentages des monstres sur les plaques de nom (Intégration MythicDungeonTools)|r\n" ..
                                 "|cff8888ff• Suivi du pourcentage du pull actuel|r\n" ..
                                 "|cff8888ff• Valeurs projetées|r\n\n" ..
                                 "|cff8888ffCes fonctionnalités seront réactivées une fois que Blizzard aura sorti la nouvelle API Mythique+. Il n'y a actuellement pas de date de sortie connue.|r\n\n" ..
                                 "Toutes les autres fonctionnalités devraient rester disponibles, désolé pour le désagrément.\n"
+L["COMPATIBILITY_WARNING_MESSAGE_CORE"] = "|cffff0000Certains fonctionnalités sont désactivées sur Midnight en raison des restrictions de l'API:|r\n\n" ..
+                                "|cff8888ff• Suivi du pourcentage du pull actuel|r\n" ..
+                                "|cff8888ff• Valeurs projetées|r\n\n" ..
+                                "|cff8888ffCes fonctionnalités seront réactivées une fois que Blizzard aura sorti la nouvelle API Mythique+. Il n'y a actuellement pas de date de sortie connue.|r\n\n" ..
+                                "Toutes les autres fonctionnalités devraient rester disponibles, désolé pour le désagrément.\n" -- TODO: "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n|cff8888ff• Current pull tracking|r\n|cff8888ff• Projected values|r\n\n|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\nAll other features should remain available, sorry for the inconvenience.\n"
 
 -- Dungeons Group
 L["DUNGEONS"] = "Donjons"
