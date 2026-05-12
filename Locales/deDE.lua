@@ -14,7 +14,6 @@ if not L then return end
 -- Temporary locales for Midnight Compatibility Warning
 -- TODO: L["COMPATIBILITY_WARNING"] = "Midnight Compatibility Warning"
 -- TODO: L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n" ..
--- TODO:                                 "|cff8888ff• Mob percentages on nameplates (MDT Integration)|r\n" ..
 -- TODO:                                 "|cff8888ff• Current pull tracking|r\n" ..
 -- TODO:                                 "|cff8888ff• Projected values|r\n\n" ..
 -- TODO:                                 "|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\n" ..

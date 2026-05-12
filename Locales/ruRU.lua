@@ -14,7 +14,6 @@ if not L then return end
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "Предупреждение о совместимости с 'Полночью'"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000В настоящее время некоторые функции в 'Полночи' отключены из-за ограничений API:|r\n\n" ..
-                                "|cff8888ff• Проценты мобов на индикаторах здоровья (интеграция MDT)|r\n" ..
                                 "|cff8888ff• Текущее отслеживание пуллов|r\n" ..
                                 "|cff8888ff• Прогнозируемые значения|r\n\n" ..
                                 "|cff8888ffЭти функции будут повторно включены после того, как Blizzard выпустит новый API для Mythic+. В настоящее время точная дата этого пока неизвестна.|r\n\n" ..
@@ -168,9 +167,9 @@ L["DONATE"] = "Пожертвование"
 L["DONATE_DESC"] = "Хотите поддержать разработку Keystone Polaris? Используйте одну из кнопок ниже, чтобы скопировать ссылку для пожертвования."
 L["SUPPORT"] = "Поддержка"
 L["SUPPORT_DESC"] = "Хотите помочь в поддержке разработки Keystone Polaris? Используйте одну из кнопок ниже, чтобы скопировать ссылку для поддержки."
-L["GITHUB_SPONSORS"] = "GitHub Sponsors"
+-- TODO: L["GITHUB_SPONSORS"] = "GitHub Sponsors"
 L["GITHUB_SPONSORS_DESC"] = "Скопировать ссылку GitHub Sponsors."
-L["PAYPAL"] = "PayPal"
+-- TODO: L["PAYPAL"] = "PayPal"
 L["PAYPAL_DESC"] = "Скопировать ссылку для пожертвования через PayPal."
 
 -- Test Mode

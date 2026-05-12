@@ -14,7 +14,6 @@ if not L then return end
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "한밤 호환성 경고"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000API 제한으로 인해 일부 기능이 현재 한밤에서 비활성화되어 있습니다:|r\n\n" ..
-                                "|cff8888ff• 이름표에서 몹 퍼센트(MDT 통합)|r\n" ..
                                 "|cff8888ff• 현재 풀링 트래킹|r\n" ..
                                 "|cff8888ff• 예상 값|r\n\n" ..
                                 "|cff8888ff이러한 기능은 블리자드가 새로운 Mythic+ API를 출시하면 다시 활성화됩니다. 현재 이에 대한 ETA는 없습니다.|r\n\n" ..
