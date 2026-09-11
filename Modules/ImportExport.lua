@@ -86,6 +86,33 @@ local function ParsePositiveInt(v)
     return nil
 end
 
+-- Same selection shapes as CountSelectedClones: boolean map, clone-id list, string keys.
+local function SelectedCloneIds(selection)
+    local ids = {}
+    if type(selection) ~= "table" then return ids end
+
+    for k, v in pairs(selection) do
+        local cloneId
+        if type(k) == "number" then
+            if type(v) == "boolean" then
+                if v then cloneId = ParsePositiveInt(k) end
+            else
+                cloneId = ParsePositiveInt(v) or ParsePositiveInt(k)
+            end
+        else
+            local keyClone = ParsePositiveInt(k)
+            if keyClone and v then
+                cloneId = keyClone
+            end
+        end
+        if cloneId then
+            ids[#ids + 1] = cloneId
+        end
+    end
+
+    return ids
+end
+
 local function BossDataHasNpcID(bossData, npcID)
     npcID = ParsePositiveInt(npcID)
     if not npcID or type(bossData) ~= "table" then return false end
@@ -522,6 +549,16 @@ local function GetEnemyForcesCount(enemy)
     return 0
 end
 
+local function ForcesForEnemyClone(enemy, clone)
+    if type(clone) ~= "table" then return 0 end
+    if clone.count ~= nil then
+        local n = tonumber(clone.count)
+        if n and n > 0 then return n end
+        return 0
+    end
+    return GetEnemyForcesCount(enemy)
+end
+
 local function ResolveTotalForces(mdt, dungeonIdx, enemyTable)
     if mdt and type(mdt.dungeonTotalCount) == "table" then
         local total = mdt.dungeonTotalCount[dungeonIdx]
@@ -817,10 +854,16 @@ function KeystonePolaris:TryImportMDTRoute(importPayload)
                 if enemyIndex then
                     local enemy = enemies[enemyIndex]
                     if type(enemy) == "table" then
-                        local selectedClones = CountSelectedClones(cloneSelection)
-                        if selectedClones > 0 then
-                            pullForces = pullForces + (GetEnemyForcesCount(enemy) * selectedClones)
-
+                        local hadValidClone = false
+                        local clones = enemy.clones
+                        for _, cloneId in ipairs(SelectedCloneIds(cloneSelection)) do
+                            local clone = type(clones) == "table" and clones[cloneId] or nil
+                            if type(clone) == "table" then
+                                hadValidClone = true
+                                pullForces = pullForces + ForcesForEnemyClone(enemy, clone)
+                            end
+                        end
+                        if hadValidClone then
                             local bossIndex = ResolveBossIndex(self, dungeonKey, enemy)
                             if bossIndex and not pullBosses[bossIndex] then
                                 pullBosses[bossIndex] = true
