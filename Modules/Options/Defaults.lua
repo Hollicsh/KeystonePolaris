@@ -99,6 +99,18 @@ KeystonePolaris.defaults = {
     }
 }
 
+KeystonePolaris.defaults.profile.roleMarker = {
+    enabled = true,
+    tankMarker = 6,
+    healerMarker = 5,
+    locked = true,
+    xOffset = 0,
+    yOffset = 0,
+    font = "Friz Quadrata TT",
+    fontFlags = KeystonePolaris.DEFAULT_FONT_FLAG_PRESET,
+    fontSize = 16,
+}
+
 KeystonePolaris.defaults.profile.groupReminder = {
     enabled = true,
     showPopup = true,
