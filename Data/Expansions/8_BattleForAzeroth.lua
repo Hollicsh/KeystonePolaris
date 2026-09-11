@@ -43,8 +43,8 @@ KeystonePolaris.BFA_DUNGEON_DATA = {
         teleportID = 1286828,
         bosses = {
             {1, 31.36, false, 1, 2142, "Adderis and Aspix", {262530, 262822}}, -- Adderis and Aspix
-            {2, 81.36, false, 2, 2143, "Merektha", 244887}, -- Merektha
-            {3, 96.82, false, 3, 2144, "Galvazzt", 245912}, -- Galvazzt
+            {2, 81.36, false, 2, 2143, "Merektha", 133384}, -- Merektha
+            {3, 96.82, false, 3, 2144, "Galvazzt", 263658}, -- Galvazzt
             {4, 100,   true,  4, 2145, "Avatar of Sethraliss", 133392}, -- Avatar of Sethraliss
         }
     },
