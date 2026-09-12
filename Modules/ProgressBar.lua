@@ -740,6 +740,9 @@ function KeystonePolaris:InitializeProgressBar()
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function(self_frame)
         if KeystonePolaris._progressBarPositioning or KeystonePolaris._positioningMode then
+            if KeystonePolaris.SetPositioningFocus then
+                KeystonePolaris:SetPositioningFocus("progressBar")
+            end
             self_frame:StartMoving()
             KeystonePolaris._progressBarDragging = true
         end
@@ -751,7 +754,20 @@ function KeystonePolaris:InitializeProgressBar()
         KeystonePolaris.db.profile.progressBar.position = point
         KeystonePolaris.db.profile.progressBar.xOffset = x
         KeystonePolaris.db.profile.progressBar.yOffset = y
+        if KeystonePolaris.RefreshPositioningOffsetSliders then
+            KeystonePolaris:RefreshPositioningOffsetSliders()
+        end
         LibStub("AceConfigRegistry-3.0"):NotifyChange(AddOnName)
+    end)
+    frame:SetScript("OnMouseUp", function(_, mouseButton)
+        if not KeystonePolaris._positioningMode then return end
+        if mouseButton ~= "LeftButton" and mouseButton ~= "RightButton" then return end
+        if KeystonePolaris.SetPositioningFocus then
+            KeystonePolaris:SetPositioningFocus("progressBar")
+        end
+        if KeystonePolaris.ShowPositioningOffsetPopup then
+            KeystonePolaris:ShowPositioningOffsetPopup()
+        end
     end)
 
     local bg = frame:CreateTexture(nil, "BACKGROUND")
@@ -766,6 +782,7 @@ function KeystonePolaris:InitializeProgressBar()
     frame.milestoneThresholds = {}
 
     frame:SetScript("OnEnter", function(self_frame)
+        if KeystonePolaris._positioningMode then return end
         self_frame._lastTooltipSectionKey = nil
         KeystonePolaris:ShowProgressBarTooltip(self_frame)
         self_frame:SetScript("OnUpdate", function(update_frame)

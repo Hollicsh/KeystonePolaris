@@ -43,7 +43,7 @@ function KeystonePolaris:GetPositioningOptions()
                 type = "execute",
                 func = function()
                     HideUIPanel(SettingsPanel)
-                    self:EnterPositioningMode()
+                    self:EnterPositioningMode("display")
                 end
             }),
             offsetRow = ColumnRow(3, {

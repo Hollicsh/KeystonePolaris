@@ -41,10 +41,10 @@ KeystonePolaris.Changelog["3.12.0"] = {
         ["zhCN"] = {},
         ["zhTW"] = {},
         ["enUS"] = {
-            "Added the [Role Marker] module: click a button to mark selected tank and/or healer roles in a 5-player group. Icons are configurable, including -none-, and the button can be unlocked to move.",
+            "Added the [Role Marker] module: click a button to mark selected tank and/or healer roles in a 5-player group. Icons are configurable, including -none-, and Show Anchor moves the button with the rest of the display. Right-click a component to edit its X/Y offsets in a popup beside it.",
         },
         ["frFR"] = {
-            "Ajout du module [Marqueur de rôles] : un clic pose les marques du tank et/ou du healer dans un groupe de 5. Icônes configurables, y compris -aucun-, et le bouton peut être déverrouillé pour le déplacer.",
+            "Ajout du module [Marqueur de rôles] : un clic pose les marques du tank et/ou du healer dans un groupe de 5. Icônes configurables, y compris -aucun-, et Afficher l'ancrage déplace le bouton avec le reste de l'affichage. Clic droit : popup X/Y à côté du composant.",
         },
         ["koKR"] = {},
         ["ruRU"] = {},
