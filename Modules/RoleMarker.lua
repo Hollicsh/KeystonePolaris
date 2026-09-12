@@ -2,6 +2,7 @@ local AddOnName, KeystonePolaris = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 local _G = _G
 local GetCVarBool = _G.GetCVarBool
+local HideUIPanel = _G.HideUIPanel
 local issecretvalue = _G.issecretvalue
 
 local ROLE_MARKER_UNITS = { "player", "party1", "party2", "party3", "party4" }
@@ -166,9 +167,10 @@ function KeystonePolaris:RefreshRoleMarkerIcons()
     end
 end
 
-function KeystonePolaris:ApplyRoleMarkerPosition()
+function KeystonePolaris:ApplyRoleMarkerPosition(force)
     local btn = self.roleMarkerButton
     if not btn then return end
+    if self._positioningMode and not force then return end
     if InCombatLockdown() then
         self._pendingRoleMarkerUpdate = true
         self:EnsureRoleMarkerWatcher()
@@ -182,6 +184,45 @@ function KeystonePolaris:ApplyRoleMarkerPosition()
     btn:SetPoint("CENTER", UIParent, "CENTER", xOff, yOff)
 end
 
+function KeystonePolaris:SaveRoleMarkerPositioningState()
+    local db = GetRoleMarkerDB(self)
+    if not db then
+        self._savedRoleMarkerPosition = nil
+        return
+    end
+    self._savedRoleMarkerPosition = {
+        xOffset = db.xOffset,
+        yOffset = db.yOffset,
+    }
+end
+
+function KeystonePolaris:BeginRoleMarkerPositioning()
+    local db = GetRoleMarkerDB(self)
+    if not db or not db.enabled then return end
+    if InCombatLockdown() then return end
+
+    local btn = self:EnsureRoleMarkerButton()
+    self:RefreshRoleMarkerIcons()
+    self:ApplyRoleMarkerPosition(true)
+    btn:SetAttribute("type", nil)
+    btn:SetAttribute("macrotext", nil)
+    btn:SetMovable(true)
+    btn:RegisterForDrag("LeftButton")
+    btn:EnableMouse(true)
+    btn:SetAlpha(1)
+    btn:Show()
+end
+
+function KeystonePolaris:FinishRoleMarkerPositioning(save)
+    local db = GetRoleMarkerDB(self)
+    if not save and self._savedRoleMarkerPosition and db then
+        db.xOffset = self._savedRoleMarkerPosition.xOffset
+        db.yOffset = self._savedRoleMarkerPosition.yOffset
+    end
+    self._savedRoleMarkerPosition = nil
+    self:UpdateRoleMarkerState()
+end
+
 function KeystonePolaris:ApplyRoleMarkerCombatVisualState(shouldShow)
     local btn = self.roleMarkerButton
     if not btn then return end
@@ -189,15 +230,6 @@ function KeystonePolaris:ApplyRoleMarkerCombatVisualState(shouldShow)
         btn:SetAlpha(1)
     else
         btn:SetAlpha(0)
-    end
-end
-
-local function ApplyRoleMarkerLockState(btn, locked)
-    btn:SetMovable(not locked)
-    if locked then
-        btn:RegisterForDrag()
-    else
-        btn:RegisterForDrag("LeftButton")
     end
 end
 
@@ -234,28 +266,30 @@ function KeystonePolaris:EnsureRoleMarkerButton()
     btn.Label:SetWordWrap(false)
 
     btn:SetScript("OnEnter", function(button)
+        if self._positioningMode then return end
         GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
         GameTooltip:SetText(L["KPL_RM_HEADER"])
         GameTooltip:AddLine(L["KPL_RM_TOOLTIP"], 1, 1, 1, true)
-        local db = GetRoleMarkerDB(self)
-        if db and not db.locked then
-            GameTooltip:AddLine(L["KPL_RM_UNLOCKED_HINT"], 1, 0.82, 0, true)
-        end
         GameTooltip:Show()
     end)
     btn:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
 
+    btn:SetScript("OnMouseUp", function(_, mouseButton)
+        if not self._positioningMode then return end
+        if mouseButton ~= "LeftButton" and mouseButton ~= "RightButton" then return end
+        if self.SetPositioningFocus then self:SetPositioningFocus("roleMarker") end
+        if self.ShowPositioningOffsetPopup then self:ShowPositioningOffsetPopup() end
+    end)
     btn:SetScript("OnDragStart", function(button)
-        if InCombatLockdown() then return end
-        local db = GetRoleMarkerDB(self)
-        if not db or db.locked then return end
+        if InCombatLockdown() or not self._positioningMode then return end
+        if self.SetPositioningFocus then self:SetPositioningFocus("roleMarker") end
         button:StartMoving()
     end)
     btn:SetScript("OnDragStop", function(button)
         button:StopMovingOrSizing()
-        if InCombatLockdown() then return end
+        if InCombatLockdown() or not self._positioningMode then return end
         local db = GetRoleMarkerDB(self)
         if not db then return end
         local cx, cy = button:GetCenter()
@@ -264,7 +298,8 @@ function KeystonePolaris:EnsureRoleMarkerButton()
             db.xOffset = cx - sw / 2
             db.yOffset = cy - sh / 2
         end
-        self:ApplyRoleMarkerPosition()
+        self:ApplyRoleMarkerPosition(true)
+        if self.RefreshPositioningOffsetSliders then self:RefreshPositioningOffsetSliders() end
         LibStub("AceConfigRegistry-3.0"):NotifyChange(AddOnName)
     end)
 
@@ -294,9 +329,9 @@ function KeystonePolaris:UpdateRoleMarkerState()
     end
 
     btn = self:EnsureRoleMarkerButton()
-    local macroText = CanUseRoleMarker() and self:BuildRoleMarkerMacro() or nil
-    local unlocked = not db.locked
-    local shouldShow = (macroText ~= nil) or unlocked
+    local positioning = self._positioningMode and true or false
+    local macroText = (not positioning) and CanUseRoleMarker() and self:BuildRoleMarkerMacro() or nil
+    local shouldShow = (macroText ~= nil) or positioning
 
     if InCombatLockdown() then
         self._pendingRoleMarkerUpdate = true
@@ -307,12 +342,16 @@ function KeystonePolaris:UpdateRoleMarkerState()
 
     self:RefreshRoleMarkerIcons()
     self:ApplyRoleMarkerPosition()
-    ApplyRoleMarkerLockState(btn, db.locked)
     btn:SetAlpha(1)
+    btn:SetMovable(positioning)
+    if positioning then
+        btn:RegisterForDrag("LeftButton")
+    else
+        btn:RegisterForDrag()
+    end
 
     if shouldShow then
-        -- Unlocked drag uses left click; attaching /tm would toggle marks.
-        if macroText and not unlocked then
+        if macroText then
             btn:SetAttribute("type", "macro")
             btn:SetAttribute("macrotext", macroText)
         else
@@ -524,24 +563,29 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 type = "header",
                 name = L["KPL_RM_POSITION"],
             },
-            lockPosition = {
-                name = L["KPL_RM_LOCK_POSITION"],
-                desc = L["KPL_RM_LOCK_POSITION_DESC"],
-                type = "toggle",
-                width = "full",
-                order = 6,
-                get = function()
-                    local db = GetRoleMarkerDB(self)
-                    return not db or db.locked
-                end,
-                set = function(_, value)
-                    local db = GetRoleMarkerDB(self)
-                    if not db then return end
-                    db.locked = value and true or false
-                    self:UpdateRoleMarkerState()
+            anchorRow = ColumnRow(6, {
+                name = L["SHOW_ANCHOR"],
+                type = "execute",
+                func = function()
+                    HideUIPanel(SettingsPanel)
+                    if self.EnterPositioningMode then
+                        self:EnterPositioningMode("roleMarker")
+                    end
                 end,
                 disabled = IsRoleMarkerDisabled,
-            },
+            }, {
+                name = L["KPL_RM_RESET_POSITION"],
+                desc = L["KPL_RM_RESET_POSITION_DESC"],
+                type = "execute",
+                func = function()
+                    local db = GetRoleMarkerDB(self)
+                    if not db then return end
+                    db.xOffset = 0
+                    db.yOffset = 0
+                    self:ApplyRoleMarkerPosition()
+                end,
+                disabled = IsRoleMarkerDisabled,
+            }),
             offsetRow = ColumnRow(6.5, {
                 name = L["X_OFFSET"],
                 type = "range",
@@ -577,21 +621,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 end,
                 disabled = IsRoleMarkerDisabled,
             }),
-            resetPosition = {
-                name = L["KPL_RM_RESET_POSITION"],
-                desc = L["KPL_RM_RESET_POSITION_DESC"],
-                type = "execute",
-                width = "full",
-                order = 7,
-                func = function()
-                    local db = GetRoleMarkerDB(self)
-                    if not db then return end
-                    db.xOffset = 0
-                    db.yOffset = 0
-                    self:ApplyRoleMarkerPosition()
-                end,
-                disabled = IsRoleMarkerDisabled,
-            },
         },
     }
 end
