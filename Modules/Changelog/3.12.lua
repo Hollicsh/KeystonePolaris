@@ -70,10 +70,12 @@ KeystonePolaris.Changelog["3.12"] = {
         ["enUS"] = {
             "Fixed [Temple of Sethraliss] [MythicDungeonTools] import.",
             "Opening [Changelog] should no longer freeze the Settings panel.",
+            "Canceling [Show Anchor] no longer leaves preview milestone ticks on the [Progress Bar].",
         },
         ["frFR"] = {
             "Correction de l'import [MythicDungeonTools] du [Temple de Sephraliss].",
             "L'ouverture des [Mises à jour] ne devrait plus figer le panneau des paramètres.",
+            "Annuler [Afficher l'ancrage] ne laisse plus de ticks de milestones de prévisualisation sur la [Barre de progression].",
         },
         ["koKR"] = {},
         ["ruRU"] = {},
