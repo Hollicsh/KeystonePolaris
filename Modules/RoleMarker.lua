@@ -48,12 +48,35 @@ local function RaidIconMarkup(marker)
     return string.format("|T%s:%d:%d:0:0|t", string.format(RAID_ICON_TEXTURE, marker), ROLE_MARKER_ICON_SIZE, ROLE_MARKER_ICON_SIZE)
 end
 
-local function FormatRoleMarkerLabel(tankMarker, healerMarker)
+local function GetPartyRolePresence()
+    local hasTank, hasHealer = false, false
+    for i = 1, #ROLE_MARKER_UNITS do
+        local unit = ROLE_MARKER_UNITS[i]
+        if UnitExists(unit) then
+            local role = UnitGroupRolesAssigned(unit)
+            if role == "TANK" then
+                hasTank = true
+            elseif role == "HEALER" then
+                hasHealer = true
+            end
+            if hasTank and hasHealer then
+                break
+            end
+        end
+    end
+    return hasTank, hasHealer
+end
+
+local function FormatRoleMarkerLabel(tankMarker, healerMarker, requirePresent)
+    local hasTank, hasHealer = true, true
+    if requirePresent then
+        hasTank, hasHealer = GetPartyRolePresence()
+    end
     local roles = {}
-    if tankMarker then
+    if tankMarker and hasTank then
         roles[#roles + 1] = string.format("%s %s", TANK, RaidIconMarkup(tankMarker))
     end
-    if healerMarker then
+    if healerMarker and hasHealer then
         roles[#roles + 1] = string.format("%s %s", HEALER, RaidIconMarkup(healerMarker))
     end
     if #roles == 0 then
@@ -158,7 +181,7 @@ function KeystonePolaris:RefreshRoleMarkerIcons()
     local db = GetRoleMarkerDB(self)
     local tankMarker, healerMarker = GetConfiguredRoleMarkers(db)
     local fontSize = ApplyRoleMarkerLabelFont(self, btn.Label, db)
-    btn.Label:SetText(FormatRoleMarkerLabel(tankMarker, healerMarker))
+    btn.Label:SetText(FormatRoleMarkerLabel(tankMarker, healerMarker, not self._positioningMode))
 
     if not InCombatLockdown() then
         local textWidth = btn.Label:GetStringWidth() or 0
