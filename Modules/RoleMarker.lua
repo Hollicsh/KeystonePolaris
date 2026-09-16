@@ -425,11 +425,21 @@ function KeystonePolaris:GetRoleMarkerOptions()
         return not (db and db.enabled)
     end
 
+    self:RegisterOptionFeature({
+        key = "roleMarker",
+        treeValue = "modules\001roleMarker",
+        parentValue = "modules",
+        parentLabel = L["MODULES"],
+    })
+
     return {
-        name = L["KPL_RM_HEADER"],
+        name = function()
+            return self:GetOptionFeatureLabel("roleMarker", L["KPL_RM_HEADER"])
+        end,
         type = "group",
         order = 5,
         args = {
+            featureSeenProbe = self:OptionFeatureSeenProbe("roleMarker"),
             header = {
                 order = 0,
                 type = "header",

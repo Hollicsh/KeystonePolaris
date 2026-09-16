@@ -99,6 +99,13 @@ KeystonePolaris.defaults = {
     }
 }
 
+-- Keys match RegisterOptionFeature specs; false means unseen until the panel is opened.
+KeystonePolaris.defaults.global = {
+    seenOptionFeatures = {
+        roleMarker = false,
+    },
+}
+
 KeystonePolaris.defaults.profile.roleMarker = {
     enabled = true,
     tankMarker = 6,
