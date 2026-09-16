@@ -126,7 +126,6 @@ local function GradientText(text)
 end
 
 local function BuildModulesOverviewDescription()
-    local featureIcon = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:14:14:0:0|t"
     local intro = L["MODULES_SUMMARY_INTRO"]
     local mobPercentagesTitle = L["MOB_PERCENTAGES"]
     local mobPercentagesDesc = L["MODULES_SUMMARY_MOB_PERCENTAGES_DESC"]
@@ -138,13 +137,13 @@ local function BuildModulesOverviewDescription()
     return table.concat({
         intro,
         "",
-        featureIcon .. " |cffffd100" .. mobPercentagesTitle .. "|r",
+        "- |cffffd100" .. mobPercentagesTitle .. "|r",
         "   |cff9d9d9d" .. mobPercentagesDesc .. "|r",
         "",
-        featureIcon .. " |cffffd100" .. roleMarkerTitle .. "|r",
+        "- |cffffd100" .. roleMarkerTitle .. "|r",
         "   |cff9d9d9d" .. roleMarkerDesc .. "|r",
         "",
-        featureIcon .. " |cffffd100" .. groupReminderTitle .. "|r",
+        "- |cffffd100" .. groupReminderTitle .. "|r",
         "   |cff9d9d9d" .. groupReminderDesc .. "|r",
     }, "\n")
 end
