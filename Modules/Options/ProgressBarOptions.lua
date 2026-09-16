@@ -63,7 +63,7 @@ function KeystonePolaris:GetProgressBarOptions()
                         func = function()
                             HideUIPanel(SettingsPanel)
                             if self.EnterPositioningMode then
-                                self:EnterPositioningMode()
+                                self:EnterPositioningMode("progressBar")
                             end
                         end,
                     }),

@@ -14,14 +14,14 @@ if not L then return end
 -- Temporary locales for Midnight Compatibility Warning
 L["COMPATIBILITY_WARNING"] = "한밤 호환성 경고" -- TODO: "Midnight Compatibility Warning"
 L["COMPATIBILITY_WARNING_MESSAGE"] = "|cffff0000API 제한으로 인해 일부 기능이 현재 한밤에서 비활성화되어 있습니다:|r\n\n" ..
-                                "|cff8888ff• 이름표에서 몹 퍼센트(MDT 통합)|r\n" ..
-                                "|cff8888ff• 현재 풀링 트래킹|r\n" ..
-                                "|cff8888ff• 예상 값|r\n\n" ..
+                                "|cff8888ff* 이름표에서 몹 퍼센트(MDT 통합)|r\n" ..
+                                "|cff8888ff* 현재 풀링 트래킹|r\n" ..
+                                "|cff8888ff* 예상 값|r\n\n" ..
                                 "|cff8888ff이러한 기능은 블리자드가 새로운 Mythic+ API를 출시하면 다시 활성화됩니다. 현재 이에 대한 ETA는 없습니다.|r\n\n" ..
                                 "다른 모든 기능은 계속 사용 가능합니다. 불편을 드려 죄송합니다." -- TODO: "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n|cff8888ff• Mob percentages on nameplates (MDT Integration)|r\n|cff8888ff• Current pull tracking|r\n|cff8888ff• Projected values|r\n\n|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\nAll other features should remain available, sorry for the inconvenience.\n"
 L["COMPATIBILITY_WARNING_MESSAGE_CORE"] = "|cffff0000API 제한으로 인해 일부 기능이 현재 한밤에서 비활성화되어 있습니다:|r\n\n" ..
-                                "|cff8888ff• 현재 풀링 트래킹|r\n" ..
-                                "|cff8888ff• 예상 값|r\n\n" ..
+                                "|cff8888ff* 현재 풀링 트래킹|r\n" ..
+                                "|cff8888ff* 예상 값|r\n\n" ..
                                 "|cff8888ff이러한 기능은 블리자드가 새로운 Mythic+ API를 출시하면 다시 활성화됩니다. 현재 이에 대한 ETA는 없습니다.|r\n\n" ..
                                 "다른 모든 기능은 계속 사용 가능합니다. 불편을 드려 죄송합니다." -- TODO: "|cffff0000Some features are disabled on Midnight for now due to API restrictions:|r\n\n|cff8888ff• Current pull tracking|r\n|cff8888ff• Projected values|r\n\n|cff8888ffThese features will be re-enabled once Blizzard releases the new Mythic+ API. There is currently no ETA for this.|r\n\nAll other features should remain available, sorry for the inconvenience.\n"
 
@@ -47,6 +47,7 @@ L["MODULES_SUMMARY_HEADER"] = "모듈 개요" -- TODO: "Modules Overview"
 L["MODULES_SUMMARY_INTRO"] = "사용 가능한 모듈 한눈에 보기:"
 L["MODULES_SUMMARY_MOB_PERCENTAGES_DESC"] = "적 세력 기여도를 이름표에 직접 표시합니다."
 L["MODULES_SUMMARY_GROUP_REMINDER_DESC"] = "파티에 가입했을 때 파티 이름, 대상 던전, 자신이 담당할 역할(탱/딜/힐)이 담긴 알림 창을 띄웁니다."
+-- TODO: L["MODULES_SUMMARY_ROLE_MARKER_DESC"] = "Shows a clickable button to mark the tank and healer in your party. A click is required because Midnight protects raid markers."
 L["FINISHED"] = "던전 퍼센트 완료" -- TODO: "Dungeon Percentage Done"
 L["SECTION_DONE"] = "구역 완료" -- TODO: "Section Finished"
 L["DONE"] = "구역 퍼센트 완료" -- TODO: "Section Percentage Done"
@@ -109,7 +110,7 @@ L["PROGRESS_BAR_CALLOUT_FONT"] = "강조 표시 글꼴"
 L["PROGRESS_BAR_CALLOUT_FONT_SIZE"] = "강조 표시 글꼴 크기"
 L["PROGRESS_BAR_CALLOUT_TEXT_COLOR"] = "강조 표시 텍스트 색상"
 L["PROGRESS_BAR_CALLOUT_BG_COLOR"] = "강조 표시 배경"
-L["PROGRESS_BAR_CALLOUT_FORMAT"] = "%.2f%% • %s"
+L["PROGRESS_BAR_CALLOUT_FORMAT"] = "%.2f%% * %s"
 L["PROGRESS_BAR_THRESHOLD"] = "임계값: %.2f%%"
 -- TODO: L["PROGRESS_BAR_COUNT"] = "Count: %d"
 L["Changelog"] = "변경 사항" -- TODO: "Changelog"
@@ -218,7 +219,7 @@ L["NEW_ROUTES_ALL_SEASON_PROMPT"] = "현재 시즌의 모든 던전 경로가 �
 
 -- Commands / Help
 L["COMMANDS_HEADER"] = "명령어" -- TODO: "Commands"
-L["COMMANDS_HELP_DESC"] = "사용 가능한 명령어:\n• /kpl 또는 /polaris - 설정 열기\n• /kpl reminder 또는 /polaris reminder - 마지막 파티 알람창 열기\n• /kpl help or /polaris help - 도움말 보기" -- TODO: "Available slash commands:\n• /kpl or /polaris - Open options\n• /kpl reminder or /polaris reminder - Show last group reminder\n• /kpl help or /polaris help - Show this help"
+L["COMMANDS_HELP_DESC"] = "사용 가능한 명령어:\n* /kpl 또는 /polaris - 설정 열기\n* /kpl reminder 또는 /polaris reminder - 마지막 파티 알람창 열기\n* /kpl help or /polaris help - 도움말 보기" -- TODO: "Available slash commands:\n• /kpl or /polaris - Open options\n• /kpl reminder or /polaris reminder - Show last group reminder\n• /kpl help or /polaris help - Show this help"
 L["COMMANDS_HELP_OPEN"] = "/kpl 또는 /polaris - 설정 열기" -- TODO: "/kpl or /polaris - Open options"
 L["COMMANDS_HELP_CHANGELOG"] = "/kpl changelog 또는 /polaris changelog - 변경 사항 열기" -- TODO: "/kpl changelog or /polaris changelog - Open changelog"
 L["COMMANDS_HELP_REMINDER"] = "/kpl reminder 또는 /polaris reminder - 마지막 파티 알람창 열기" -- TODO: "/kpl reminder or /polaris reminder - Show last group reminder"
@@ -393,6 +394,8 @@ L["KPL_GR_INVITED"] = "파티에 초대 받았습니다." -- TODO: "You have bee
 L["KPL_GR_AS_ROLE"] = "포지션은 %s 입니다." -- TODO: "as a %s"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "그룹이 가득 찼을 때 팝업 다시 표시" -- TODO: "Show popup again when the group is full"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Mythic+ 그룹이 5명의 플레이어에게 도달하면 알림 창을 다시 엽니다." -- TODO: "Reopen the reminder window when your Mythic+ group reaches 5 players."
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER"] = "Show popup when the group is full (as group leader)"
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER_DESC"] = "Display the reminder window when your Mythic+ group reaches 5 players and you are the group leader."
 L["KPL_GR_CHAT_COMMAND_INFO"] = "팁: |cffffd100/kpl reminder|r 을 사용하여 마지막 그룹 알림을 다시 표시합니다." -- TODO: "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again."
 
 -- Group Reminder (Options)
@@ -412,3 +415,16 @@ L["KPL_GR_SHOW_GROUP"] = "파티명 표시" -- TODO: "Show group name"
 L["KPL_GR_SHOW_DESC"] = "파티 요약 표시" -- TODO: "Show group description"
 L["KPL_GR_SHOW_ROLE"] = "수락한 포지션 표시" -- TODO: "Show applied role"
 L["KPL_GR_SHOW_PLAYSTYLE"] = "플레이 방식 표시" -- TODO: "Show group playstyle"
+
+-- Role Marker
+-- TODO: L["KPL_RM_HEADER"] = "Role Marker"
+-- TODO: L["KPL_RM_DESC_LONG"] = "Shows a button to mark the tank and healer in your 5-player group. Click the button to apply the marks; addons cannot place them automatically in Midnight."
+-- TODO: L["KPL_RM_CLICK_REQUIRED"] = "A click is required: Blizzard protects raid markers, so this button runs a secure /tm macro."
+-- TODO: L["KPL_RM_MARKERS"] = "Markers"
+-- TODO: L["KPL_RM_MARKER_NONE"] = "-none-"
+-- TODO: L["KPL_RM_BUTTON"] = "Mark %s"
+-- TODO: L["KPL_RM_ROLES_AND"] = "%s & %s"
+-- TODO: L["KPL_RM_POSITION"] = "Position"
+-- TODO: L["KPL_RM_RESET_POSITION"] = "Reset position"
+-- TODO: L["KPL_RM_RESET_POSITION_DESC"] = "Move the Role Marker button back to the center of the screen."
+-- TODO: L["KPL_RM_TOOLTIP"] = "Click to mark the selected roles."

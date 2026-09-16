@@ -1,11 +1,13 @@
 local AddOnName, KeystonePolaris = ...;
 
-local pairs, select = pairs, select
+local pairs = pairs
 local gsub = string.gsub
 local strsplit = strsplit
 
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName, true)
 local ACR = LibStub("AceConfigRegistry-3.0")
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local AceGUI = LibStub("AceGUI-3.0")
 
 -- MDT integration unavailable due to Blizzard API changes in Midnight
 local MDT_FEATURES_ENABLED = false
@@ -113,8 +115,6 @@ local function ColumnRow(order, left, right, spacerWidth)
 end
 
 local function RefreshDisplayColorSettings(self)
-    if self.UpdateColorCache then self:UpdateColorCache() end
-    if self.UpdatePercentageText then self:UpdatePercentageText() end
     self:Refresh()
     RefreshPreviewWidget()
 end
@@ -231,7 +231,7 @@ local function InsertSortedDungeonOptions(addon, dungeonKeys, sharedOptions, tar
     local sortable = {}
     for _, key in ipairs(dungeonKeys) do
         local mapId = addon:GetDungeonIdByKey(key)
-        local name = (mapId and select(1, C_ChallengeMode.GetMapUIInfo(mapId))) or key
+        local name = (mapId and C_ChallengeMode.GetMapUIInfo(mapId)) or key
         table.insert(sortable, { key = key, name = name })
     end
     table.sort(sortable, function(a, b) return a.name < b.name end)
@@ -243,6 +243,252 @@ local function InsertSortedDungeonOptions(addon, dungeonKeys, sharedOptions, tar
     end
 end
 
+-- ---------------------------------------------------------------------------
+-- New-feature badges in the AceConfig tree (few groups only)
+-- ---------------------------------------------------------------------------
+local OPTION_FEATURE_ICON = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t "
+local OPTION_FEATURE_MARK_DELAY = 5
+
+local optionFeatures = {}
+local optionFeatureParents = {}
+
+local function GetSeenOptionFeatures(self)
+    if not self.db then return end
+    self.db.global = self.db.global or {}
+    self.db.global.seenOptionFeatures = self.db.global.seenOptionFeatures or {}
+    return self.db.global.seenOptionFeatures
+end
+
+-- spec.key, spec.treeValue (Ace3 uniquevalue), spec.parentValue, spec.parentLabel
+function KeystonePolaris:RegisterOptionFeature(spec)
+    if not self or not spec or not spec.key then return end
+    optionFeatures[spec.key] = spec
+    local parentValue = spec.parentValue
+    if not parentValue then return end
+    local parent = optionFeatureParents[parentValue]
+    if not parent then
+        parent = { keys = {}, label = spec.parentLabel }
+        optionFeatureParents[parentValue] = parent
+    end
+    parent.label = spec.parentLabel or parent.label
+    local keys = parent.keys
+    for i = 1, #keys do
+        if keys[i] == spec.key then return end
+    end
+    keys[#keys + 1] = spec.key
+end
+
+function KeystonePolaris:IsOptionFeatureUnseen(key)
+    local seen = GetSeenOptionFeatures(self)
+    if not seen then return false end
+    return seen[key] ~= true
+end
+
+function KeystonePolaris:MarkOptionFeatureSeen(key)
+    local seen = GetSeenOptionFeatures(self)
+    if not seen then return end
+    seen[key] = true
+end
+
+function KeystonePolaris:SeedOptionFeaturesIfNewInstall()
+    if self._hadPriorVersionCheck then return end
+    local seen = GetSeenOptionFeatures(self)
+    if not seen then return end
+    local defaults = self.defaults and self.defaults.global and self.defaults.global.seenOptionFeatures
+    if type(defaults) == "table" then
+        for key in pairs(defaults) do
+            seen[key] = true
+        end
+    end
+end
+
+local function GetAceConfigTreeSelected()
+    local status = AceConfigDialog:GetStatusTable(AddOnName)
+    return status and status.groups and status.groups.selected
+end
+
+local function IsOptionFeaturePanelSelected(key)
+    local spec = optionFeatures[key]
+    if not spec or not spec.treeValue then return false end
+    return GetAceConfigTreeSelected() == spec.treeValue
+end
+
+function KeystonePolaris:CancelQueuedOptionFeatureMark(key)
+    if self._optionFeatureMarkQueued then
+        self._optionFeatureMarkQueued[key] = nil
+    end
+    local timers = self._optionFeatureMarkTimers
+    local timer = timers and timers[key]
+    if timer then
+        timers[key] = nil
+        if timer.Cancel then
+            timer:Cancel()
+        end
+    end
+end
+
+local function CollectQueuedOptionFeatureKeys(self)
+    local queued = self._optionFeatureMarkQueued
+    if not queued then return nil end
+    local keys = {}
+    for key in pairs(queued) do
+        keys[#keys + 1] = key
+    end
+    return keys
+end
+
+function KeystonePolaris:CancelQueuedOptionFeatureMarks()
+    local keys = CollectQueuedOptionFeatureKeys(self)
+    if not keys then return end
+    for i = 1, #keys do
+        self:CancelQueuedOptionFeatureMark(keys[i])
+    end
+end
+
+local function CancelOptionFeatureMarkIfLeftPanel(self, key)
+    if not (self._optionFeatureMarkQueued and self._optionFeatureMarkQueued[key]) then return end
+    if IsOptionFeaturePanelSelected(key) then return end
+    self:CancelQueuedOptionFeatureMark(key)
+end
+
+function KeystonePolaris:CancelOptionFeatureMarksIfLeftPanel()
+    local keys = CollectQueuedOptionFeatureKeys(self)
+    if not keys then return end
+    for i = 1, #keys do
+        CancelOptionFeatureMarkIfLeftPanel(self, keys[i])
+    end
+end
+
+local function QueueMarkOptionFeatureSeen(self, key)
+    if not self:IsOptionFeatureUnseen(key) then return end
+    self._optionFeatureMarkQueued = self._optionFeatureMarkQueued or {}
+    if self._optionFeatureMarkQueued[key] then return end
+    self._optionFeatureMarkQueued[key] = true
+    self._optionFeatureMarkTimers = self._optionFeatureMarkTimers or {}
+    self._optionFeatureMarkTimers[key] = C_Timer.NewTimer(OPTION_FEATURE_MARK_DELAY, function()
+        self._optionFeatureMarkTimers[key] = nil
+        self._optionFeatureMarkQueued[key] = nil
+        if not self:IsOptionFeatureUnseen(key) then return end
+        if not IsOptionFeaturePanelSelected(key) then return end
+        self:MarkOptionFeatureSeen(key)
+        ACR:NotifyChange(AddOnName)
+    end)
+end
+
+function KeystonePolaris:OptionFeatureSeenProbe(key)
+    return {
+        type = "description",
+        order = -1,
+        name = " ",
+        hidden = function()
+            QueueMarkOptionFeatureSeen(self, key)
+            return true
+        end,
+    }
+end
+
+function KeystonePolaris:GetOptionFeatureLabel(key, label)
+    if self:IsOptionFeatureUnseen(key) then
+        return OPTION_FEATURE_ICON .. label
+    end
+    return label
+end
+
+function KeystonePolaris:GetParentOptionFeatureLabel(parentValue, label)
+    local parent = optionFeatureParents[parentValue]
+    if parent and label then
+        parent.label = label
+    end
+    local parentLabel = label or (parent and parent.label) or parentValue
+    local expanded = self._optionFeatureExpanded and self._optionFeatureExpanded[parentValue]
+    if expanded then
+        return parentLabel
+    end
+    if not parent then
+        return parentLabel
+    end
+    for i = 1, #parent.keys do
+        if self:IsOptionFeatureUnseen(parent.keys[i]) then
+            return OPTION_FEATURE_ICON .. parentLabel
+        end
+    end
+    return parentLabel
+end
+
+local function UpdateOptionFeatureParentLabels(self, nodes)
+    if type(nodes) ~= "table" then return false end
+    local updated = false
+    for i = 1, #nodes do
+        local entry = nodes[i]
+        if entry then
+            if optionFeatureParents[entry.value] then
+                entry.text = self:GetParentOptionFeatureLabel(entry.value, optionFeatureParents[entry.value].label)
+                updated = true
+            end
+            if UpdateOptionFeatureParentLabels(self, entry.children) then
+                updated = true
+            end
+        end
+    end
+    return updated
+end
+
+function KeystonePolaris:OnOptionFeatureTreeRefreshed(tree)
+    self:CancelOptionFeatureMarksIfLeftPanel()
+    if self._optionFeatureTreeLock then return end
+    if not tree then return end
+
+    local status = tree.status or tree.localstatus
+    local groups = status and status.groups
+    self._optionFeatureExpanded = self._optionFeatureExpanded or {}
+    local changed = false
+    for parentValue in pairs(optionFeatureParents) do
+        local expanded = groups and groups[parentValue] and true or false
+        local previous = self._optionFeatureExpanded[parentValue] and true or false
+        if expanded ~= previous then
+            self._optionFeatureExpanded[parentValue] = expanded
+            changed = true
+        end
+    end
+    if not changed then return end
+    if not UpdateOptionFeatureParentLabels(self, tree.tree) then return end
+
+    self._optionFeatureTreeLock = true
+    tree:RefreshTree()
+    self._optionFeatureTreeLock = false
+end
+
+if not AceGUI._kplOptionFeatureCreateHook then
+    AceGUI._kplOptionFeatureCreateHook = true
+    local origCreate = AceGUI.Create
+    function AceGUI:Create(widgetType, ...)
+        local widget = origCreate(self, widgetType, ...)
+        if widgetType == "TreeGroup" and widget and not widget._kplOptionFeatureHook then
+            widget._kplOptionFeatureHook = true
+            hooksecurefunc(widget, "RefreshTree", function(tree)
+                if tree.GetUserData and tree:GetUserData("appName") == AddOnName then
+                    KeystonePolaris:OnOptionFeatureTreeRefreshed(tree)
+                end
+            end)
+        end
+        return widget
+    end
+end
+
+hooksecurefunc(AceConfigDialog, "Open", function(_, appName, container)
+    if appName ~= AddOnName then return end
+    local root = container
+    if not root and AceConfigDialog.OpenFrames then
+        root = AceConfigDialog.OpenFrames[AddOnName]
+    end
+    if root and root.frame and not root._kplFeatureHideHook then
+        root._kplFeatureHideHook = true
+        root.frame:HookScript("OnHide", function()
+            KeystonePolaris:CancelQueuedOptionFeatureMarks()
+        end)
+    end
+end)
+
 -- Expose shared helpers for other Options modules (load after Helpers.lua)
 KeystonePolaris.RefreshPreviewWidget = RefreshPreviewWidget
 KeystonePolaris.PreviewScenarioValues = PreviewScenarioValues
@@ -250,10 +496,8 @@ KeystonePolaris.SetPreviewScenario = SetPreviewScenario
 KeystonePolaris.PreviewScenarioDropdown = PreviewScenarioDropdown
 KeystonePolaris.PreviewGroup = PreviewGroup
 KeystonePolaris.ColumnRow = ColumnRow
-KeystonePolaris.RefreshDisplayColorSettings = RefreshDisplayColorSettings
 KeystonePolaris.MakeStatusColorOption = MakeStatusColorOption
 KeystonePolaris.MakeMilestonePrefixColorProps = MakeMilestonePrefixColorProps
-KeystonePolaris.ShallowCloneTable = ShallowCloneTable
 KeystonePolaris.CloneTable = CloneTable
 KeystonePolaris.FormatSeasonDate = FormatSeasonDate
 KeystonePolaris.InsertSortedDungeonOptions = InsertSortedDungeonOptions

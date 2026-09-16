@@ -1,6 +1,6 @@
 local AddOnName, KeystonePolaris = ...;
 
-local pairs, select = pairs, select
+local pairs = pairs
 local format = string.format
 local strsplit = strsplit
 local CALENDAR_WEEKDAY_NAMES = _G.CALENDAR_WEEKDAY_NAMES
@@ -15,16 +15,17 @@ local InsertSortedDungeonOptions = KeystonePolaris.InsertSortedDungeonOptions
 
 local expansions = KeystonePolaris.Expansions
 
+local function GetChallengeMapName(mapId)
+    if not mapId then return nil end
+    return C_ChallengeMode.GetMapUIInfo(mapId)
+end
+
 
 function KeystonePolaris:GetAdvancedOptions()
     -- Helper function to get dungeon name with icon
     local function GetDungeonNameWithIcon(dungeonKey)
         local mapId = self:GetDungeonIdByKey(dungeonKey)
-
-        local name
-        if mapId then
-            name = select(1, C_ChallengeMode.GetMapUIInfo(mapId))
-        end
+        local name = GetChallengeMapName(mapId)
 
         -- Retrieve manual display name
         local manualName
@@ -396,13 +397,8 @@ function KeystonePolaris:GetAdvancedOptions()
         local mapIdA = a.id or self:GetDungeonIdByKey(a.key)
         local mapIdB = b.id or self:GetDungeonIdByKey(b.key)
 
-        local nameA
-        if mapIdA then nameA = select(1, C_ChallengeMode.GetMapUIInfo(mapIdA)) end
-        nameA = nameA or a.key
-
-        local nameB
-        if mapIdB then nameB = select(1, C_ChallengeMode.GetMapUIInfo(mapIdB)) end
-        nameB = nameB or b.key
+        local nameA = GetChallengeMapName(mapIdA) or a.key
+        local nameB = GetChallengeMapName(mapIdB) or b.key
 
         return nameA < nameB
     end)
@@ -477,13 +473,8 @@ function KeystonePolaris:GetAdvancedOptions()
         local mapIdA = a.id or self:GetDungeonIdByKey(a.key)
         local mapIdB = b.id or self:GetDungeonIdByKey(b.key)
 
-        local nameA
-        if mapIdA then nameA = select(1, C_ChallengeMode.GetMapUIInfo(mapIdA)) end
-        nameA = nameA or a.key
-
-        local nameB
-        if mapIdB then nameB = select(1, C_ChallengeMode.GetMapUIInfo(mapIdB)) end
-        nameB = nameB or b.key
+        local nameA = GetChallengeMapName(mapIdA) or a.key
+        local nameB = GetChallengeMapName(mapIdB) or b.key
 
         return nameA < nameB
     end)
@@ -652,13 +643,8 @@ function KeystonePolaris:GetAdvancedOptions()
             local mapIdA = a.id or self:GetDungeonIdByKey(a.key)
             local mapIdB = b.id or self:GetDungeonIdByKey(b.key)
 
-            local nameA
-            if mapIdA then nameA = select(1, C_ChallengeMode.GetMapUIInfo(mapIdA)) end
-            nameA = nameA or a.key
-
-            local nameB
-            if mapIdB then nameB = select(1, C_ChallengeMode.GetMapUIInfo(mapIdB)) end
-            nameB = nameB or b.key
+            local nameA = GetChallengeMapName(mapIdA) or a.key
+            local nameB = GetChallengeMapName(mapIdB) or b.key
 
             return nameA < nameB
         end)
@@ -871,11 +857,7 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
     local options = {
         name = function()
             local mapId = self:GetDungeonIdByKey(dungeonKey)
-
-            local name
-            if mapId then
-                name = select(1, C_ChallengeMode.GetMapUIInfo(mapId))
-            end
+            local name = GetChallengeMapName(mapId)
 
             if not name then
                 for _, expansion in ipairs(expansions) do
@@ -899,11 +881,7 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                 fontSize = "large",
                 name = function()
                     local mapId = self:GetDungeonIdByKey(dungeonKey)
-
-                    local name
-                    if mapId then
-                        name = select(1, C_ChallengeMode.GetMapUIInfo(mapId))
-                    end
+                    local name = GetChallengeMapName(mapId)
 
                     if not name then
                          for _, expansion in ipairs(expansions) do

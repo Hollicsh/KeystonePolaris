@@ -35,6 +35,13 @@ for _, entry in ipairs(FONT_FLAG_OPTIONS) do
     KeystonePolaris.fontFlagPresetSorting[#KeystonePolaris.fontFlagPresetSorting + 1] = entry.key
 end
 
+function KeystonePolaris:GetFontFlagsForPreset(preset)
+    if preset and FONT_FLAG_PRESETS[preset] ~= nil then
+        return FONT_FLAG_PRESETS[preset]
+    end
+    return FONT_FLAG_PRESETS[self.DEFAULT_FONT_FLAG_PRESET]
+end
+
 function KeystonePolaris:GetFontFlagsPreset()
     local stored = self.db and self.db.profile and self.db.profile.text and self.db.profile.text.fontFlags
     if stored and FONT_FLAG_PRESETS[stored] ~= nil then
@@ -44,7 +51,7 @@ function KeystonePolaris:GetFontFlagsPreset()
 end
 
 function KeystonePolaris:GetFontFlags()
-    return FONT_FLAG_PRESETS[self:GetFontFlagsPreset()]
+    return self:GetFontFlagsForPreset(self:GetFontFlagsPreset())
 end
 
 function KeystonePolaris:GetFontFlagSelectValues()
@@ -62,11 +69,20 @@ KeystonePolaris.constants = {
 }
 
 -- Track the last routes update version for prompting users
-KeystonePolaris.lastRoutesUpdate = "3.11" -- Set to true when routes have been updated
+KeystonePolaris.lastRoutesUpdate = "3.12" -- Set to true when routes have been updated
 
 -- Table to store dungeons with changed routes
 KeystonePolaris.CHANGED_ROUTES_DUNGEONS = {
-    ["NPX"] = true, -- Nexus-Point Xenas
+    ["MR"] = true, -- Murder Row
+    ["DoN"] = true, -- Den of Nalorakk
+    ["TBV"] = true, -- The Blinding Vale
+    ["VSA"] = true, -- Voidscar Arena
+    ["AoFa"] = true, -- Altar of Fangs
+    -- Dragonflight dungeons
+    ["RLP"] = true, -- Ruby Life Pools
+    -- Battle for Azeroth dungeons
+    ["ToSet"] = true, -- Temple of Sethraliss
+    ["KR"] = true, -- Kings' Rest
 }
 
 -- Initialize Ace3 configuration libraries
@@ -119,20 +135,24 @@ local function GradientText(text)
 end
 
 local function BuildModulesOverviewDescription()
-    local featureIcon = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:14:14:0:0|t"
     local intro = L["MODULES_SUMMARY_INTRO"]
     local mobPercentagesTitle = L["MOB_PERCENTAGES"]
     local mobPercentagesDesc = L["MODULES_SUMMARY_MOB_PERCENTAGES_DESC"]
     local groupReminderTitle = L["KPL_GR_HEADER"]
     local groupReminderDesc = L["MODULES_SUMMARY_GROUP_REMINDER_DESC"]
+    local roleMarkerTitle = L["KPL_RM_HEADER"]
+    local roleMarkerDesc = L["MODULES_SUMMARY_ROLE_MARKER_DESC"]
 
     return table.concat({
         intro,
         "",
-        featureIcon .. " |cffffd100" .. mobPercentagesTitle .. "|r",
+        "- |cffffd100" .. mobPercentagesTitle .. "|r",
         "   |cff9d9d9d" .. mobPercentagesDesc .. "|r",
         "",
-        featureIcon .. " |cffffd100" .. groupReminderTitle .. "|r",
+        "- |cffffd100" .. roleMarkerTitle .. "|r",
+        "   |cff9d9d9d" .. roleMarkerDesc .. "|r",
+        "",
+        "- |cffffd100" .. groupReminderTitle .. "|r",
         "   |cff9d9d9d" .. groupReminderDesc .. "|r",
     }, "\n")
 end
@@ -362,6 +382,7 @@ function KeystonePolaris:OnInitialize()
     local general = self.db.profile.general
     -- Capture before CheckForNewRoutes overwrites lastVersionCheck on first install.
     self._hadPriorVersionCheck = (general.lastVersionCheck or "") ~= ""
+    self:SeedOptionFeaturesIfNewInstall()
 
     -- Force-enable the returning feature once per profile, then keep user choice afterwards.
     if general.mobPercentagesMigrationVersion ~= MOB_PERCENTAGES_REENABLE_MIGRATION then
@@ -441,7 +462,9 @@ function KeystonePolaris:OnInitialize()
             progressBar = self:GetProgressBarOptions(),
             informGroup = self:GetInformGroupOptions(),
             modules = {
-                name = L["MODULES"],
+                name = function()
+                    return self:GetParentOptionFeatureLabel("modules", L["MODULES"])
+                end,
                 type = "group",
                 order = 6,
                 childGroups = "tree",
@@ -458,6 +481,7 @@ function KeystonePolaris:OnInitialize()
                         fontSize = "medium",
                     },
                     mobPercentages = self:GetMobPercentagesOptions(),
+                    roleMarker = self:GetRoleMarkerOptions(),
                     groupReminder = self:GetGroupReminderOptions(),
                 }
             },
@@ -504,6 +528,10 @@ function KeystonePolaris:OnInitialize()
     -- Initialize group reminder module if enabled
     if self.db.profile.groupReminder and self.db.profile.groupReminder.enabled then
         self:InitializeGroupReminder()
+    end
+
+    if self.db.profile.roleMarker and self.db.profile.roleMarker.enabled then
+        self:InitializeRoleMarker()
     end
 end
 
@@ -552,14 +580,6 @@ function KeystonePolaris:ShowHelp()
     for _, line in ipairs(lines) do
         addMessage(self:ColorizeCommands(line))
     end
-end
-
--- Refresh the addon display (called when options change)
-function KeystonePolaris:Refresh()
-    if self.UpdateColorCache then self:UpdateColorCache() end
-    if self.UpdatePercentageText then self:UpdatePercentageText() end
-    if self.ApplyTextLayout then self:ApplyTextLayout() end
-    if self.AdjustDisplayFrameSize then self:AdjustDisplayFrameSize() end
 end
 
 -- Handler for addon compartment button click
@@ -1340,6 +1360,11 @@ function KeystonePolaris:RefreshForActiveProfile()
     end
     if self.db.profile.groupReminder and self.db.profile.groupReminder.enabled then
         if self.InitializeGroupReminder then self:InitializeGroupReminder() end
+    end
+    if self.db.profile.roleMarker and self.db.profile.roleMarker.enabled then
+        if self.InitializeRoleMarker then self:InitializeRoleMarker() end
+    elseif self.DisableRoleMarker then
+        self:DisableRoleMarker()
     end
 end
 

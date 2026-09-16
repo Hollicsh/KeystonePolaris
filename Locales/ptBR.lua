@@ -47,6 +47,7 @@ L["MODULES_SUMMARY_HEADER"] = "Visão geral dos módulos" -- TODO: "Modules Over
 -- TODO: L["MODULES_SUMMARY_INTRO"] = "Quick tour of available modules:"
 -- TODO: L["MODULES_SUMMARY_MOB_PERCENTAGES_DESC"] = "Shows enemy-forces contribution directly on nameplates."
 -- TODO: L["MODULES_SUMMARY_GROUP_REMINDER_DESC"] = "Displays a quick reminder popup when you join a group, with key details such as the group name, dungeon, and the role you were accepted for."
+-- TODO: L["MODULES_SUMMARY_ROLE_MARKER_DESC"] = "Shows a clickable button to mark the tank and healer in your party. A click is required because Midnight protects raid markers."
 L["FINISHED"] = "Percentagem de masmorra concluída" -- TODO: "Dungeon Percentage Done"
 L["SECTION_DONE"] = "Seção concluída" -- TODO: "Section Finished"
 L["DONE"] = "Percentagem da seção concluída" -- TODO: "Section Percentage Done"
@@ -393,6 +394,8 @@ L["KPL_GR_INVITED"] = "Você foi convidado para" -- TODO: "You have been invited
 L["KPL_GR_AS_ROLE"] = "como %s" -- TODO: "as a %s"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "Mostrar popup novamente quando o grupo estiver cheio" -- TODO: "Show popup again when the group is full"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Reabrir a janela de lembrete quando seu grupo M+ atingir 5 jogadores." -- TODO: "Reopen the reminder window when your Mythic+ group reaches 5 players."
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER"] = "Show popup when the group is full (as group leader)"
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER_DESC"] = "Display the reminder window when your Mythic+ group reaches 5 players and you are the group leader."
 L["KPL_GR_CHAT_COMMAND_INFO"] = "Dica: use |cffffd100/kpl reminder|r para mostrar o último lembrete de grupo novamente." -- TODO: "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again."
 
 -- Group Reminder (Options)
@@ -412,3 +415,16 @@ L["KPL_GR_SHOW_GROUP"] = "Mostrar nome do grupo" -- TODO: "Show group name"
 L["KPL_GR_SHOW_DESC"] = "Mostrar descrição do grupo" -- TODO: "Show group description"
 L["KPL_GR_SHOW_ROLE"] = "Mostrar função escolhida" -- TODO: "Show applied role"
 -- TODO: L["KPL_GR_SHOW_PLAYSTYLE"] = "Show group playstyle"
+
+-- Role Marker
+-- TODO: L["KPL_RM_HEADER"] = "Role Marker"
+-- TODO: L["KPL_RM_DESC_LONG"] = "Shows a button to mark the tank and healer in your 5-player group. Click the button to apply the marks; addons cannot place them automatically in Midnight."
+-- TODO: L["KPL_RM_CLICK_REQUIRED"] = "A click is required: Blizzard protects raid markers, so this button runs a secure /tm macro."
+-- TODO: L["KPL_RM_MARKERS"] = "Markers"
+-- TODO: L["KPL_RM_MARKER_NONE"] = "-none-"
+-- TODO: L["KPL_RM_BUTTON"] = "Mark %s"
+-- TODO: L["KPL_RM_ROLES_AND"] = "%s & %s"
+-- TODO: L["KPL_RM_POSITION"] = "Position"
+-- TODO: L["KPL_RM_RESET_POSITION"] = "Reset position"
+-- TODO: L["KPL_RM_RESET_POSITION_DESC"] = "Move the Role Marker button back to the center of the screen."
+-- TODO: L["KPL_RM_TOOLTIP"] = "Click to mark the selected roles."

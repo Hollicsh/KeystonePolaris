@@ -68,9 +68,9 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "Murder Row",
         teleportID = 1286809,
         bosses = {
-            {1, 38.45, false, 1, 3101, "Kystia Manaheart", 252458}, -- Kystia Manaheart
-            {2, 38.45, false, 2, 3102, "Zaen Bladesorrow", 234649}, -- Zaen Bladesorrow
-            {3, 65.27, false, 3, 3103, "Xathuux the Annihilator", 234647}, -- Xathuux the Annihilator
+            {1, 29.16, false, 1, 3101, "Kystia Manaheart", 252458}, -- Kystia Manaheart
+            {2, 33.13, false, 2, 3102, "Zaen Bladesorrow", 234649}, -- Zaen Bladesorrow
+            {3, 62.14, false, 3, 3103, "Xathuux the Annihilator", 234647}, -- Xathuux the Annihilator
             {4, 100,   true,  4, 3104, "Lithiel Cinderfury", 237415}, -- Lithiel Cinderfury
         }
     },
@@ -81,8 +81,8 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "Den of Nalorakk",
         teleportID = 1286807,
         bosses = {
-            {1, 15.37, false, 1, 3207, "The Hoardmonger", 248710}, -- The Hoardmonger
-            {2, 68.12, false, 2, 3208, "Sentinel of Winter", 261053}, -- Sentinel of Winter
+            {1, 28.67, false, 1, 3207, "The Hoardmonger", 248710}, -- The Hoardmonger
+            {2, 70.64, true,  2, 3208, "Sentinel of Winter", 261053}, -- Sentinel of Winter
             {3, 100,   true,  3, 3209, "Nalorakk", 258877}, -- Nalorakk
         }
     },
@@ -93,9 +93,9 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "The Blinding Vale",
         teleportID = 1286801,
         bosses = {
-            {1, 40.47, false, 1, 3199, "Lightblossom Trinity", {243028, 243030, 243029}}, -- Lightblossom Trinity
-            {2, 58.8,  false, 2, 3200, "Ikuzz the Light Hunter", 244887}, -- Ikuzz the Light Hunter
-            {3, 71.99, false, 3, 3201, "Lightwarden Ruia", 245912}, -- Lightwarden Ruia
+            {1, 38.48, false, 1, 3199, "Lightblossom Trinity", {243028, 243030, 243029}}, -- Lightblossom Trinity
+            {2, 50.29, false, 2, 3200, "Ikuzz the Light Hunter", 244887}, -- Ikuzz the Light Hunter
+            {3, 69.53, false, 3, 3201, "Lightwarden Ruia", 245912}, -- Lightwarden Ruia
             {4, 100,   true,  4, 3202, "Ziekket", 247676}, -- Ziekket
         }
     },
@@ -106,8 +106,8 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "Voidscar Arena",
         teleportID = 1286804,
         bosses = {
-            {1, 44.24, false, 1, 3285, "Taz'Rah", 238887}, -- Taz'Rah
-            {2, 75.66, false, 2, 3286, "Atroxus", 239008}, -- Atroxus
+            {1, 35.5,  false, 1, 3285, "Taz'Rah", 238887}, -- Taz'Rah
+            {2, 60.98, false, 2, 3286, "Atroxus", 239008}, -- Atroxus
             {3, 100,   true,  3, 3287, "Charonus", 248015}, -- Charonus
         }
     },
@@ -118,8 +118,8 @@ KeystonePolaris.MIDNIGHT_DUNGEON_DATA = {
         displayName = "Altar of Fangs",
         teleportID = 1286812,
         bosses = {
-            {1, 36.5, false, 1, 3456, "Rav'i", 259445}, -- Rav'i
-            {2, 60.6, false, 2, 3457, "The Writhing Coil", 259446}, -- The Writhing Coil
+            {1, 44.06, false, 1, 3456, "Rav'i", 259445}, -- Rav'i
+            {2, 66.95, false, 2, 3457, "The Writhing Coil", 259446}, -- The Writhing Coil
             {3, 100,  true,  3, 3458, "Zul'jan", 259447}, -- Zul'jan
         }
     },

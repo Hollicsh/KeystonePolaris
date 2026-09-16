@@ -153,6 +153,7 @@ end
 
 -- Refresh the display with current settings
 function KeystonePolaris:Refresh()
+    if self.UpdateColorCache then self:UpdateColorCache() end
     if not self.displayFrame then return end
 
     -- Update frame position (skip during positioning mode — frame is being dragged)
@@ -193,8 +194,10 @@ function KeystonePolaris:Refresh()
             self.displayFrame:Show()
         else
             self.displayFrame:Hide()
-            return
         end
+    else
+        self.displayFrame:Show()
     end
-    self.displayFrame:Show()
+    if self.UpdatePercentageText then self:UpdatePercentageText() end
+    if self.AdjustDisplayFrameSize then self:AdjustDisplayFrameSize() end
 end
