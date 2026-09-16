@@ -362,6 +362,9 @@ function KeystonePolaris:OnInitialize()
     local general = self.db.profile.general
     -- Capture before CheckForNewRoutes overwrites lastVersionCheck on first install.
     self._hadPriorVersionCheck = (general.lastVersionCheck or "") ~= ""
+    if self.SeedOptionFeaturesIfNewInstall then
+        self:SeedOptionFeaturesIfNewInstall()
+    end
 
     -- Force-enable the returning feature once per profile, then keep user choice afterwards.
     if general.mobPercentagesMigrationVersion ~= MOB_PERCENTAGES_REENABLE_MIGRATION then
