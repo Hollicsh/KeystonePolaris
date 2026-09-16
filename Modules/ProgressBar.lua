@@ -1479,6 +1479,10 @@ function KeystonePolaris:DisableProgressBarPreview()
 
     if not self.progressBarFrame then return end
 
+    -- Preview paints fake milestone ticks on the live bar. UpdateProgressBar
+    -- skips rebuild when the dungeon key is unchanged, so drop the cache.
+    self._progressBarDungeonKey = nil
+
     if self.UpdateProgressBar then
         self:UpdateProgressBar()
     else
