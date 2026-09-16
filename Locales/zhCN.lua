@@ -393,6 +393,8 @@ L["KPL_GR_INVITED"] = "你已被邀请加入队伍，" -- TODO: "You have been i
 L["KPL_GR_AS_ROLE"] = "职责是 %s" -- TODO: "as a %s"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "满员后再次弹窗提醒" -- TODO: "Show popup again when the group is full"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "当团队满员后重新打开提醒窗口" -- TODO: "Reopen the reminder window when your Mythic+ group reaches 5 players."
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER"] = "Show popup when the group is full (as group leader)"
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER_DESC"] = "Display the reminder window when your Mythic+ group reaches 5 players and you are the group leader."
 L["KPL_GR_CHAT_COMMAND_INFO"] = "小贴士：使用|cffffd100/kpl reminder|r来再次打开团队提醒" -- TODO: "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again."
 
 -- Group Reminder (Options)

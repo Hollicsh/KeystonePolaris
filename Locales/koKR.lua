@@ -393,6 +393,8 @@ L["KPL_GR_INVITED"] = "파티에 초대 받았습니다." -- TODO: "You have bee
 L["KPL_GR_AS_ROLE"] = "포지션은 %s 입니다." -- TODO: "as a %s"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL"] = "그룹이 가득 찼을 때 팝업 다시 표시" -- TODO: "Show popup again when the group is full"
 L["KPL_GR_SHOW_POPUP_WHEN_FULL_DESC"] = "Mythic+ 그룹이 5명의 플레이어에게 도달하면 알림 창을 다시 엽니다." -- TODO: "Reopen the reminder window when your Mythic+ group reaches 5 players."
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER"] = "Show popup when the group is full (as group leader)"
+-- TODO: L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER_DESC"] = "Display the reminder window when your Mythic+ group reaches 5 players and you are the group leader."
 L["KPL_GR_CHAT_COMMAND_INFO"] = "팁: |cffffd100/kpl reminder|r 을 사용하여 마지막 그룹 알림을 다시 표시합니다." -- TODO: "Tip: use |cffffd100/kpl reminder|r to show the last group reminder again."
 
 -- Group Reminder (Options)

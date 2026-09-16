@@ -208,6 +208,53 @@ local GENERAL_PLAYSTYLE_TEXT_BY_VALUE = {
     [Enum.LFGEntryGeneralPlaystyle.Expert] = GROUP_FINDER_GENERAL_PLAYSTYLE4,
 }
 
+local function GetPlaystyleTextFromSource(source, activity)
+    if type(source) ~= "table" then return "" end
+    local generalPlaystyle = source.generalPlaystyle or source.playstyle or (activity and activity.playstyle)
+    local noneValue = Enum and Enum.LFGEntryGeneralPlaystyle and Enum.LFGEntryGeneralPlaystyle.None
+    local playstyleText = source.playstyleString
+    if not playstyleText and generalPlaystyle and generalPlaystyle ~= noneValue then
+        playstyleText = GENERAL_PLAYSTYLE_TEXT_BY_VALUE[generalPlaystyle]
+    end
+    return playstyleText or ""
+end
+
+local function ResolveTeleportForMapID(self, activityMapID)
+    local teleportSpellID = self.GetTeleportSpellForMapID and self:GetTeleportSpellForMapID(activityMapID) or nil
+    if not teleportSpellID then
+        local candidates = GetTeleportCandidatesForMapIDLocal(self, activityMapID)
+        if type(candidates) == "number" then
+            teleportSpellID = candidates
+        elseif type(candidates) == "table" then
+            teleportSpellID = candidates[1]
+        end
+    end
+
+    local teleportSpellUnknown = false
+    if teleportSpellID and IsSpellKnown and not IsSpellKnown(teleportSpellID) then
+        teleportSpellUnknown = true
+        teleportSpellID = nil
+    end
+    return teleportSpellID, teleportSpellUnknown
+end
+
+local function StoreLastGroupReminder(self, zone, groupName, comment, playstyleText, roleText, teleportSpellID, teleportSpellUnknown)
+    local reminderData = {
+        zone = zone,
+        groupName = groupName,
+        comment = comment,
+        playstyleText = playstyleText,
+        roleText = roleText,
+        teleportSpellID = teleportSpellID,
+        teleportSpellUnknown = teleportSpellUnknown,
+    }
+    self.lastGroupReminder = reminderData
+    if self.db and self.db.profile and self.db.profile.groupReminder then
+        self.db.profile.groupReminder.lastReminder = reminderData
+    end
+    return reminderData
+end
+
 -- Clickable chat link handler: opens the reminder popup again
 if not KeystonePolaris._KPL_ReminderChatLinkHooked then
     KeystonePolaris._KPL_ReminderChatLinkHooked = true
@@ -557,39 +604,8 @@ function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment,
 
     local roleText = GetAppliedRoleText(searchResultID)
     local _, body = BuildMessages(db, zone, title, roleText, playstyleText)
-
-    -- Resolve teleport spell for this dungeon
-    local teleportSpellID = self.GetTeleportSpellForMapID and self:GetTeleportSpellForMapID(activityMapID) or nil
-    if not teleportSpellID then
-        local candidates = GetTeleportCandidatesForMapIDLocal(self, activityMapID)
-        if type(candidates) == "number" then
-            teleportSpellID = candidates
-        elseif type(candidates) == "table" then
-            teleportSpellID = candidates[1]
-        end
-    end
-
-    -- Filter unknown teleport spell as early as possible
-    local teleportSpellUnknown = false
-    if teleportSpellID and IsSpellKnown and not IsSpellKnown(teleportSpellID) then
-        teleportSpellUnknown = true
-        teleportSpellID = nil
-    end
-
-    -- Store last reminder data (for chat link + command)
-    local reminderData = {
-        zone = zone,
-        groupName = title,
-        comment = comment,
-        playstyleText = playstyleText,
-        roleText = roleText,
-        teleportSpellID = teleportSpellID,
-        teleportSpellUnknown = teleportSpellUnknown,
-    }
-    self.lastGroupReminder = reminderData
-    if self.db and self.db.profile and self.db.profile.groupReminder then
-        self.db.profile.groupReminder.lastReminder = reminderData
-    end
+    local teleportSpellID, teleportSpellUnknown = ResolveTeleportForMapID(self, activityMapID)
+    StoreLastGroupReminder(self, zone, title, comment, playstyleText, roleText, teleportSpellID, teleportSpellUnknown)
 
     self.groupReminderPendingFullPopup = db.showPopupWhenGroupIsFull and true or nil
     self.groupReminderFullPopupShown = nil
@@ -620,10 +636,42 @@ function KeystonePolaris:ShowGroupReminder(searchResultID, title, zone, comment,
     end
 end
 
+function KeystonePolaris:CaptureActiveListingReminder()
+    local db = self.db and self.db.profile and self.db.profile.groupReminder
+    if not db or not db.enabled then return false end
+    if not C_LFGList then return false end
+    if C_LFGList.HasActiveEntryInfo and not C_LFGList.HasActiveEntryInfo() then return false end
+    if not C_LFGList.GetActiveEntryInfo then return false end
+
+    local entry = C_LFGList.GetActiveEntryInfo()
+    if not entry then return false end
+
+    local activityID = (entry.activityIDs and entry.activityIDs[1]) or entry.activityID
+    if not activityID or not IsMythicPlusActivity(activityID) then return false end
+
+    local activity = C_LFGList.GetActivityInfoTable and C_LFGList.GetActivityInfoTable(activityID)
+    if not activity then return false end
+
+    local title = entry.name or ""
+    local zone = activity.fullName or ""
+    local comment = entry.comment or ""
+    local playstyleText = GetPlaystyleTextFromSource(entry, activity)
+    local roleText = GetAppliedRoleText(nil)
+    local teleportSpellID, teleportSpellUnknown = ResolveTeleportForMapID(self, activity.mapID)
+    StoreLastGroupReminder(self, zone, title, comment, playstyleText, roleText, teleportSpellID, teleportSpellUnknown)
+
+    if db.showPopupWhenGroupIsFullAsLeader then
+        self.groupReminderPendingLeaderFullPopup = true
+    end
+    return true
+end
+
 function KeystonePolaris:InitializeGroupReminder()
     if self.groupReminderFrame then
         -- Ensure registration reflects current settings
         self:UpdateGroupReminderRegistration()
+        self:CaptureActiveListingReminder()
+        self:HandleGroupRosterUpdate()
         return
     end
 
@@ -631,6 +679,7 @@ function KeystonePolaris:InitializeGroupReminder()
     self.groupReminderFrame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
     self.groupReminderFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     self.groupReminderFrame:RegisterEvent("GROUP_LEFT")
+    self.groupReminderFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
 
     self.groupReminderFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "GROUP_LEFT" then
@@ -638,6 +687,11 @@ function KeystonePolaris:InitializeGroupReminder()
             return
         end
         if event == "GROUP_ROSTER_UPDATE" then
+            self:HandleGroupRosterUpdate()
+            return
+        end
+        if event == "LFG_LIST_ACTIVE_ENTRY_UPDATE" then
+            self:CaptureActiveListingReminder()
             self:HandleGroupRosterUpdate()
             return
         end
@@ -672,13 +726,7 @@ function KeystonePolaris:InitializeGroupReminder()
         local zone = activity.fullName or ""
         local comment = srd.comment or ""
         local mapID = activity.mapID
-        local generalPlaystyle = srd.generalPlaystyle or srd.playstyle or activity.playstyle
-        local noneValue = Enum and Enum.LFGEntryGeneralPlaystyle and Enum.LFGEntryGeneralPlaystyle.None
-        local playstyleText = srd.playstyleString
-        if not playstyleText and generalPlaystyle and generalPlaystyle ~= noneValue then
-            playstyleText = GENERAL_PLAYSTYLE_TEXT_BY_VALUE[generalPlaystyle]
-        end
-        playstyleText = playstyleText or ""
+        local playstyleText = GetPlaystyleTextFromSource(srd, activity)
         -- Delay slightly to allow group roster to update so UnitGroupRolesAssigned returns the accepted role
         C_Timer.After(0.2, function()
             self:ShowGroupReminder(searchResultID, title, zone, comment, mapID, playstyleText)
@@ -688,6 +736,9 @@ function KeystonePolaris:InitializeGroupReminder()
         -- Cleanup stored role for this application
         self.groupReminderRoleByResult[searchResultID] = nil
     end)
+
+    self:CaptureActiveListingReminder()
+    self:HandleGroupRosterUpdate()
 end
 
 function KeystonePolaris:DisableGroupReminder()
@@ -707,6 +758,7 @@ function KeystonePolaris:UpdateGroupReminderRegistration()
         self.groupReminderFrame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
         self.groupReminderFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
         self.groupReminderFrame:RegisterEvent("GROUP_LEFT")
+        self.groupReminderFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
     else
         self:DisableGroupReminder()
     end
@@ -721,6 +773,8 @@ end
 function KeystonePolaris:ResetGroupReminderTracking(clearLastReminder)
     self.groupReminderPendingFullPopup = nil
     self.groupReminderFullPopupShown = nil
+    self.groupReminderPendingLeaderFullPopup = nil
+    self.groupReminderLeaderFullPopupShown = nil
 
     if clearLastReminder then
         self.lastGroupReminder = nil
@@ -732,12 +786,25 @@ end
 
 function KeystonePolaris:HandleGroupRosterUpdate()
     local db = self.db and self.db.profile and self.db.profile.groupReminder
-    if not db or not db.enabled or not db.showPopupWhenGroupIsFull then return end
-    if not self.groupReminderPendingFullPopup or self.groupReminderFullPopupShown then return end
-    if not self.lastGroupReminder then return end
+    if not db or not db.enabled then return end
     if not IsCurrentGroupFull() then return end
 
-    self.groupReminderFullPopupShown = true
+    if db.showPopupWhenGroupIsFull and self.groupReminderPendingFullPopup and not self.groupReminderFullPopupShown and self.lastGroupReminder then
+        self.groupReminderFullPopupShown = true
+        self:ShowLastGroupReminder()
+        return
+    end
+
+    if not db.showPopupWhenGroupIsFullAsLeader then return end
+    if self.groupReminderLeaderFullPopupShown then return end
+    if not (UnitIsGroupLeader and UnitIsGroupLeader("player")) then return end
+
+    if not self.groupReminderPendingLeaderFullPopup or not self.lastGroupReminder then
+        self:CaptureActiveListingReminder()
+    end
+    if not self.groupReminderPendingLeaderFullPopup or not self.lastGroupReminder then return end
+
+    self.groupReminderLeaderFullPopupShown = true
     self:ShowLastGroupReminder()
 end
 
@@ -910,6 +977,25 @@ function KeystonePolaris:GetGroupReminderOptions()
                         self.groupReminderPendingFullPopup = nil
                         self.groupReminderFullPopupShown = nil
                     else
+                        self:HandleGroupRosterUpdate()
+                    end
+                end,
+                disabled = function() return not self.db.profile.groupReminder.enabled end,
+            },
+            showPopupWhenGroupIsFullAsLeader = {
+                name = L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER"] or "Show popup when the group is full (as group leader)",
+                desc = L["KPL_GR_SHOW_POPUP_WHEN_FULL_LEADER_DESC"] or "Display the reminder window when your listed Mythic+ group reaches 5 players while you are the group leader.",
+                type = "toggle",
+                width = "full",
+                order = 4.6,
+                get = function() return self.db.profile.groupReminder.showPopupWhenGroupIsFullAsLeader end,
+                set = function(_, v)
+                    self.db.profile.groupReminder.showPopupWhenGroupIsFullAsLeader = v
+                    if not v then
+                        self.groupReminderPendingLeaderFullPopup = nil
+                        self.groupReminderLeaderFullPopupShown = nil
+                    else
+                        self:CaptureActiveListingReminder()
                         self:HandleGroupRosterUpdate()
                     end
                 end,
