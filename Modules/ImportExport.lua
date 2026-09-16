@@ -1423,6 +1423,9 @@ function KeystonePolaris:BuildProfileSnapshot(scope)
     if profile.groupReminder then
         data.groupReminder = DeepCloneTable(profile.groupReminder, EXCLUDED_GROUP_REMINDER_KEYS)
     end
+    if profile.roleMarker then
+        data.roleMarker = DeepCloneTable(profile.roleMarker, nil)
+    end
     if profile.mobPercentages then
         data.mobPercentages = DeepCloneTable(profile.mobPercentages, nil)
     end
@@ -1453,6 +1456,7 @@ function KeystonePolaris:ApplyProfileSnapshot(targetName, importPayload, switchA
     if data.color then target.color = DeepCloneTable(data.color, nil) end
     if data.progressBar then target.progressBar = DeepCloneTable(data.progressBar, nil) end
     if data.groupReminder then target.groupReminder = DeepCloneTable(data.groupReminder, nil) end
+    if data.roleMarker then target.roleMarker = DeepCloneTable(data.roleMarker, nil) end
     if data.mobPercentages then target.mobPercentages = DeepCloneTable(data.mobPercentages, nil) end
     if scope == "full" and data.advanced then
         target.advanced = DeepCloneTable(data.advanced, nil)

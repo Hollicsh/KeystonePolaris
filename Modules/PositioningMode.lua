@@ -122,9 +122,82 @@ function KeystonePolaris:CreatePositioningToolbar()
 
     toolbar:Hide()
     self.positioningToolbar = toolbar
+    self:CreatePositioningOffsetPopup()
 end
 
-function KeystonePolaris:EnterPositioningMode()
+function KeystonePolaris:CreatePositioningOffsetPopup()
+    if self.positioningOffsetPopup then return self.positioningOffsetPopup end
+
+    local popup = CreateFrame("Frame", "KPL_PositioningOffsetPopup", UIParent, "BasicFrameTemplateWithInset")
+    popup:SetSize(200, 118)
+    popup:SetFrameStrata("TOOLTIP")
+    popup:SetFrameLevel(200)
+    popup:EnableMouse(true)
+    popup:SetMovable(true)
+    popup:SetClampedToScreen(true)
+    popup:RegisterForDrag("LeftButton")
+    popup:SetScript("OnDragStart", function() popup:StartMoving() end)
+    popup:SetScript("OnDragStop", function() popup:StopMovingOrSizing() end)
+    popup.TitleText:SetText(L["X_OFFSET"])
+
+    popup.CloseButton:SetScript("OnClick", function()
+        popup:Hide()
+    end)
+
+    local function MakeOffsetSlider(widgetName, label, y)
+        local offsetSlider = CreateFrame("Slider", widgetName, popup, "OptionsSliderTemplate")
+        offsetSlider:SetPoint("LEFT", popup, "LEFT", 16, 0)
+        offsetSlider:SetPoint("RIGHT", popup, "RIGHT", -16, 0)
+        offsetSlider:SetPoint("TOP", popup, "TOP", 0, y)
+        offsetSlider:SetHeight(17)
+        offsetSlider:SetValueStep(1)
+        offsetSlider:SetObeyStepOnDrag(true)
+        local offsetName = offsetSlider:GetName()
+        _G[offsetName .. "Low"]:SetText("")
+        _G[offsetName .. "High"]:SetText("")
+        _G[offsetName .. "Text"]:SetText(label .. ": 0")
+        return offsetSlider
+    end
+
+    local xSlider = MakeOffsetSlider("KPL_PosXOffset", L["X_OFFSET"], -36)
+    xSlider:SetScript("OnValueChanged", function(_, value)
+        if self._positioningOffsetSliderLock then return end
+        self:SetPositioningFocusOffset("xOffset", math.floor(value + 0.5))
+        _G[xSlider:GetName() .. "Text"]:SetText(L["X_OFFSET"] .. ": " .. math.floor(value + 0.5))
+    end)
+    popup.xOffsetSlider = xSlider
+
+    local ySlider = MakeOffsetSlider("KPL_PosYOffset", L["Y_OFFSET"], -72)
+    ySlider:SetScript("OnValueChanged", function(_, value)
+        if self._positioningOffsetSliderLock then return end
+        self:SetPositioningFocusOffset("yOffset", math.floor(value + 0.5))
+        _G[ySlider:GetName() .. "Text"]:SetText(L["Y_OFFSET"] .. ": " .. math.floor(value + 0.5))
+    end)
+    popup.yOffsetSlider = ySlider
+
+    if ElvUI then
+        local E = unpack(ElvUI)
+        if E and E.Skins then
+            local S = E:GetModule('Skins')
+            if S.HandleFrame then
+                pcall(S.HandleFrame, S, popup)
+            end
+            if S.HandleCloseButton and popup.CloseButton then
+                pcall(S.HandleCloseButton, S, popup.CloseButton)
+            end
+            if S.HandleSliderFrame then
+                S:HandleSliderFrame(xSlider)
+                S:HandleSliderFrame(ySlider)
+            end
+        end
+    end
+
+    popup:Hide()
+    self.positioningOffsetPopup = popup
+    return popup
+end
+
+function KeystonePolaris:EnterPositioningMode(focus)
     if not self.displayFrame then return end
 
     self._savedPosition = {
@@ -139,6 +212,9 @@ function KeystonePolaris:EnterPositioningMode()
             yOffset = self.db.profile.progressBar.yOffset,
         }
     end
+    if self.SaveRoleMarkerPositioningState then
+        self:SaveRoleMarkerPositioningState()
+    end
 
     self._testMode = true
     self._positioningMode = true
@@ -149,7 +225,10 @@ function KeystonePolaris:EnterPositioningMode()
     self.displayFrame:SetMovable(true)
     self.displayFrame:EnableMouse(true)
     self.displayFrame:RegisterForDrag("LeftButton")
-    self.displayFrame:SetScript("OnDragStart", function() self.displayFrame:StartMoving() end)
+    self.displayFrame:SetScript("OnDragStart", function()
+        self:SetPositioningFocus("display")
+        self.displayFrame:StartMoving()
+    end)
     self.displayFrame:SetScript("OnDragStop", function()
         self.displayFrame:StopMovingOrSizing()
         local centerX, centerY = self.displayFrame:GetCenter()
@@ -170,11 +249,18 @@ function KeystonePolaris:EnterPositioningMode()
 
         self.db.profile.general.xOffset = xOffset
         self.db.profile.general.yOffset = yOffset
+        self:RefreshPositioningOffsetSliders()
+    end)
+    self.displayFrame:SetScript("OnMouseUp", function(_, mouseButton)
+        if mouseButton == "LeftButton" or mouseButton == "RightButton" then
+            self:SetPositioningFocus("display")
+            self:ShowPositioningOffsetPopup()
+        end
     end)
 
     self.displayFrame:Show()
     if self.EnableProgressBarPreview then self:EnableProgressBarPreview() end
-    self:ShowPositioningBorder()
+    if self.BeginRoleMarkerPositioning then self:BeginRoleMarkerPositioning() end
     self.displayFrame:SetScript("OnSizeChanged", function() self:RefreshPositioningBorder() end)
 
     if self.positioningToolbar then
@@ -195,6 +281,7 @@ function KeystonePolaris:EnterPositioningMode()
 
     self:UpdatePositioningDim()
     self:UpdatePositioningGrid()
+    self:SetPositioningFocus(focus)
 end
 
 function KeystonePolaris:ExitPositioningMode(save)
@@ -209,6 +296,7 @@ function KeystonePolaris:ExitPositioningMode(save)
         self.displayFrame:RegisterForDrag()
         self.displayFrame:SetScript("OnDragStart", nil)
         self.displayFrame:SetScript("OnDragStop", nil)
+        self.displayFrame:SetScript("OnMouseUp", nil)
         self.displayFrame:SetScript("OnSizeChanged", nil)
     end
 
@@ -222,8 +310,12 @@ function KeystonePolaris:ExitPositioningMode(save)
         self.db.profile.progressBar.xOffset = self._savedProgressBarPosition.xOffset
         self.db.profile.progressBar.yOffset = self._savedProgressBarPosition.yOffset
     end
+    if self.FinishRoleMarkerPositioning then
+        self:FinishRoleMarkerPositioning(save)
+    end
     self._savedPosition = nil
     self._savedProgressBarPosition = nil
+    self._positioningFocus = nil
 
     self:HidePositioningBorder()
 
@@ -237,8 +329,13 @@ function KeystonePolaris:ExitPositioningMode(save)
         self.progressBarFrame:SetFrameStrata(self._prevProgressBarStrata)
         self._prevProgressBarStrata = nil
     end
+    if self.roleMarkerButton and self._prevRoleMarkerStrata then
+        self.roleMarkerButton:SetFrameStrata(self._prevRoleMarkerStrata)
+        self._prevRoleMarkerStrata = nil
+    end
 
     if self.positioningToolbar then self.positioningToolbar:Hide() end
+    if self.positioningOffsetPopup then self.positioningOffsetPopup:Hide() end
 
     if self.DisableProgressBarPreview then self:DisableProgressBarPreview() end
     self:UpdatePercentageText()
@@ -255,13 +352,152 @@ end
 -- Positioning Border (dashed bounding box)
 -- ---------------------------------------------------------------------------
 
+function KeystonePolaris:ResolvePositioningFocus(focus)
+    if focus == "roleMarker" then
+        local db = self.db and self.db.profile and self.db.profile.roleMarker
+        if db and db.enabled and self.roleMarkerButton then
+            return "roleMarker"
+        end
+    elseif focus == "progressBar" then
+        if self.GetProgressBarValue and self:GetProgressBarValue("enabled") and self.progressBarFrame then
+            return "progressBar"
+        end
+    end
+    return "display"
+end
+
+function KeystonePolaris:GetPositioningFocusFrame()
+    local focus = self._positioningFocus or "display"
+    if focus == "roleMarker" and self.roleMarkerButton then
+        return self.roleMarkerButton, false
+    end
+    if focus == "progressBar" and self.progressBarFrame then
+        return self.progressBarFrame, false
+    end
+    return self.displayFrame, true
+end
+
+function KeystonePolaris:GetPositioningFocusOffsets()
+    local focus = self._positioningFocus or "display"
+    if focus == "roleMarker" then
+        local db = self.db and self.db.profile and self.db.profile.roleMarker
+        return (db and db.xOffset) or 0, (db and db.yOffset) or 0
+    end
+    if focus == "progressBar" then
+        local pb = self.db and self.db.profile and self.db.profile.progressBar
+        return (pb and pb.xOffset) or 0, (self.GetProgressBarValue and self:GetProgressBarValue("yOffset")) or 0
+    end
+    local general = self.db and self.db.profile and self.db.profile.general
+    return (general and general.xOffset) or 0, (general and general.yOffset) or 0
+end
+
+function KeystonePolaris:SetPositioningFocusOffset(axis, value)
+    local focus = self._positioningFocus or "display"
+    if focus == "roleMarker" then
+        local db = self.db and self.db.profile and self.db.profile.roleMarker
+        if not db then return end
+        db[axis] = value
+        if self.ApplyRoleMarkerPosition then self:ApplyRoleMarkerPosition(true) end
+    elseif focus == "progressBar" then
+        local pb = self.db and self.db.profile and self.db.profile.progressBar
+        if not pb then return end
+        pb[axis] = value
+        if self.RefreshProgressBar then self:RefreshProgressBar() end
+    else
+        local general = self.db and self.db.profile and self.db.profile.general
+        if not general then return end
+        general[axis] = value
+        local df = self.displayFrame
+        if df then
+            df:ClearAllPoints()
+            df:SetPoint(general.position, UIParent, general.position, general.xOffset, general.yOffset)
+        end
+    end
+    self:RefreshPositioningBorder()
+end
+
+function KeystonePolaris:GetPositioningFocusTitle()
+    local focus = self._positioningFocus or "display"
+    if focus == "roleMarker" then
+        return L["KPL_RM_HEADER"]
+    end
+    if focus == "progressBar" then
+        return L["PROGRESS_BAR"]
+    end
+    return L["DISPLAY"]
+end
+
+function KeystonePolaris:AnchorPositioningOffsetPopup()
+    local popup = self.positioningOffsetPopup
+    if not popup then return end
+
+    local x, y = GetCursorPosition()
+    local scale = UIParent:GetEffectiveScale()
+    if not x or not y or not scale or scale == 0 then return end
+    x, y = x / scale, y / scale
+    popup:ClearAllPoints()
+    popup:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x + 4, y - 4)
+end
+
+function KeystonePolaris:RefreshPositioningOffsetSliders()
+    local popup = self.positioningOffsetPopup
+    if not popup or not popup.xOffsetSlider or not popup.yOffsetSlider then return end
+
+    local xOff, yOff = self:GetPositioningFocusOffsets()
+    local xMax = math.ceil(GetScreenWidth())
+    local yMax = math.ceil(GetScreenHeight())
+    self._positioningOffsetSliderLock = true
+    popup.xOffsetSlider:SetMinMaxValues(-xMax, xMax)
+    popup.xOffsetSlider:SetValue(xOff)
+    _G[popup.xOffsetSlider:GetName() .. "Text"]:SetText(L["X_OFFSET"] .. ": " .. math.floor(xOff + 0.5))
+    popup.yOffsetSlider:SetMinMaxValues(-yMax, yMax)
+    popup.yOffsetSlider:SetValue(yOff)
+    _G[popup.yOffsetSlider:GetName() .. "Text"]:SetText(L["Y_OFFSET"] .. ": " .. math.floor(yOff + 0.5))
+    self._positioningOffsetSliderLock = false
+    if popup.TitleText then
+        popup.TitleText:SetText(self:GetPositioningFocusTitle())
+    end
+end
+
+function KeystonePolaris:ShowPositioningOffsetPopup()
+    if not self._positioningMode then return end
+    if not self.positioningOffsetPopup then
+        self:CreatePositioningOffsetPopup()
+    end
+    self:RefreshPositioningOffsetSliders()
+    self.positioningOffsetPopup:Show()
+    self:AnchorPositioningOffsetPopup()
+end
+
+function KeystonePolaris:SetPositioningFocus(focus)
+    if not self._positioningMode then return end
+    self._positioningFocus = self:ResolvePositioningFocus(focus)
+    self:ShowPositioningBorder()
+    if self.positioningOffsetPopup then
+        self:RefreshPositioningOffsetSliders()
+    end
+end
+
 function KeystonePolaris:UpdatePositioningBorderAnimation()
     local anchor = self._borderAnchor
     local state = self._borderAnimationState
     if not (self._positioningMode and anchor and state and self._borderTexturePool) then return end
 
-    local w = state.width
-    local h = state.height
+    local target, useTextBounds = self:GetPositioningFocusFrame()
+    if target then
+        local layoutW, layoutH = self:LayoutPositioningBorderAnchor(target, useTextBounds, 4)
+        if layoutW then
+            state.width = layoutW
+            state.height = layoutH
+        end
+    end
+
+    local w = anchor:GetWidth() or state.width
+    local h = anchor:GetHeight() or state.height
+    if w > 0 then state.width = w end
+    if h > 0 then state.height = h end
+    w = state.width
+    h = state.height
     local dash = state.dash
     local gap = state.gap
     local thickness = state.thickness
@@ -325,36 +561,86 @@ function KeystonePolaris:UpdatePositioningBorderAnimation()
     end
 end
 
-function KeystonePolaris:ShowPositioningBorder()
-    if not self.displayFrame or not self.displayFrame.text then return end
-
-    local text = self.displayFrame.text
-    local w = text:GetStringWidth() or 0
-    local h = text:GetStringHeight() or 0
-    if w == 0 or h == 0 then return end
-
-    local pad = 4
-    w = w + pad * 2
-    h = h + pad * 2
-
-    if not self._borderAnchor then
-        self._borderAnchor = CreateFrame("Frame", nil, self.displayFrame)
+local function UnionFrameRect(left, right, top, bottom, frame)
+    if not frame or not frame:IsShown() then
+        return left, right, top, bottom
     end
+    local fl, fr, ft, fb = frame:GetLeft(), frame:GetRight(), frame:GetTop(), frame:GetBottom()
+    if not fl or not fr or not ft or not fb then
+        return left, right, top, bottom
+    end
+    return math.min(left, fl), math.max(right, fr), math.max(top, ft), math.min(bottom, fb)
+end
+
+function KeystonePolaris:LayoutPositioningBorderAnchor(target, useTextBounds, pad)
     local anchor = self._borderAnchor
+    if not anchor or not target then return end
+    pad = pad or 4
     anchor:ClearAllPoints()
 
-    local cfg = self.db.profile.general.mainDisplay
-    local align = (cfg and cfg.textAlign) or "CENTER"
-    local multi = cfg and cfg.multiLine
+    if useTextBounds then
+        local text = target.text
+        if not text then return end
+        local w = (text:GetStringWidth() or 0) + pad * 2
+        local h = (text:GetStringHeight() or 0) + pad * 2
+        if w <= pad * 2 or h <= pad * 2 then return end
 
-    if multi and align == "LEFT" then
-        anchor:SetPoint("TOPLEFT", text, "TOPLEFT", -pad, pad)
-    elseif multi and align == "RIGHT" then
-        anchor:SetPoint("TOPRIGHT", text, "TOPRIGHT", pad, pad)
-    else
-        anchor:SetPoint("CENTER", text, "CENTER", 0, 0)
+        local cfg = self.db.profile.general.mainDisplay
+        local align = (cfg and cfg.textAlign) or "CENTER"
+        local multi = cfg and cfg.multiLine
+        if multi and align == "LEFT" then
+            anchor:SetPoint("TOPLEFT", text, "TOPLEFT", -pad, pad)
+        elseif multi and align == "RIGHT" then
+            anchor:SetPoint("TOPRIGHT", text, "TOPRIGHT", pad, pad)
+        else
+            anchor:SetPoint("CENTER", text, "CENTER", 0, 0)
+        end
+        anchor:SetSize(w, h)
+        return w, h
     end
-    anchor:SetSize(w, h)
+
+    local left, right, top, bottom = target:GetLeft(), target:GetRight(), target:GetTop(), target:GetBottom()
+    if left and self._positioningFocus == "progressBar" then
+        left, right, top, bottom = UnionFrameRect(left, right, top, bottom, target.callout)
+    end
+
+    if left and right and top and bottom then
+        local tl, tr, tt, tb = target:GetLeft(), target:GetRight(), target:GetTop(), target:GetBottom()
+        local screenW = (tr and tl) and (tr - tl) or 0
+        local screenH = (tt and tb) and (tt - tb) or 0
+        local sx = (screenW > 0) and ((target:GetWidth() or screenW) / screenW) or 1
+        local sy = (screenH > 0) and ((target:GetHeight() or screenH) / screenH) or 1
+        local w = (right - left) * sx + pad * 2
+        local h = (top - bottom) * sy + pad * 2
+        if w <= pad * 2 or h <= pad * 2 then return end
+        anchor:SetPoint("TOPLEFT", target, "TOPLEFT", (left - tl) * sx - pad, (top - tt) * sy + pad)
+        anchor:SetSize(w, h)
+        return w, h
+    end
+
+    local w = (target:GetWidth() or 0) + pad * 2
+    local h = (target:GetHeight() or 0) + pad * 2
+    if w <= pad * 2 or h <= pad * 2 then return end
+    anchor:SetPoint("TOPLEFT", target, "TOPLEFT", -pad, pad)
+    anchor:SetPoint("BOTTOMRIGHT", target, "BOTTOMRIGHT", pad, -pad)
+    return w, h
+end
+
+function KeystonePolaris:ShowPositioningBorder()
+    local target, useTextBounds = self:GetPositioningFocusFrame()
+    if not target then return end
+
+    if not self._borderAnchor then
+        self._borderAnchor = CreateFrame("Frame", nil, target)
+    else
+        self._borderAnchor:SetParent(target)
+    end
+    local anchor = self._borderAnchor
+    anchor:SetFrameStrata(target:GetFrameStrata() or "TOOLTIP")
+    anchor:SetFrameLevel((target:GetFrameLevel() or 0) + 20)
+
+    local w, h = self:LayoutPositioningBorderAnchor(target, useTextBounds, 4)
+    if not w then return end
     anchor:Show()
 
     self._borderTexturePool = self._borderTexturePool or {}
@@ -420,6 +706,10 @@ function KeystonePolaris:UpdatePositioningDim()
             self._prevProgressBarStrata = self._prevProgressBarStrata or self.progressBarFrame:GetFrameStrata()
             self.progressBarFrame:SetFrameStrata("TOOLTIP")
         end
+        if self.roleMarkerButton then
+            self._prevRoleMarkerStrata = self._prevRoleMarkerStrata or self.roleMarkerButton:GetFrameStrata()
+            self.roleMarkerButton:SetFrameStrata("TOOLTIP")
+        end
     else
         if self.testDimOverlay then self.testDimOverlay:Hide() end
         if not (self.db.profile.general.positioningShowGrid and self._positioningMode) then
@@ -430,6 +720,10 @@ function KeystonePolaris:UpdatePositioningDim()
             if self.progressBarFrame and self._prevProgressBarStrata then
                 self.progressBarFrame:SetFrameStrata(self._prevProgressBarStrata)
                 self._prevProgressBarStrata = nil
+            end
+            if self.roleMarkerButton and self._prevRoleMarkerStrata then
+                self.roleMarkerButton:SetFrameStrata(self._prevRoleMarkerStrata)
+                self._prevRoleMarkerStrata = nil
             end
         end
     end
@@ -516,6 +810,10 @@ function KeystonePolaris:UpdatePositioningGrid()
         if self.progressBarFrame then
             self._prevProgressBarStrata = self._prevProgressBarStrata or self.progressBarFrame:GetFrameStrata()
             self.progressBarFrame:SetFrameStrata("TOOLTIP")
+        end
+        if self.roleMarkerButton then
+            self._prevRoleMarkerStrata = self._prevRoleMarkerStrata or self.roleMarkerButton:GetFrameStrata()
+            self.roleMarkerButton:SetFrameStrata("TOOLTIP")
         end
     else
         if self.gridOverlay then self.gridOverlay:Hide() end

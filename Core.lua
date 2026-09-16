@@ -35,6 +35,13 @@ for _, entry in ipairs(FONT_FLAG_OPTIONS) do
     KeystonePolaris.fontFlagPresetSorting[#KeystonePolaris.fontFlagPresetSorting + 1] = entry.key
 end
 
+function KeystonePolaris:GetFontFlagsForPreset(preset)
+    if preset and FONT_FLAG_PRESETS[preset] ~= nil then
+        return FONT_FLAG_PRESETS[preset]
+    end
+    return FONT_FLAG_PRESETS[self.DEFAULT_FONT_FLAG_PRESET]
+end
+
 function KeystonePolaris:GetFontFlagsPreset()
     local stored = self.db and self.db.profile and self.db.profile.text and self.db.profile.text.fontFlags
     if stored and FONT_FLAG_PRESETS[stored] ~= nil then
@@ -44,7 +51,7 @@ function KeystonePolaris:GetFontFlagsPreset()
 end
 
 function KeystonePolaris:GetFontFlags()
-    return FONT_FLAG_PRESETS[self:GetFontFlagsPreset()]
+    return self:GetFontFlagsForPreset(self:GetFontFlagsPreset())
 end
 
 function KeystonePolaris:GetFontFlagSelectValues()
@@ -125,12 +132,17 @@ local function BuildModulesOverviewDescription()
     local mobPercentagesDesc = L["MODULES_SUMMARY_MOB_PERCENTAGES_DESC"]
     local groupReminderTitle = L["KPL_GR_HEADER"]
     local groupReminderDesc = L["MODULES_SUMMARY_GROUP_REMINDER_DESC"]
+    local roleMarkerTitle = L["KPL_RM_HEADER"]
+    local roleMarkerDesc = L["MODULES_SUMMARY_ROLE_MARKER_DESC"]
 
     return table.concat({
         intro,
         "",
         featureIcon .. " |cffffd100" .. mobPercentagesTitle .. "|r",
         "   |cff9d9d9d" .. mobPercentagesDesc .. "|r",
+        "",
+        featureIcon .. " |cffffd100" .. roleMarkerTitle .. "|r",
+        "   |cff9d9d9d" .. roleMarkerDesc .. "|r",
         "",
         featureIcon .. " |cffffd100" .. groupReminderTitle .. "|r",
         "   |cff9d9d9d" .. groupReminderDesc .. "|r",
@@ -444,7 +456,9 @@ function KeystonePolaris:OnInitialize()
             progressBar = self:GetProgressBarOptions(),
             informGroup = self:GetInformGroupOptions(),
             modules = {
-                name = L["MODULES"],
+                name = function()
+                    return self:GetParentOptionFeatureLabel("modules", L["MODULES"])
+                end,
                 type = "group",
                 order = 6,
                 childGroups = "tree",
@@ -461,6 +475,7 @@ function KeystonePolaris:OnInitialize()
                         fontSize = "medium",
                     },
                     mobPercentages = self:GetMobPercentagesOptions(),
+                    roleMarker = self:GetRoleMarkerOptions(),
                     groupReminder = self:GetGroupReminderOptions(),
                 }
             },
@@ -507,6 +522,10 @@ function KeystonePolaris:OnInitialize()
     -- Initialize group reminder module if enabled
     if self.db.profile.groupReminder and self.db.profile.groupReminder.enabled then
         self:InitializeGroupReminder()
+    end
+
+    if self.db.profile.roleMarker and self.db.profile.roleMarker.enabled then
+        self:InitializeRoleMarker()
     end
 end
 
@@ -1343,6 +1362,11 @@ function KeystonePolaris:RefreshForActiveProfile()
     end
     if self.db.profile.groupReminder and self.db.profile.groupReminder.enabled then
         if self.InitializeGroupReminder then self:InitializeGroupReminder() end
+    end
+    if self.db.profile.roleMarker and self.db.profile.roleMarker.enabled then
+        if self.InitializeRoleMarker then self:InitializeRoleMarker() end
+    elseif self.DisableRoleMarker then
+        self:DisableRoleMarker()
     end
 end
 

@@ -99,6 +99,24 @@ KeystonePolaris.defaults = {
     }
 }
 
+-- Keys match RegisterOptionFeature specs; false means unseen until the panel is opened.
+KeystonePolaris.defaults.global = {
+    seenOptionFeatures = {
+        roleMarker = false,
+    },
+}
+
+KeystonePolaris.defaults.profile.roleMarker = {
+    enabled = true,
+    tankMarker = 6,
+    healerMarker = 5,
+    xOffset = 0,
+    yOffset = 0,
+    font = "Friz Quadrata TT",
+    fontFlags = KeystonePolaris.DEFAULT_FONT_FLAG_PRESET,
+    fontSize = 16,
+}
+
 KeystonePolaris.defaults.profile.groupReminder = {
     enabled = true,
     showPopup = true,
