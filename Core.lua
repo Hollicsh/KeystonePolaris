@@ -382,9 +382,7 @@ function KeystonePolaris:OnInitialize()
     local general = self.db.profile.general
     -- Capture before CheckForNewRoutes overwrites lastVersionCheck on first install.
     self._hadPriorVersionCheck = (general.lastVersionCheck or "") ~= ""
-    if self.SeedOptionFeaturesIfNewInstall then
-        self:SeedOptionFeaturesIfNewInstall()
-    end
+    self:SeedOptionFeaturesIfNewInstall()
 
     -- Force-enable the returning feature once per profile, then keep user choice afterwards.
     if general.mobPercentagesMigrationVersion ~= MOB_PERCENTAGES_REENABLE_MIGRATION then
@@ -582,14 +580,6 @@ function KeystonePolaris:ShowHelp()
     for _, line in ipairs(lines) do
         addMessage(self:ColorizeCommands(line))
     end
-end
-
--- Refresh the addon display (called when options change)
-function KeystonePolaris:Refresh()
-    if self.UpdateColorCache then self:UpdateColorCache() end
-    if self.UpdatePercentageText then self:UpdatePercentageText() end
-    if self.ApplyTextLayout then self:ApplyTextLayout() end
-    if self.AdjustDisplayFrameSize then self:AdjustDisplayFrameSize() end
 end
 
 -- Handler for addon compartment button click
