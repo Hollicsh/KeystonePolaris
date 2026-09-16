@@ -69,11 +69,20 @@ KeystonePolaris.constants = {
 }
 
 -- Track the last routes update version for prompting users
-KeystonePolaris.lastRoutesUpdate = "3.11" -- Set to true when routes have been updated
+KeystonePolaris.lastRoutesUpdate = "3.12" -- Set to true when routes have been updated
 
 -- Table to store dungeons with changed routes
 KeystonePolaris.CHANGED_ROUTES_DUNGEONS = {
-    ["NPX"] = true, -- Nexus-Point Xenas
+    ["MR"] = true, -- Murder Row
+    ["DoN"] = true, -- Den of Nalorakk
+    ["TBV"] = true, -- The Blinding Vale
+    ["VSA"] = true, -- Voidscar Arena
+    ["AoFa"] = true, -- Altar of Fangs
+    -- Dragonflight dungeons
+    ["RLP"] = true, -- Ruby Life Pools
+    -- Battle for Azeroth dungeons
+    ["ToSet"] = true, -- Temple of Sethraliss
+    ["KR"] = true, -- Kings' Rest
 }
 
 -- Initialize Ace3 configuration libraries
