@@ -19,8 +19,8 @@ KeystonePolaris.DF_DUNGEON_DATA = {
         mapID = 2521,
         teleportID = 393256,
         bosses = {
-            {1, 35.15, false, 1, 2488, "Melidrussa Chillworn", 188252}, -- Melidrussa Chillworn
-            {2, 76.97, false, 2, 2485, "Kokia Blazehoof", 189232}, -- Kokia Blazehoof
+            {1, 30.49, false, 1, 2488, "Melidrussa Chillworn", 188252}, -- Melidrussa Chillworn
+            {2, 74.77, true,  2, 2485, "Kokia Blazehoof", 189232}, -- Kokia Blazehoof
             {3, 100,   true,  3, 2503, "Kyrakka and Erkhart Stormvein", {199790, 199791}}, -- Kyrakka and Erkhart Stormvein
         }
     }

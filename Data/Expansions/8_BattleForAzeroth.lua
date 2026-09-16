@@ -42,9 +42,9 @@ KeystonePolaris.BFA_DUNGEON_DATA = {
         displayName = "Temple of Sethraliss",
         teleportID = 1286828,
         bosses = {
-            {1, 31.36, false, 1, 2142, "Adderis and Aspix", {262530, 262822}}, -- Adderis and Aspix
-            {2, 81.36, false, 2, 2143, "Merektha", 133384}, -- Merektha
-            {3, 96.82, false, 3, 2144, "Galvazzt", 263658}, -- Galvazzt
+            {1, 27.37, false, 1, 2142, "Adderis and Aspix", {262530, 262822}}, -- Adderis and Aspix
+            {2, 62.3,  false, 2, 2143, "Merektha", 133384}, -- Merektha
+            {3, 82.54, true, 3, 2144, "Galvazzt", 263658}, -- Galvazzt
             {4, 100,   true,  4, 2145, "Avatar of Sethraliss", 133392}, -- Avatar of Sethraliss
         }
     },
@@ -54,9 +54,9 @@ KeystonePolaris.BFA_DUNGEON_DATA = {
         displayName = "Kings' Rest",
         teleportID = 1286831,
         bosses = {
-            {1, 22.89, false, 1, 2165, "The Golden Serpent", 135322}, -- The Golden Serpent
-            {2, 61.95, false, 2, 2171, "Mchimba the Embalmer", 134993}, -- Mchimba the Embalmer
-            {3, 79.97, false, 3, 2170, "The Council of Tribes", {269811, 269808, 269810}}, -- The Council of Tribes
+            {1, 23.68, false, 1, 2165, "The Golden Serpent", 135322}, -- The Golden Serpent
+            {2, 68.76, false, 2, 2171, "Mchimba the Embalmer", 134993}, -- Mchimba the Embalmer
+            {3, 95.07, false, 3, 2170, "The Council of Tribes", {269811, 269808, 269810}}, -- The Council of Tribes
             {4, 100,   true,  4, 2172, "Dazar, The First King", 136160}, -- King Dazar
         }
     }
