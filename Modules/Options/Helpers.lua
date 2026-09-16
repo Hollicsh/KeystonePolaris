@@ -1,6 +1,6 @@
 local AddOnName, KeystonePolaris = ...;
 
-local pairs, select = pairs, select
+local pairs = pairs
 local gsub = string.gsub
 local strsplit = strsplit
 
@@ -115,8 +115,6 @@ local function ColumnRow(order, left, right, spacerWidth)
 end
 
 local function RefreshDisplayColorSettings(self)
-    if self.UpdateColorCache then self:UpdateColorCache() end
-    if self.UpdatePercentageText then self:UpdatePercentageText() end
     self:Refresh()
     RefreshPreviewWidget()
 end
@@ -233,7 +231,7 @@ local function InsertSortedDungeonOptions(addon, dungeonKeys, sharedOptions, tar
     local sortable = {}
     for _, key in ipairs(dungeonKeys) do
         local mapId = addon:GetDungeonIdByKey(key)
-        local name = (mapId and select(1, C_ChallengeMode.GetMapUIInfo(mapId))) or key
+        local name = (mapId and C_ChallengeMode.GetMapUIInfo(mapId)) or key
         table.insert(sortable, { key = key, name = name })
     end
     table.sort(sortable, function(a, b) return a.name < b.name end)
@@ -302,9 +300,6 @@ function KeystonePolaris:SeedOptionFeaturesIfNewInstall()
             seen[key] = true
         end
     end
-    for key in pairs(optionFeatures) do
-        seen[key] = true
-    end
 end
 
 local function GetAceConfigTreeSelected()
@@ -332,37 +327,39 @@ function KeystonePolaris:CancelQueuedOptionFeatureMark(key)
     end
 end
 
-function KeystonePolaris:CancelQueuedOptionFeatureMarks()
+local function CollectQueuedOptionFeatureKeys(self)
     local queued = self._optionFeatureMarkQueued
-    if not queued then return end
+    if not queued then return nil end
     local keys = {}
     for key in pairs(queued) do
         keys[#keys + 1] = key
     end
+    return keys
+end
+
+function KeystonePolaris:CancelQueuedOptionFeatureMarks()
+    local keys = CollectQueuedOptionFeatureKeys(self)
+    if not keys then return end
     for i = 1, #keys do
         self:CancelQueuedOptionFeatureMark(keys[i])
     end
 end
 
-function KeystonePolaris:CancelOptionFeatureMarkIfLeftPanel(key)
+local function CancelOptionFeatureMarkIfLeftPanel(self, key)
     if not (self._optionFeatureMarkQueued and self._optionFeatureMarkQueued[key]) then return end
     if IsOptionFeaturePanelSelected(key) then return end
     self:CancelQueuedOptionFeatureMark(key)
 end
 
 function KeystonePolaris:CancelOptionFeatureMarksIfLeftPanel()
-    local queued = self._optionFeatureMarkQueued
-    if not queued then return end
-    local keys = {}
-    for key in pairs(queued) do
-        keys[#keys + 1] = key
-    end
+    local keys = CollectQueuedOptionFeatureKeys(self)
+    if not keys then return end
     for i = 1, #keys do
-        self:CancelOptionFeatureMarkIfLeftPanel(keys[i])
+        CancelOptionFeatureMarkIfLeftPanel(self, keys[i])
     end
 end
 
-function KeystonePolaris:QueueMarkOptionFeatureSeen(key)
+local function QueueMarkOptionFeatureSeen(self, key)
     if not self:IsOptionFeatureUnseen(key) then return end
     self._optionFeatureMarkQueued = self._optionFeatureMarkQueued or {}
     if self._optionFeatureMarkQueued[key] then return end
@@ -384,7 +381,7 @@ function KeystonePolaris:OptionFeatureSeenProbe(key)
         order = -1,
         name = " ",
         hidden = function()
-            self:QueueMarkOptionFeatureSeen(key)
+            QueueMarkOptionFeatureSeen(self, key)
             return true
         end,
     }
@@ -499,10 +496,8 @@ KeystonePolaris.SetPreviewScenario = SetPreviewScenario
 KeystonePolaris.PreviewScenarioDropdown = PreviewScenarioDropdown
 KeystonePolaris.PreviewGroup = PreviewGroup
 KeystonePolaris.ColumnRow = ColumnRow
-KeystonePolaris.RefreshDisplayColorSettings = RefreshDisplayColorSettings
 KeystonePolaris.MakeStatusColorOption = MakeStatusColorOption
 KeystonePolaris.MakeMilestonePrefixColorProps = MakeMilestonePrefixColorProps
-KeystonePolaris.ShallowCloneTable = ShallowCloneTable
 KeystonePolaris.CloneTable = CloneTable
 KeystonePolaris.FormatSeasonDate = FormatSeasonDate
 KeystonePolaris.InsertSortedDungeonOptions = InsertSortedDungeonOptions
