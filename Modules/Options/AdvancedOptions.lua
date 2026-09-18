@@ -1292,7 +1292,6 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                 },
                 informRow = ColumnRow(7, {
                     type = "toggle",
-                    width = 1,
                     name = L["SHOW_INFORM_GROUP_BUTTON"],
                     desc = L["SHOW_INFORM_GROUP_BUTTON_DESC"],
                     hidden = function()
@@ -1311,7 +1310,6 @@ function KeystonePolaris:CreateDungeonOptions(dungeonKey, order)
                     end
                 }, {
                     type = "input",
-                    width = 1.1,
                     name = L["MILESTONE_INFORM_SUFFIX"],
                     desc = L["MILESTONE_INFORM_SUFFIX_DESC"],
                     hidden = function()

@@ -126,7 +126,7 @@ if not L then return end
 -- TODO: L["ADVANCED_SETTINGS"] = "Custom Routes"
 -- TODO: L["TANK_GROUP_HEADER"] = "Boss Percentages"
 -- TODO: L["ROLES_ENABLED"] = "Role(s) Required"
--- TODO: L["ROLES_ENABLED_DESC"] = "Select which roles will see the percentage and inform the group"
+-- TODO: L["ROLES_ENABLED_DESC"] = "Select which roles can use the Inform Group button"
 -- TODO: L["ENABLE"] = "Enable"
 -- TODO: L["ENABLE_ADVANCED_OPTIONS"] = "Enable custom routes"
 -- TODO: L["ADVANCED_OPTIONS_DESC"] = "This will allow you to set custom percentages to reach before each boss and to choose whether to inform the group of any missed percentage"

@@ -107,7 +107,7 @@ KeystonePolaris.defaults.global = {
 }
 
 KeystonePolaris.defaults.profile.roleMarker = {
-    enabled = true,
+    enabled = false,
     showOutsideInstance = false,
     tankMarker = 6,
     healerMarker = 5,
@@ -132,4 +132,17 @@ KeystonePolaris.defaults.profile.groupReminder = {
     lastReminder = nil,
     popupXOffset = 0,
     popupYOffset = 0,
+}
+
+KeystonePolaris.defaults.profile.mobPercentages = {
+    enabled = true,
+    fontSize = 8,
+    textColor = { r = 1, g = 1, b = 1, a = 1 },
+    position = "RIGHT",
+    showPercent = true,
+    showCount = false,
+    showTotal = false,
+    xOffset = 0,
+    yOffset = 0,
+    customFormat = "(%s)"
 }
