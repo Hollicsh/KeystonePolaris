@@ -119,9 +119,9 @@ end
 
 local function ColumnRow(order, left, right, spacerWidth)
     left.order = 1
-    left.width = left.width or 1.25
+    left.width = 1.25
     right.order = 2
-    right.width = right.width or 1.25
+    right.width = 1.1
     return {
         type = "group", inline = true, name = "", order = order,
         args = {
@@ -164,7 +164,6 @@ local function MakeMilestonePrefixColorProps(self, order)
         name = L["CUSTOM_MILESTONE_PREFIX_COLOR"],
         desc = L["CUSTOM_MILESTONE_PREFIX_COLOR_DESC"],
         type = "toggle",
-        width = 1.125,
         get = function()
             return self.db.profile.general.mainDisplay.customMilestonePrefixColor == true
         end,

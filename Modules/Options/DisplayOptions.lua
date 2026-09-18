@@ -310,7 +310,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["SHOW_REQUIRED_PREFIX"],
                 desc = L["SHOW_REQUIRED_PREFIX_DESC"],
                 type = "toggle",
-                width = 1.25,
                 get = function() return self.db.profile.general.mainDisplay.showRequiredText end,
                 set = function(_, value)
                     self.db.profile.general.mainDisplay.showRequiredText = value
@@ -321,7 +320,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["PREFIX"],
                 desc = L["REQUIRED_LABEL_DESC"],
                 type = "input",
-                width = 1,
                 get = function() return self.db.profile.general.mainDisplay.requiredLabel end,
                 set = function(_, value)
                     local text = type(value) == "string" and value or ""
@@ -338,7 +336,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["SHOW_SECTION_REQUIRED_PREFIX"],
                 desc = L["SHOW_SECTION_REQUIRED_PREFIX_DESC"],
                 type = "toggle",
-                width = 1.25,
                 get = function() return self.db.profile.general.mainDisplay.showSectionRequiredText end,
                 set = function(_, value)
                     self.db.profile.general.mainDisplay.showSectionRequiredText = value
@@ -349,7 +346,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["PREFIX"],
                 desc = L["SECTION_REQUIRED_LABEL_DESC"],
                 type = "input",
-                width = 1,
                 get = function() return self.db.profile.general.mainDisplay.sectionRequiredLabel end,
                 set = function(_, value)
                     local text = type(value) == "string" and value or ""
@@ -366,7 +362,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["SHOW_CURRENT_PERCENT"],
                 desc = L["SHOW_CURRENT_PERCENT_DESC"],
                 type = "toggle",
-                width = 1.25,
                 get = function() return self.db.profile.general.mainDisplay.showCurrentPercent end,
                 set = function(_, value)
                     self.db.profile.general.mainDisplay.showCurrentPercent = value
@@ -377,7 +372,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["PREFIX"],
                 desc = L["CURRENT_LABEL_DESC"],
                 type = "input",
-                width = 1,
                 get = function() return self.db.profile.general.mainDisplay.currentLabel end,
                 set = function(_, value)
                     local text = type(value) == "string" and value or ""
@@ -394,7 +388,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["SHOW_MILESTONES"],
                 desc = L["SHOW_MILESTONES_DESC"],
                 type = "toggle",
-                width = 1.25,
                 get = function() return self.db.profile.general.mainDisplay.showMilestones ~= false end,
                 set = function(_, value)
                     self.db.profile.general.mainDisplay.showMilestones = value and true or false
@@ -404,7 +397,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["PREFIX"],
                 desc = L["MILESTONE_DISPLAY_LABEL_DESC"],
                 type = "input",
-                width = 1,
                 get = function() return self.db.profile.general.mainDisplay.milestoneLabel or L["MILESTONE_DISPLAY_DEFAULT"] end,
                 set = function(_, value)
                     local text = type(value) == "string" and value or ""
@@ -420,7 +412,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["USE_MULTI_LINE_LAYOUT"],
                 desc = L["USE_MULTI_LINE_LAYOUT_DESC"],
                 type = "toggle",
-                width = 1.25,
                 get = function() return self.db.profile.general.mainDisplay.multiLine end,
                 set = function(_, value)
                     self.db.profile.general.mainDisplay.multiLine = value
@@ -445,7 +436,6 @@ function KeystonePolaris:GetDisplayOptions()
                 name = L["SINGLE_LINE_SEPARATOR"],
                 desc = L["SINGLE_LINE_SEPARATOR_DESC"],
                 type = "input",
-                width = 1,
                 get = function() return self.db.profile.general.mainDisplay.singleLineSeparator end,
                 set = function(_, value)
                     self.db.profile.general.mainDisplay.singleLineSeparator = tostring(value or " | ")

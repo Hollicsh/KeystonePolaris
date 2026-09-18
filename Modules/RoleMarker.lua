@@ -522,7 +522,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
             markersRow = ColumnRow(4, {
                 name = TANK,
                 type = "select",
-                width = 1.25,
                 values = RaidMarkerValues,
                 sorting = RAID_MARKER_SORTING,
                 get = function()
@@ -541,7 +540,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
             {
                 name = HEALER,
                 type = "select",
-                width = 1.1,
                 values = RaidMarkerValues,
                 sorting = RAID_MARKER_SORTING,
                 get = function()
@@ -566,7 +564,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 name = L["FONT"],
                 type = "select",
                 dialogControl = "LSM30_Font",
-                width = 1.25,
                 values = function()
                     return _G.AceGUIWidgetLSMlists and _G.AceGUIWidgetLSMlists.font or {}
                 end,
@@ -587,7 +584,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 name = L["FONT_SIZE"],
                 desc = L["FONT_SIZE_DESC"],
                 type = "range",
-                width = 1.1,
                 min = 8,
                 max = 32,
                 step = 1,
@@ -637,7 +633,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
             anchorRow = ColumnRow(6, {
                 name = L["SHOW_ANCHOR"],
                 type = "execute",
-                width = 1.25,
                 func = function()
                     HideUIPanel(SettingsPanel)
                     if self.EnterPositioningMode then
@@ -649,7 +644,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 name = L["KPL_RM_RESET_POSITION"],
                 desc = L["KPL_RM_RESET_POSITION_DESC"],
                 type = "execute",
-                width = 1.1,
                 func = function()
                     local db = GetRoleMarkerDB(self)
                     if not db then return end
@@ -662,7 +656,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
             offsetRow = ColumnRow(7, {
                 name = L["X_OFFSET"],
                 type = "range",
-                width = 1.25,
                 min = -math.ceil(GetScreenWidth()),
                 max = math.ceil(GetScreenWidth()),
                 step = 1,
@@ -680,7 +673,6 @@ function KeystonePolaris:GetRoleMarkerOptions()
             }, {
                 name = L["Y_OFFSET"],
                 type = "range",
-                width = 1.1,
                 min = -math.ceil(GetScreenHeight()),
                 max = math.ceil(GetScreenHeight()),
                 step = 1,

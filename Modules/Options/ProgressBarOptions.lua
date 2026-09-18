@@ -50,7 +50,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_ENABLED"],
                         desc = L["PROGRESS_BAR_ENABLED_DESC"],
                         type = "toggle",
-                        width = 1.5,
                         get = function() return self:GetProgressBarValue("enabled") end,
                         set = function(_, value)
                             self.db.profile.progressBar.enabled = value
@@ -59,7 +58,6 @@ function KeystonePolaris:GetProgressBarOptions()
                     }, {
                         name = L["SHOW_ANCHOR"],
                         type = "execute",
-                        width = 1,
                         func = function()
                             HideUIPanel(SettingsPanel)
                             if self.EnterPositioningMode then
@@ -161,7 +159,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         dialogControl = "LSM30_Statusbar",
                         values = AceGUIWidgetLSMlists.statusbar,
                         style = "dropdown",
-                        width = 1.5,
                         get = function() return self.db.profile.progressBar.barTexture end,
                         set = function(_, value)
                             self.db.profile.progressBar.barTexture = value
@@ -172,7 +169,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         type = "range",
                         min = 0, max = 1, step = 0.05,
                         isPercent = true,
-                        width = 1,
                         get = function() return self.db.profile.progressBar.backgroundColor.a or 0.7 end,
                         set = function(_, value)
                             self.db.profile.progressBar.backgroundColor.a = value
@@ -217,7 +213,6 @@ function KeystonePolaris:GetProgressBarOptions()
                     gradientColorRow = ColumnRow(3.6, {
                         name = L["PROGRESS_BAR_GRADIENT_START_COLOR"],
                         type = "color",
-                        width = 1,
                         hasAlpha = true,
                         disabled = function() return not self.db.profile.progressBar.useGradient end,
                         get = function()
@@ -231,7 +226,6 @@ function KeystonePolaris:GetProgressBarOptions()
                     }, {
                         name = L["PROGRESS_BAR_GRADIENT_END_COLOR"],
                         type = "color",
-                        width = 1,
                         hasAlpha = true,
                         disabled = function() return not self.db.profile.progressBar.useGradient end,
                         get = function()
@@ -315,7 +309,6 @@ function KeystonePolaris:GetProgressBarOptions()
                     borderStyleRow = ColumnRow(8, {
                         name = L["PROGRESS_BAR_BORDER_STYLE"],
                         type = "select",
-                        width = 1.2,
                         values = {
                             NONE = L["PROGRESS_BAR_BORDER_NONE"],
                             SOLID = L["PROGRESS_BAR_BORDER_SOLID"],
@@ -330,7 +323,6 @@ function KeystonePolaris:GetProgressBarOptions()
                     }, {
                         name = L["PROGRESS_BAR_BORDER_TEXTURE"],
                         type = "select",
-                        width = 1.05,
                         dialogControl = "LSM30_Border",
                         values = AceGUIWidgetLSMlists.border,
                         style = "dropdown",
@@ -346,7 +338,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_BORDER_COLOR"],
                         type = "color",
                         hasAlpha = true,
-                        width = 1.25,
                         disabled = function() return self:GetProgressBarValue("borderStyle") == "NONE" end,
                         get = function()
                             local c = self.db.profile.progressBar.borderColor
@@ -361,7 +352,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_BORDER_SIZE"],
                         type = "range",
                         min = 1, max = 16, step = 1,
-                        width = 1,
                         disabled = function() return self:GetProgressBarValue("borderStyle") == "NONE" end,
                         get = function() return self.db.profile.progressBar.borderSize end,
                         set = function(_, value)
@@ -379,7 +369,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_TICK_COLOR"],
                         type = "color",
                         hasAlpha = true,
-                        width = 1.25,
                         get = function()
                             local c = self.db.profile.progressBar.tickColor
                             return c.r, c.g, c.b, c.a
@@ -392,7 +381,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_TICK_WIDTH"],
                         type = "range",
                         min = 1, max = 4, step = 1,
-                        width = 1,
                         get = function() return self.db.profile.progressBar.tickWidth end,
                         set = function(_, value)
                             self.db.profile.progressBar.tickWidth = value
@@ -428,7 +416,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_MILESTONE_TICK_COLOR"],
                         type = "color",
                         hasAlpha = true,
-                        width = 1.25,
                         disabled = function() return not self:GetProgressBarValue("showMilestoneTicks") end,
                         get = function()
                             local c = self.db.profile.progressBar.milestoneTickColor
@@ -442,7 +429,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_MILESTONE_TICK_WIDTH"],
                         type = "range",
                         min = 1, max = 3, step = 1,
-                        width = 1,
                         disabled = function() return not self:GetProgressBarValue("showMilestoneTicks") end,
                         get = function() return self.db.profile.progressBar.milestoneTickWidth or 1 end,
                         set = function(_, value)
@@ -455,21 +441,21 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["CALLOUT"],
                         order = 13,
                     },
-                    showCallout = {
+                    calloutRow = ColumnRow(14, {
                         name = L["PROGRESS_BAR_SHOW_CALLOUT"],
                         desc = L["PROGRESS_BAR_SHOW_CALLOUT_DESC"],
                         type = "toggle",
-                        order = 14,
+                        width = 1.25,
                         get = function() return self:GetProgressBarValue("showCallout") end,
                         set = function(_, value)
                             self.db.profile.progressBar.showCallout = value
                             if self.ApplyProgressBarCallout then self:ApplyProgressBarCallout() end
                         end,
                     },
-                    calloutPosition = {
+                    {
                         name = L["PROGRESS_BAR_CALLOUT_POSITION"],
                         type = "select",
-                        order = 15,
+                        width = 1.1,
                         disabled = function() return not self:GetProgressBarValue("showCallout") end,
                         values = {
                             ABOVE = L["PROGRESS_BAR_CALLOUT_ABOVE"],
@@ -480,7 +466,7 @@ function KeystonePolaris:GetProgressBarOptions()
                             self.db.profile.progressBar.calloutPosition = value
                             if self.ApplyProgressBarCallout then self:ApplyProgressBarCallout() end
                         end,
-                    },
+                    }),
                     calloutFontRow = ColumnRow(16, {
                         name = L["PROGRESS_BAR_CALLOUT_FONT"],
                         type = "select",
@@ -511,7 +497,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_CALLOUT_TEXT_COLOR"],
                         type = "color",
                         hasAlpha = true,
-                        width = 1,
                         disabled = function() return not self:GetProgressBarValue("showCallout") end,
                         get = function()
                             local c = self.db.profile.progressBar.calloutTextColor
@@ -525,7 +510,6 @@ function KeystonePolaris:GetProgressBarOptions()
                         name = L["PROGRESS_BAR_CALLOUT_BG_COLOR"],
                         type = "color",
                         hasAlpha = true,
-                        width = 1,
                         disabled = function() return not self:GetProgressBarValue("showCallout") end,
                         get = function()
                             local c = self.db.profile.progressBar.calloutBackgroundColor
