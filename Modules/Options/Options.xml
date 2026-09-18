@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
   <Script file="Helpers.lua"/>
+  <Script file="RoleMarkerOptions.lua"/>
   <Script file="Defaults.lua"/>
   <Script file="DisplayOptions.lua"/>
   <Script file="ProgressBarOptions.lua"/>
