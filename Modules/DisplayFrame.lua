@@ -181,23 +181,7 @@ function KeystonePolaris:Refresh()
     -- Update dungeon data with advanced options if enabled
     if self.UpdateDungeonData then self:UpdateDungeonData() end
 
-    -- Show/hide based on enabled state
-    local leaderEnabled   = self.db.profile.general.rolesEnabled.LEADER
-    local isLeader        = UnitIsGroupLeader("player")
-    local role            = UnitGroupRolesAssigned("player")   -- "TANK", "HEALER", "DAMAGER", ou "NONE"
-    local roleEnabled     = self.db.profile.general.rolesEnabled[role]
-
-    local shouldShow = (leaderEnabled and isLeader) or roleEnabled or role == "NONE"
-
-    if not shouldShow then
-        if self._testMode then
-            self.displayFrame:Show()
-        else
-            self.displayFrame:Hide()
-        end
-    else
-        self.displayFrame:Show()
-    end
+    self.displayFrame:Show()
     if self.UpdatePercentageText then self:UpdatePercentageText() end
     if self.AdjustDisplayFrameSize then self:AdjustDisplayFrameSize() end
 end
