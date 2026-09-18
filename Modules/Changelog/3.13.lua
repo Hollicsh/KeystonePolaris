@@ -10,11 +10,11 @@ KeystonePolaris.Changelog["3.13"] = {
         ["zhTW"] = {},
         ["enUS"] = {
             title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t Version 3.13 - Inform display, Role Marker default, and settings|r",
-            text = "Version 3.13 keeps [Text Display] visible when [Role(s) Required] does not match your role: only the [Inform Group] button is filtered. [Role Marker] is off by default. Changing [Progress Bar] options should feel smoother.",
+            text = "Version 3.13 keeps [Text Display] visible when [Role(s) Required] does not match your role: only the [Inform Group] button is filtered. [Role Marker] is off by default. Changing [Progress Bar] options should feel smoother. Feedback on [GitHub] would be appreciated and would help me a lot!",
         },
         ["frFR"] = {
             title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t Version 3.13 - Affichage Inform, Marqueur de rôles et paramètres|r",
-            text = "La version 3.13 garde l'[Affichage du texte] visible lorsque [Role(s) nécessaire(s)] ne correspond pas à votre rôle : seul le bouton [Informer le groupe] est filtré. Le [Marqueur de rôles] est désactivé par défaut. Changer les options de la [Barre de progression] devrait sembler plus fluide.",
+            text = "La version 3.13 garde l'[Affichage du texte] visible lorsque [Role(s) nécessaire(s)] ne correspond pas à votre rôle : seul le bouton [Informer le groupe] est filtré. Le [Marqueur de rôles] est désactivé par défaut. Changer les options de la [Barre de progression] devrait sembler plus fluide. Un retour sur [GitHub] serait apprécié et m'aiderait beaucoup!",
         },
         ["koKR"] = {},
         ["ruRU"] = {},
@@ -72,11 +72,11 @@ KeystonePolaris.Changelog["3.13"] = {
         ["zhTW"] = {},
         ["enUS"] = {
             "[Role Marker] is now off by default. Profiles that already had it enabled are unchanged.",
-            "Changing [Progress Bar] options should feel smoother.",
+            "Changing [Progress Bar] options should feel smoother. Feedback on [GitHub] would be appreciated and would help me a lot!"
         },
         ["frFR"] = {
             "Le [Marqueur de rôles] est désormais désactivé par défaut. Les profils qui l'avaient déjà activé ne changent pas.",
-            "Changer les options de la [Barre de progression] devrait sembler plus fluide.",
+            "Changer les options de la [Barre de progression] devrait sembler plus fluide. Un retour sur [GitHub] serait apprécié et m'aiderait beaucoup!",
         },
         ["koKR"] = {},
         ["ruRU"] = {},
