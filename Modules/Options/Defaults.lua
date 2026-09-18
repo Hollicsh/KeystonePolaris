@@ -133,3 +133,16 @@ KeystonePolaris.defaults.profile.groupReminder = {
     popupXOffset = 0,
     popupYOffset = 0,
 }
+
+KeystonePolaris.defaults.profile.mobPercentages = {
+    enabled = true,
+    fontSize = 8,
+    textColor = { r = 1, g = 1, b = 1, a = 1 },
+    position = "RIGHT",
+    showPercent = true,
+    showCount = false,
+    showTotal = false,
+    xOffset = 0,
+    yOffset = 0,
+    customFormat = "(%s)"
+}
