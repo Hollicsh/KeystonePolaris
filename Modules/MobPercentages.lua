@@ -414,7 +414,7 @@ function KeystonePolaris:GetMobPercentagesOptions()
                         hasAlpha = true,
                         get = function() return self.db.profile.mobPercentages.textColor.r, self.db.profile.mobPercentages.textColor.g, self.db.profile.mobPercentages.textColor.b, self.db.profile.mobPercentages.textColor.a end,
                         set = function(_, r, g, b, a)
-                            self.db.profile.mobPercentages.textColor = {r = r, g = g, b = b, a = a}
+                            KeystonePolaris.SetColorTable(self.db.profile.mobPercentages.textColor, r, g, b, a)
                             for _, frame in pairs(self.nameplateTextFrames or {}) do
                                 frame.text:SetTextColor(r, g, b, a)
                             end

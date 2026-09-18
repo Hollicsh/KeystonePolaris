@@ -402,7 +402,7 @@ function KeystonePolaris:SetPositioningFocusOffset(axis, value)
         local pb = self.db and self.db.profile and self.db.profile.progressBar
         if not pb then return end
         pb[axis] = value
-        if self.RefreshProgressBar then self:RefreshProgressBar() end
+        if self.ApplyProgressBarPosition then self:ApplyProgressBarPosition() end
     else
         local general = self.db and self.db.profile and self.db.profile.general
         if not general then return end
@@ -677,9 +677,18 @@ function KeystonePolaris:HidePositioningBorder()
 end
 
 function KeystonePolaris:RefreshPositioningBorder()
-    if self._positioningMode then
-        self:ShowPositioningBorder()
+    if not self._positioningMode then return end
+
+    if self._borderAnchor and self._borderAnimationState then
+        local target, useTextBounds = self:GetPositioningFocusFrame()
+        if target then
+            self:LayoutPositioningBorderAnchor(target, useTextBounds, 4)
+            self:UpdatePositioningBorderAnimation()
+        end
+        return
     end
+
+    self:ShowPositioningBorder()
 end
 
 -- ---------------------------------------------------------------------------

@@ -519,10 +519,10 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 type = "header",
                 name = L["KPL_RM_MARKERS"],
             },
-            tankMarker = {
+            markersRow = ColumnRow(4, {
                 name = TANK,
                 type = "select",
-                order = 4,
+                width = 1.25,
                 values = RaidMarkerValues,
                 sorting = RAID_MARKER_SORTING,
                 get = function()
@@ -538,10 +538,10 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 end,
                 disabled = IsRoleMarkerDisabled,
             },
-            healerMarker = {
+            {
                 name = HEALER,
                 type = "select",
-                order = 4.5,
+                width = 1.1,
                 values = RaidMarkerValues,
                 sorting = RAID_MARKER_SORTING,
                 get = function()
@@ -556,16 +556,17 @@ function KeystonePolaris:GetRoleMarkerOptions()
                     self:UpdateRoleMarkerState()
                 end,
                 disabled = IsRoleMarkerDisabled,
-            },
+            }),
             appearanceHeader = {
                 order = 4.8,
                 type = "header",
                 name = L["APPEARANCE"],
             },
-            font = {
+            fontRow = ColumnRow(4.5, {
                 name = L["FONT"],
                 type = "select",
                 dialogControl = "LSM30_Font",
+                width = 1.25,
                 values = function()
                     return _G.AceGUIWidgetLSMlists and _G.AceGUIWidgetLSMlists.font or {}
                 end,
@@ -578,15 +579,15 @@ function KeystonePolaris:GetRoleMarkerOptions()
                     local db = GetRoleMarkerDB(self)
                     if not db then return end
                     db.font = value
-                    self:UpdateRoleMarkerState()
+                    self:RefreshRoleMarkerIcons()
                 end,
                 disabled = IsRoleMarkerDisabled,
             },
-            fontSize = {
+            {
                 name = L["FONT_SIZE"],
                 desc = L["FONT_SIZE_DESC"],
                 type = "range",
-                order = 4.9,
+                width = 1.1,
                 min = 8,
                 max = 32,
                 step = 1,
@@ -598,14 +599,15 @@ function KeystonePolaris:GetRoleMarkerOptions()
                     local db = GetRoleMarkerDB(self)
                     if not db then return end
                     db.fontSize = value
-                    self:UpdateRoleMarkerState()
+                    self:RefreshRoleMarkerIcons()
                 end,
                 disabled = IsRoleMarkerDisabled,
-            },
+            }),
             fontFlags = {
                 name = L["FONT_FLAGS"],
                 type = "select",
                 order = 4.95,
+                width = 1.25,
                 sorting = KeystonePolaris.fontFlagPresetSorting,
                 values = function()
                     return self:GetFontFlagSelectValues()
@@ -623,7 +625,7 @@ function KeystonePolaris:GetRoleMarkerOptions()
                     local db = GetRoleMarkerDB(self)
                     if not db then return end
                     db.fontFlags = value or KeystonePolaris.DEFAULT_FONT_FLAG_PRESET
-                    self:UpdateRoleMarkerState()
+                    self:RefreshRoleMarkerIcons()
                 end,
                 disabled = IsRoleMarkerDisabled,
             },
@@ -635,6 +637,7 @@ function KeystonePolaris:GetRoleMarkerOptions()
             anchorRow = ColumnRow(6, {
                 name = L["SHOW_ANCHOR"],
                 type = "execute",
+                width = 1.25,
                 func = function()
                     HideUIPanel(SettingsPanel)
                     if self.EnterPositioningMode then
@@ -646,6 +649,7 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 name = L["KPL_RM_RESET_POSITION"],
                 desc = L["KPL_RM_RESET_POSITION_DESC"],
                 type = "execute",
+                width = 1.1,
                 func = function()
                     local db = GetRoleMarkerDB(self)
                     if not db then return end
@@ -655,9 +659,10 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 end,
                 disabled = IsRoleMarkerDisabled,
             }),
-            offsetRow = ColumnRow(6.5, {
+            offsetRow = ColumnRow(7, {
                 name = L["X_OFFSET"],
                 type = "range",
+                width = 1.25,
                 min = -math.ceil(GetScreenWidth()),
                 max = math.ceil(GetScreenWidth()),
                 step = 1,
@@ -675,6 +680,7 @@ function KeystonePolaris:GetRoleMarkerOptions()
             }, {
                 name = L["Y_OFFSET"],
                 type = "range",
+                width = 1.1,
                 min = -math.ceil(GetScreenHeight()),
                 max = math.ceil(GetScreenHeight()),
                 step = 1,
