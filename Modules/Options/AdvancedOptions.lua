@@ -702,7 +702,14 @@ function KeystonePolaris:GetAdvancedOptions()
             return defaults and defaults[dungeonKey] or nil
         end
 
-        local expansionTitle = "|cffffffff" .. expansion.name .. "|r"
+        local expansionPrefix = expansion.id .. "_"
+        local isCurrentExpansion = currentSeasonId and (
+            currentSeasonId == expansion.id
+            or currentSeasonId:sub(1, #expansionPrefix) == expansionPrefix
+        )
+        -- Pastel purple marks the live expansion in the Custom Routes tree.
+        local expansionTitleColor = isCurrentExpansion and "|cffc4a5e8" or "|cffffffff"
+        local expansionTitle = expansionTitleColor .. expansion.name .. "|r"
         args[sectionKey] = {
             name = expansionTitle,
             type = "group",
