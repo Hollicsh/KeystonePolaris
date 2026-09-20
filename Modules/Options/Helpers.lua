@@ -491,6 +491,28 @@ function KeystonePolaris:OnOptionFeatureTreeRefreshed(tree)
     end
 end
 
+-- AceConfig select groups (Custom Routes seasons/expansions) use DropdownGroup
+-- titletext at GameFontNormal 18px. Changelog uses the same widget on another
+-- appName; only enlarge titles for this addon's main options table.
+local DROPDOWN_TITLE_HEIGHT = 22
+local DROPDOWN_TITLE_RIGHT_PAD = 210
+
+local function ResetKplDropdownGroupTitle(group)
+    local titletext = group.titletext
+    if not titletext then return end
+    titletext:SetFontObject(GameFontNormal)
+    titletext:SetHeight(18)
+    titletext:SetPoint("TOPRIGHT", -4, -5)
+end
+
+local function ApplyKplDropdownGroupTitle(group)
+    local titletext = group.titletext
+    if not titletext then return end
+    titletext:SetFontObject(GameFontHighlightLarge)
+    titletext:SetHeight(DROPDOWN_TITLE_HEIGHT)
+    titletext:SetPoint("TOPRIGHT", -DROPDOWN_TITLE_RIGHT_PAD, -5)
+end
+
 if not AceGUI._kplOptionFeatureCreateHook then
     AceGUI._kplOptionFeatureCreateHook = true
     local origCreate = AceGUI.Create
@@ -503,6 +525,17 @@ if not AceGUI._kplOptionFeatureCreateHook then
                     KeystonePolaris:OnOptionFeatureTreeRefreshed(tree)
                 end
             end)
+        elseif widgetType == "DropdownGroup" and widget and not widget._kplDropdownTitleHook then
+            widget._kplDropdownTitleHook = true
+            hooksecurefunc(widget, "OnAcquire", ResetKplDropdownGroupTitle)
+            local function TryApplyKplDropdownTitle(group)
+                if group.GetUserData and group:GetUserData("appName") == AddOnName then
+                    ApplyKplDropdownGroupTitle(group)
+                end
+            end
+            hooksecurefunc(widget, "SetTitle", TryApplyKplDropdownTitle)
+            -- AceConfig SetTitle runs before InjectInfo; SetGroupList is after.
+            hooksecurefunc(widget, "SetGroupList", TryApplyKplDropdownTitle)
         end
         return widget
     end

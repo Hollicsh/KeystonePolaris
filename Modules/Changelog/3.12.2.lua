@@ -68,9 +68,11 @@ KeystonePolaris.Changelog["3.12.2"] = {
         ["zhTW"] = {},
         ["enUS"] = {
             "Unread option panels now use the same NEW badge as Blizzard Settings, instead of the yellow exclamation icon. It currently marks [Role Marker], and [Modules] while that folder is collapsed.",
+            "Season and expansion titles in [Custom Routes] are larger on the right-hand page.",
         },
         ["frFR"] = {
             "Les panneaux d'options non lus utilisent le même badge NEW que les Réglages Blizzard, à la place du point d'exclamation jaune. Pour l'instant, il signale le [Marqueur de rôles], et [Modules] tant que le dossier est replié.",
+            "Les titres de saison et d'extension dans les [Routes personnalisées] sont plus grands sur la page de droite.",
         },
         ["koKR"] = {},
         ["ruRU"] = {},
