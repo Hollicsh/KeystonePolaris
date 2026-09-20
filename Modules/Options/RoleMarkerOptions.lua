@@ -97,6 +97,25 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 end,
                 disabled = IsRoleMarkerDisabled,
             },
+            showTitle = {
+                name = L["KPL_RM_SHOW_TITLE"],
+                desc = L["KPL_RM_SHOW_TITLE_DESC"],
+                type = "toggle",
+                width = "full",
+                order = 1.6,
+                get = function()
+                    local db = GetRoleMarkerDB(self)
+                    if not db or db.showTitle == nil then return true end
+                    return db.showTitle and true or false
+                end,
+                set = function(_, value)
+                    local db = GetRoleMarkerDB(self)
+                    if not db then return end
+                    db.showTitle = value and true or false
+                    self:UpdateRoleMarkerState()
+                end,
+                disabled = IsRoleMarkerDisabled,
+            },
             clickRequired = {
                 order = 2,
                 type = "description",

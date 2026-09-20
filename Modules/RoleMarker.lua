@@ -112,21 +112,36 @@ local function ShouldApplyRoleMark(unit, marker)
     return current ~= marker
 end
 
-local function ApplyRoleMarkerBackdrop(btn)
+local ROLE_MARKER_TITLE_PAD_X = 4
+local ROLE_MARKER_TITLE_GAP = 4
+
+local function IsRoleMarkerTitleEnabled(db)
+    if not db or db.showTitle == nil then return true end
+    return db.showTitle and true or false
+end
+
+local function ApplyRoleMarkerBackdrop(frame)
+    if not frame then return end
     local backdrop = {
         bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
         edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
         tile = true, tileSize = 16, edgeSize = 1,
     }
-    if btn.SetBackdrop then
-        btn:SetBackdrop(backdrop)
-        btn:SetBackdropColor(0, 0, 0, 0.7)
-        btn:SetBackdropBorderColor(1, 0.82, 0, 1)
+    if frame.SetBackdrop then
+        frame:SetBackdrop(backdrop)
+        frame:SetBackdropColor(0, 0, 0, 0.7)
+        frame:SetBackdropBorderColor(1, 0.82, 0, 1)
     elseif BackdropTemplateMixin and BackdropTemplateMixin.SetBackdrop then
-        BackdropTemplateMixin.SetBackdrop(btn, backdrop)
-        btn:SetBackdropColor(0, 0, 0, 0.7)
-        btn:SetBackdropBorderColor(1, 0.82, 0, 1)
+        BackdropTemplateMixin.SetBackdrop(frame, backdrop)
+        frame:SetBackdropColor(0, 0, 0, 0.7)
+        frame:SetBackdropBorderColor(1, 0.82, 0, 1)
     end
+end
+
+local function GetRoleMarkerTitleText()
+    local headerText = L["KPL_RM_HEADER"] or "Role Marker"
+    local addonName = (KeystonePolaris.GetGradientAddonName and KeystonePolaris:GetGradientAddonName()) or "Keystone Polaris"
+    return addonName .. "|r - |cffffd700" .. headerText .. "|r"
 end
 
 function KeystonePolaris:EnsureRoleMarkerWatcher()
@@ -175,6 +190,98 @@ function KeystonePolaris:BuildRoleMarkerMacro()
     return table.concat(lines, "\n")
 end
 
+function KeystonePolaris:EnsureRoleMarkerTitleFrame()
+    if self.roleMarkerTitleFrame then return self.roleMarkerTitleFrame end
+
+    local titleFrame = CreateFrame("Frame", "KeystonePolarisRoleMarkerTitleFrame", UIParent)
+    titleFrame:SetClampedToScreen(true)
+    titleFrame:SetFrameStrata("MEDIUM")
+    titleFrame:EnableMouse(true)
+
+    titleFrame.Title = titleFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+    titleFrame.Title:SetPoint("TOP", 0, 0)
+    titleFrame.Title:SetWordWrap(false)
+    titleFrame.Title:SetText(GetRoleMarkerTitleText())
+
+    titleFrame:SetScript("OnMouseUp", function(_, mouseButton)
+        if not self._positioningMode then return end
+        if mouseButton ~= "LeftButton" and mouseButton ~= "RightButton" then return end
+        if self.SetPositioningFocus then self:SetPositioningFocus("roleMarker") end
+        if self.ShowPositioningOffsetPopup then self:ShowPositioningOffsetPopup() end
+    end)
+    titleFrame:SetScript("OnDragStart", function(frame)
+        if InCombatLockdown() or not self._positioningMode then return end
+        if self.SetPositioningFocus then self:SetPositioningFocus("roleMarker") end
+        frame:StartMoving()
+    end)
+    titleFrame:SetScript("OnDragStop", function(frame)
+        frame:StopMovingOrSizing()
+        if InCombatLockdown() or not self._positioningMode then return end
+        local db = GetRoleMarkerDB(self)
+        if not db then return end
+        local cx, cy = frame:GetCenter()
+        local sw, sh = GetScreenWidth(), GetScreenHeight()
+        if cx and cy and sw and sh then
+            db.xOffset = cx - sw / 2
+            db.yOffset = cy - sh / 2
+        end
+        self:ApplyRoleMarkerPosition(true)
+        if self.RefreshPositioningOffsetSliders then self:RefreshPositioningOffsetSliders() end
+        LibStub("AceConfigRegistry-3.0"):NotifyChange(AddOnName)
+    end)
+
+    titleFrame:Hide()
+    self.roleMarkerTitleFrame = titleFrame
+    return titleFrame
+end
+
+function KeystonePolaris:GetRoleMarkerAnchorFrame()
+    local db = GetRoleMarkerDB(self)
+    if IsRoleMarkerTitleEnabled(db) and self.roleMarkerTitleFrame then
+        return self.roleMarkerTitleFrame
+    end
+    return self.roleMarkerButton
+end
+
+function KeystonePolaris:ApplyRoleMarkerLayout()
+    local btn = self.roleMarkerButton
+    if not btn then return end
+    if InCombatLockdown() then
+        self._pendingRoleMarkerUpdate = true
+        self:EnsureRoleMarkerWatcher()
+        return
+    end
+
+    local db = GetRoleMarkerDB(self)
+    local showTitle = IsRoleMarkerTitleEnabled(db)
+    if showTitle then
+        local titleFrame = self:EnsureRoleMarkerTitleFrame()
+        if btn:GetParent() ~= titleFrame then
+            btn:SetParent(titleFrame)
+        end
+        btn:SetClampedToScreen(false)
+        if titleFrame.Title then
+            titleFrame.Title:SetText(GetRoleMarkerTitleText())
+        end
+        local titleWidth = titleFrame.Title and titleFrame.Title:GetStringWidth() or 0
+        local titleHeight = titleFrame.Title and titleFrame.Title:GetStringHeight() or 12
+        local btnWidth = btn:GetWidth() or 80
+        local btnHeight = btn:GetHeight() or 28
+        titleFrame:SetWidth(math.max(btnWidth, titleWidth) + ROLE_MARKER_TITLE_PAD_X * 2)
+        titleFrame:SetHeight(titleHeight + ROLE_MARKER_TITLE_GAP + btnHeight)
+        btn:ClearAllPoints()
+        btn:SetPoint("BOTTOM", titleFrame, "BOTTOM", 0, 0)
+    else
+        if btn:GetParent() ~= UIParent then
+            btn:SetParent(UIParent)
+        end
+        btn:SetClampedToScreen(true)
+        if self.roleMarkerTitleFrame then
+            self.roleMarkerTitleFrame:Hide()
+        end
+    end
+end
+
 function KeystonePolaris:RefreshRoleMarkerIcons()
     local btn = self.roleMarkerButton
     if not btn or not btn.Label then return end
@@ -188,6 +295,7 @@ function KeystonePolaris:RefreshRoleMarkerIcons()
         local textWidth = btn.Label:GetStringWidth() or 0
         btn:SetWidth(math.max(80, textWidth + 16))
         btn:SetHeight(math.max(28, (fontSize or ROLE_MARKER_DEFAULT_FONT_SIZE) + 12))
+        self:ApplyRoleMarkerLayout()
     end
 end
 
@@ -201,11 +309,15 @@ function KeystonePolaris:ApplyRoleMarkerPosition(force)
         return
     end
 
+    self:ApplyRoleMarkerLayout()
+    local anchor = self:GetRoleMarkerAnchorFrame()
+    if not anchor then return end
+
     local db = GetRoleMarkerDB(self)
     local xOff = (db and db.xOffset) or 0
     local yOff = (db and db.yOffset) or 0
-    btn:ClearAllPoints()
-    btn:SetPoint("CENTER", UIParent, "CENTER", xOff, yOff)
+    anchor:ClearAllPoints()
+    anchor:SetPoint("CENTER", UIParent, "CENTER", xOff, yOff)
 end
 
 function KeystonePolaris:SaveRoleMarkerPositioningState()
@@ -230,11 +342,25 @@ function KeystonePolaris:BeginRoleMarkerPositioning()
     self:ApplyRoleMarkerPosition(true)
     btn:SetAttribute("type", nil)
     btn:SetAttribute("macrotext", nil)
-    btn:SetMovable(true)
-    btn:RegisterForDrag("LeftButton")
     btn:EnableMouse(true)
     btn:SetAlpha(1)
     btn:Show()
+
+    local showTitle = IsRoleMarkerTitleEnabled(db)
+    local titleFrame = showTitle and self:EnsureRoleMarkerTitleFrame() or nil
+    btn:SetMovable(not showTitle)
+    btn:RegisterForDrag("LeftButton")
+    if titleFrame then
+        titleFrame:SetMovable(true)
+        titleFrame:RegisterForDrag("LeftButton")
+        titleFrame:EnableMouse(true)
+        titleFrame:SetAlpha(1)
+        titleFrame:Show()
+    elseif self.roleMarkerTitleFrame then
+        self.roleMarkerTitleFrame:SetMovable(false)
+        self.roleMarkerTitleFrame:RegisterForDrag()
+        self.roleMarkerTitleFrame:Hide()
+    end
 end
 
 function KeystonePolaris:FinishRoleMarkerPositioning(save)
@@ -248,12 +374,13 @@ function KeystonePolaris:FinishRoleMarkerPositioning(save)
 end
 
 function KeystonePolaris:ApplyRoleMarkerCombatVisualState(shouldShow)
+    local alpha = shouldShow and 1 or 0
+    if self.roleMarkerTitleFrame then
+        self.roleMarkerTitleFrame:SetAlpha(alpha)
+    end
     local btn = self.roleMarkerButton
-    if not btn then return end
-    if shouldShow then
-        btn:SetAlpha(1)
-    else
-        btn:SetAlpha(0)
+    if btn then
+        btn:SetAlpha(alpha)
     end
 end
 
@@ -306,17 +433,19 @@ function KeystonePolaris:EnsureRoleMarkerButton()
         if self.SetPositioningFocus then self:SetPositioningFocus("roleMarker") end
         if self.ShowPositioningOffsetPopup then self:ShowPositioningOffsetPopup() end
     end)
-    btn:SetScript("OnDragStart", function(button)
+    btn:SetScript("OnDragStart", function()
         if InCombatLockdown() or not self._positioningMode then return end
         if self.SetPositioningFocus then self:SetPositioningFocus("roleMarker") end
-        button:StartMoving()
+        local anchor = self:GetRoleMarkerAnchorFrame()
+        if anchor then anchor:StartMoving() end
     end)
-    btn:SetScript("OnDragStop", function(button)
-        button:StopMovingOrSizing()
+    btn:SetScript("OnDragStop", function()
+        local anchor = self:GetRoleMarkerAnchorFrame()
+        if anchor then anchor:StopMovingOrSizing() end
         if InCombatLockdown() or not self._positioningMode then return end
         local db = GetRoleMarkerDB(self)
-        if not db then return end
-        local cx, cy = button:GetCenter()
+        if not db or not anchor then return end
+        local cx, cy = anchor:GetCenter()
         local sw, sh = GetScreenWidth(), GetScreenHeight()
         if cx and cy and sw and sh then
             db.xOffset = cx - sw / 2
@@ -337,6 +466,7 @@ end
 function KeystonePolaris:UpdateRoleMarkerState()
     local db = GetRoleMarkerDB(self)
     local btn = self.roleMarkerButton
+    local titleFrame = self.roleMarkerTitleFrame
     if not db or not db.enabled then
         if btn then
             if InCombatLockdown() then
@@ -347,7 +477,13 @@ function KeystonePolaris:UpdateRoleMarkerState()
                 btn:EnableMouse(false)
                 btn:Hide()
                 btn:SetAlpha(1)
+                if titleFrame then
+                    titleFrame:Hide()
+                    titleFrame:SetAlpha(1)
+                end
             end
+        elseif titleFrame then
+            titleFrame:Hide()
         end
         return
     end
@@ -356,6 +492,7 @@ function KeystonePolaris:UpdateRoleMarkerState()
     local positioning = self._positioningMode and true or false
     local macroText = (not positioning) and CanUseRoleMarker(self) and self:BuildRoleMarkerMacro() or nil
     local shouldShow = (macroText ~= nil) or positioning
+    local showTitle = IsRoleMarkerTitleEnabled(db)
 
     if InCombatLockdown() then
         self._pendingRoleMarkerUpdate = true
@@ -367,11 +504,26 @@ function KeystonePolaris:UpdateRoleMarkerState()
     self:RefreshRoleMarkerIcons()
     self:ApplyRoleMarkerPosition()
     btn:SetAlpha(1)
-    btn:SetMovable(positioning)
+    if self.roleMarkerTitleFrame then
+        self.roleMarkerTitleFrame:SetAlpha(1)
+    end
+    btn:SetMovable(positioning and not showTitle)
     if positioning then
         btn:RegisterForDrag("LeftButton")
     else
         btn:RegisterForDrag()
+    end
+    if showTitle then
+        titleFrame = self:EnsureRoleMarkerTitleFrame()
+        titleFrame:SetMovable(positioning)
+        if positioning then
+            titleFrame:RegisterForDrag("LeftButton")
+        else
+            titleFrame:RegisterForDrag()
+        end
+    elseif self.roleMarkerTitleFrame then
+        self.roleMarkerTitleFrame:SetMovable(false)
+        self.roleMarkerTitleFrame:RegisterForDrag()
     end
 
     if shouldShow then
@@ -384,11 +536,20 @@ function KeystonePolaris:UpdateRoleMarkerState()
         end
         btn:EnableMouse(true)
         btn:Show()
+        if showTitle then
+            titleFrame = self:EnsureRoleMarkerTitleFrame()
+            titleFrame:Show()
+        elseif self.roleMarkerTitleFrame then
+            self.roleMarkerTitleFrame:Hide()
+        end
     else
         btn:SetAttribute("type", nil)
         btn:SetAttribute("macrotext", nil)
         btn:EnableMouse(false)
         btn:Hide()
+        if self.roleMarkerTitleFrame then
+            self.roleMarkerTitleFrame:Hide()
+        end
     end
 end
 
