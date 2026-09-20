@@ -430,5 +430,5 @@ L["KPL_GR_SHOW_PLAYSTYLE"] = "플레이 방식 표시" -- TODO: "Show group play
 -- TODO: L["KPL_RM_ROLES_AND"] = "%s & %s"
 -- TODO: L["KPL_RM_POSITION"] = "Position"
 -- TODO: L["KPL_RM_RESET_POSITION"] = "Reset position"
--- TODO: L["KPL_RM_RESET_POSITION_DESC"] = "Move the Role Marker button back to the center of the screen."
+-- TODO: L["KPL_RM_RESET_POSITION_DESC"] = "Move the Role Marker button back to its default position above the Progress Bar."
 -- TODO: L["KPL_RM_TOOLTIP"] = "Click to mark the selected roles."

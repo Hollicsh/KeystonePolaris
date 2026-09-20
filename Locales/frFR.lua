@@ -430,5 +430,5 @@ L["KPL_RM_BUTTON"] = "Marquer %s"
 L["KPL_RM_ROLES_AND"] = "%s et %s"
 L["KPL_RM_POSITION"] = "Position" -- @no-translate
 L["KPL_RM_RESET_POSITION"] = "Réinitialiser la position"
-L["KPL_RM_RESET_POSITION_DESC"] = "Replace le bouton du marqueur de rôles au centre de l'écran."
+L["KPL_RM_RESET_POSITION_DESC"] = "Replace le bouton du marqueur de rôles à sa position par défaut, au-dessus de la barre de progression."
 L["KPL_RM_TOOLTIP"] = "Cliquer pour marquer les rôles sélectionnés."

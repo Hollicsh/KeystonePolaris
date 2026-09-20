@@ -9,6 +9,9 @@ local RAID_ICON_TEXTURE = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_%d"
 local ROLE_MARKER_ICON_SIZE = 14
 local ROLE_MARKER_DEFAULT_FONT = "Friz Quadrata TT"
 local ROLE_MARKER_DEFAULT_FONT_SIZE = 16
+-- CENTER offsets: sit above the default Progress Bar (yOffset 350, height 20).
+KeystonePolaris.ROLE_MARKER_DEFAULT_X = 0
+KeystonePolaris.ROLE_MARKER_DEFAULT_Y = 420
 
 local function GetRoleMarkerDB(self)
     return self.db and self.db.profile and self.db.profile.roleMarker

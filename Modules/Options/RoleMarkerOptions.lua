@@ -256,8 +256,8 @@ function KeystonePolaris:GetRoleMarkerOptions()
                 func = function()
                     local db = GetRoleMarkerDB(self)
                     if not db then return end
-                    db.xOffset = 0
-                    db.yOffset = 0
+                    db.xOffset = KeystonePolaris.ROLE_MARKER_DEFAULT_X
+                    db.yOffset = KeystonePolaris.ROLE_MARKER_DEFAULT_Y
                     self:ApplyRoleMarkerPosition()
                 end,
                 disabled = IsRoleMarkerDisabled,
