@@ -10,11 +10,11 @@ KeystonePolaris.Changelog["3.12.2"] = {
         ["zhTW"] = {},
         ["enUS"] = {
             title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t Version 3.12.2 - Settings NEW badge|r",
-            text = "Version 3.12.2 replaces the yellow exclamation on unread option panels with the same NEW badge Blizzard uses in Settings.",
+            text = "Version 3.12.2 replaces the yellow exclamation on unread option panels with the same NEW badge Blizzard uses in Settings. This update also enlarges season and expansion titles in [Custom Routes]. Thank you [Hollicsh] for the Russian translation.",
         },
         ["frFR"] = {
             title = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:16:16:0:0|t Version 3.12.2 - Badge NEW des options|r",
-            text = "La version 3.12.2 remplace le point d'exclamation jaune des panneaux d'options non lus par le même badge NEW que Blizzard dans les Réglages.",
+            text = "La version 3.12.2 remplace le point d'exclamation jaune des panneaux d'options non lus par le même badge NEW que Blizzard dans les Réglages. Cette mise à jour agrandit aussi les titres de saison et d'extension dans les [Routes personnalisées]. Merci à [Hollicsh] pour la traduction russe.",
         },
         ["koKR"] = {},
         ["ruRU"] = {},
